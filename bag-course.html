@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAG Subjects 2025-26 | Student Help Club</title>
+    <link rel="icon" type="image/jpg" href="shc-logo.jpg">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body class="light-theme">
+
+    <nav class="shc-navbar">
+        <a href="index.html" class="shc-brand-link">
+            <div class="shc-brand animated-brand">
+                <img src="shc-logo.jpg" alt="Logo" class="shc-logo-img">
+                <div class="shc-logo-text">Student <span>Help Club</span></div>
+            </div>
+        </a>
+        <div class="shc-nav-actions">
+            <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+            <div class="shc-cart-trigger" onclick="openCart()"><i class="fas fa-shopping-bag"></i><span id="shc-count">0</span></div>
+        </div>
+    </nav>
+
+    <main class="shc-main">
+        <div style="margin-bottom: 25px;"><a href="index.html" class="shc-back-btn">Home</a></div>
+        <h1 class="section-title">B.A. General (BAG) 2025-26</h1>
+
+        <h2 class="year-header">1st Year (Semester 1 & 2)</h2>
+        <div class="shc-grid">
+            <div class="shc-item-card" data-code="BEVAE-181"><h3>BEVAE-181 (25-26)</h3><p>Env. Studies</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BEVAE-181 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BHDAE-182"><h3>BHDAE-182 (25-26)</h3><p>Hindi Bhasha</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BHDAE-182 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BEGAE-182"><h3>BEGAE-182 (25-26)</h3><p>English Comm.</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BEGAE-182 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BPSC-131"><h3>BPSC-131 (25-26)</h3><p>Political Theory</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BPSC-131 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BHIC-131"><h3>BHIC-131 (25-26)</h3><p>History of India</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BHIC-131 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BSOC-131"><h3>BSOC-131 (25-26)</h3><p>Intro Sociology</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BSOC-131 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BHDLA-135"><h3>BHDLA-135 (25-26)</h3><p>Hindi Vividh Prayog</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BHDLA-135 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BECC-131"><h3>BECC-131 (25-26)</h3><p>Microeconomics</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BECC-131 (25-26)')">Add</button></div></div>
+        </div>
+
+        <h2 class="year-header">2nd Year (Semester 3 & 4)</h2>
+        <div class="shc-grid">
+            <div class="shc-item-card" data-code="BPSC-133"><h3>BPSC-133 (25-26)</h3><p>Comparative Govt.</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BPSC-133 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BHIC-133"><h3>BHIC-133 (25-26)</h3><p>History of India II</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BHIC-133 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BSOC-133"><h3>BSOC-133 (25-26)</h3><p>Socio Theories</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BSOC-133 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BANS-183"><h3>BANS-183 (25-26)</h3><p>Anthropology</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BANS-183 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BPSC-134"><h3>BPSC-134 (25-26)</h3><p>Int. Relations</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BPSC-134 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BHIC-134"><h3>BHIC-134 (25-26)</h3><p>History of India III</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BHIC-134 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BSOC-134"><h3>BSOC-134 (25-26)</h3><p>Socio Enquiry</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BSOC-134 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BHDLA-137"><h3>BHDLA-137 (25-26)</h3><p>Hindi Sampreshan</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BHDLA-137 (25-26)')">Add</button></div></div>
+        </div>
+
+        <h2 class="year-header">3rd Year (Semester 5 & 6)</h2>
+        <div class="shc-grid">
+            <div class="shc-item-card" data-code="BPAG-171"><h3>BPAG-171 (25-26)</h3><p>Disaster Mgmt.</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BPAG-171 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BPSC-141"><h3>BPSC-141 (25-26)</h3><p>Gandhi World</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BPSC-141 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BHIE-141"><h3>BHIE-141 (25-26)</h3><p>History of China</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BHIE-141 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BSOE-141"><h3>BSOE-141 (25-26)</h3><p>Indian Society</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BSOE-141 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BPAG-172"><h3>BPAG-172 (25-26)</h3><p>Governance</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BPAG-172 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BPSC-142"><h3>BPSC-142 (25-26)</h3><p>Foreign Policy</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BPSC-142 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BHIE-144"><h3>BHIE-144 (25-26)</h3><p>History Writing</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BHIE-144 (25-26)')">Add</button></div></div>
+            <div class="shc-item-card" data-code="BSOE-142"><h3>BSOE-142 (25-26)</h3><p>Socio Traditions</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BSOE-142 (25-26)')">Add</button></div></div>
+        </div>
+    </main>
+
+    <div id="cartModal" class="shc-modal">
+        <div class="modal-card">
+            <div class="modal-head"><h3>My Cart (25-26)</h3><span class="close-btn" onclick="closeCart()">&times;</span></div>
+            <div id="cart-list" class="modal-body"></div>
+            <div class="modal-foot">
+                <div class="total-row">Total: <span>₹<span id="grand-total">0</span></span></div>
+                <button class="checkout-btn" onclick="checkoutWA()">Order via WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>AOS.init({ duration: 1000, once: true });</script>
+    <script src="script.js"></script>
+</body>
+</html>

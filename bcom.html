@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B.Com General 2025-26 | Student Help Club</title>
+    <link rel="icon" type="image/jpg" href="shc-logo.jpg">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body class="light-theme">
+
+    <nav class="shc-navbar">
+        <a href="index.html" class="shc-brand-link">
+            <div class="shc-brand animated-brand">
+                <img src="shc-logo.jpg" alt="Logo" class="shc-logo-img">
+                <div class="shc-logo-text">Student <span>Help Club</span></div>
+            </div>
+        </a>
+        <div class="shc-nav-actions">
+            <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+            <div class="shc-cart-trigger" onclick="openCart()"><i class="fas fa-shopping-bag"></i><span id="shc-count">0</span></div>
+        </div>
+    </nav>
+
+    <main class="shc-main">
+        <div style="margin-bottom: 25px;"><a href="index.html" class="shc-back-btn">Home</a></div>
+        <h1 class="section-title" data-aos="fade-down">B.Com General (BCOMG) 2025-26</h1>
+
+        <h2 class="year-header" data-aos="fade-right">Commerce Core Papers</h2>
+        <div class="shc-grid">
+            <div class="shc-item-card"><h3>BCOC-131 (25-26)</h3><p>Financial Accounting</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BCOC-131 (2025-26)')">Add</button></div></div>
+            <div class="shc-item-card"><h3>BCOC-132 (25-26)</h3><p>Business Org.</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BCOC-132 (2025-26)')">Add</button></div></div>
+            <div class="shc-item-card"><h3>BCOC-133 (25-26)</h3><p>Business Law</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BCOC-133 (2025-26)')">Add</button></div></div>
+            <div class="shc-item-card"><h3>BCOC-134 (25-26)</h3><p>Business Mathematics</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BCOC-134 (2025-26)')">Add</button></div></div>
+            <div class="shc-item-card"><h3>BCOC-135 (25-26)</h3><p>Company Law</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BCOC-135 (2025-26)')">Add</button></div></div>
+            <div class="shc-item-card"><h3>BCOC-137 (25-26)</h3><p>Corporate Accounting</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BCOC-137 (2025-26)')">Add</button></div></div>
+            <div class="shc-item-card"><h3>BCOC-138 (25-26)</h3><p>Cost Accounting</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BCOC-138 (2025-26)')">Add</button></div></div>
+            <div class="shc-item-card"><h3>BCOE-141 (25-26)</h3><p>Principles of Marketing</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BCOE-141 (2025-26)')">Add</button></div></div>
+        </div>
+
+        <h2 class="year-header" data-aos="fade-right">Skill Enhancement (SEC)</h2>
+        <div class="shc-grid">
+            <div class="shc-item-card"><h3>BCOS-183 (25-26)</h3><p>Computer App in Business</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BCOS-183 (2025-26)')">Add</button></div></div>
+            <div class="shc-item-card"><h3>BCOS-184 (25-26)</h3><p>E-Commerce</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BCOS-184 (2025-26)')">Add</button></div></div>
+            <div class="shc-item-card"><h3>BCOS-185 (25-26)</h3><p>Entrepreneurship</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BCOS-185 (2025-26)')">Add</button></div></div>
+            <div class="shc-item-card"><h3>BCOS-186 (25-26)</h3><p>Personal Selling</p><div class="card-footer"><span class="price-tag">₹29</span><button class="add-btn" onclick="addToCart('BCOS-186 (2025-26)')">Add</button></div></div>
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>AOS.init({ duration: 1000, once: true });</script>
+    <script src="script.js"></script>
+</body>
+</html>
