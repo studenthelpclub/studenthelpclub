@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang
-      <link rel="manifest" href="site.webmanifest">
+<html lang="hi">
+<head>
+    <link rel="manifest" href="site.webmanifest">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -80,7 +81,8 @@
         .hidden-loader { display: none !important; }
         select { font-size: 10px !important; font-weight: 700 !important; border-radius: 10px !important; }
     </style>
-  
+    
+</head>
 <body>
 
     <div id="loader"><i class="fas fa-circle-notch fa-spin text-4xl text-[#d32f2f]"></i></div>
@@ -231,6 +233,19 @@
         let cart = JSON.parse(localStorage.getItem('shc_final_v17_live')) || [];
         let cacheData = [];
 
+        // Yahan Price update karne ka logic hai jo screen par dikhega
+        window.updateCardPrice = (id, adminBasePrice) => {
+            const mode = document.getElementById(`mode-${id}`).value;
+            const priceDisplay = document.getElementById(`price-display-${id}`);
+            const extraCharge = 100; // Handwritten ke liye extra price
+
+            if (mode === "Handwritten Scan") {
+                priceDisplay.innerText = parseInt(adminBasePrice) + extraCharge;
+            } else {
+                priceDisplay.innerText = adminBasePrice;
+            }
+        };
+
         async function init() {
             try {
                 const snap = await getDocs(collection(db, "pdf_store"));
@@ -252,10 +267,39 @@
         function renderPopular(data) {
             const grid = document.getElementById('popularGrid');
             grid.innerHTML = data.map(p => {
-                const price = p.price || 50; 
+                const adminPrice = p.price || 50; 
                 let sessionOptions = p.sessions ? p.sessions.map(s => `<option value="${s}">${s}</option>`).join('') : `<option value="2024-25">2024-25</option>`;
-                let modeSelectHTML = (p.typedPDF || p.handwrittenPDF) ? `<label class="text-[8px] font-black uppercase text-gray-400 ml-1">Mode</label><select id="mode-${p.id}" class="w-full bg-gray-50 border p-2.5 rounded-xl text-[10px] font-bold outline-none mb-2 shadow-sm">${p.typedPDF ? '<option value="Typed PDF">Typed</option>' : ''}${p.handwrittenPDF ? '<option value="Handwritten Scan">Handwritten</option>' : ''}</select>` : '';
-                return `<div class="subject-card"><div><div class="flex justify-between items-start mb-3"><span class="text-[7px] font-black bg-gray-100 px-2 py-1 rounded text-gray-500 uppercase">${p.courseName}</span><span class="font-black text-sm text-slate-800">₹${price}</span></div><h4 class="text-[11px] font-black text-slate-800 uppercase leading-tight truncate mb-4">${p.subjectCode}</h4><div class="space-y-1.5 mb-6">${modeSelectHTML}<label class="text-[8px] font-black uppercase text-gray-400 ml-1">Session</label><select id="ses-${p.id}" class="w-full bg-gray-50 border p-2.5 rounded-xl text-[10px] font-bold outline-none shadow-sm">${sessionOptions}</select><select id="med-${p.id}" class="w-full bg-gray-50 border p-2.5 rounded-xl text-[10px] font-bold mt-2 shadow-sm"><option value="Hindi Medium">Hindi</option><option value="English Medium">English</option></select></div></div><div class="flex gap-2"><button onclick="addToCart('${p.id}')" class="flex-1 bg-gray-100 py-4 rounded-2xl font-black text-[9px] uppercase transition hover:bg-gray-200">Add</button><button onclick="buyNow('${p.id}')" class="flex-[1.5] bg-slate-900 text-white py-4 rounded-2xl font-black text-[9px] uppercase shadow-lg active:scale-95 hover:bg-[#d32f2f]">Buy</button></div></div>`;
+                
+                // Mode select mein onchange add kiya hai
+                let modeSelectHTML = (p.typedPDF || p.handwrittenPDF) ? 
+                `<label class="text-[8px] font-black uppercase text-gray-400 ml-1">Mode</label>
+                <select id="mode-${p.id}" onchange="updateCardPrice('${p.id}', '${adminPrice}')" class="w-full bg-gray-50 border p-2.5 rounded-xl text-[10px] font-bold outline-none mb-2 shadow-sm">
+                    ${p.typedPDF ? '<option value="Typed PDF">Typed</option>' : ''}
+                    ${p.handwrittenPDF ? '<option value="Handwritten Scan">Handwritten</option>' : ''}
+                </select>` : '';
+
+                return `<div class="subject-card">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-[7px] font-black bg-gray-100 px-2 py-1 rounded text-gray-500 uppercase">${p.courseName}</span>
+                            <span class="font-black text-sm text-slate-800">₹<span id="price-display-${p.id}">${adminPrice}</span></span>
+                        </div>
+                        <h4 class="text-[11px] font-black text-slate-800 uppercase leading-tight truncate mb-4">${p.subjectCode}</h4>
+                        <div class="space-y-1.5 mb-6">
+                            ${modeSelectHTML}
+                            <label class="text-[8px] font-black uppercase text-gray-400 ml-1">Session</label>
+                            <select id="ses-${p.id}" class="w-full bg-gray-50 border p-2.5 rounded-xl text-[10px] font-bold outline-none shadow-sm">${sessionOptions}</select>
+                            <select id="med-${p.id}" class="w-full bg-gray-50 border p-2.5 rounded-xl text-[10px] font-bold mt-2 shadow-sm">
+                                <option value="Hindi Medium">Hindi</option>
+                                <option value="English Medium">English</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="addToCart('${p.id}')" class="flex-1 bg-gray-100 py-4 rounded-2xl font-black text-[9px] uppercase transition hover:bg-gray-200">Add</button>
+                        <button onclick="buyNow('${p.id}')" class="flex-[1.5] bg-slate-900 text-white py-4 rounded-2xl font-black text-[9px] uppercase shadow-lg active:scale-95 hover:bg-[#d32f2f]">Buy</button>
+                    </div>
+                </div>`;
             }).join('');
         }
 
@@ -277,8 +321,11 @@
             const med = document.getElementById(`med-${id}`).value;
             const mode = document.getElementById(`mode-${id}`) ? document.getElementById(`mode-${id}`).value : "Verified PDF";
             const ses = document.getElementById(`ses-${id}`).value;
+            // Naya displayed price uthata hai
+            const currentPrice = parseInt(document.getElementById(`price-display-${id}`).innerText);
+
             if(!cart.find(c => c.id === id && c.medium === med && c.mode === mode && c.session === ses)) {
-                cart.push({...p, medium: med, mode: mode, session: ses, price: p.price || 50});
+                cart.push({...p, medium: med, mode: mode, session: ses, price: currentPrice});
                 localStorage.setItem('shc_final_v17_live', JSON.stringify(cart));
                 updateUI();
             }
@@ -289,7 +336,10 @@
             const med = document.getElementById(`med-${id}`).value;
             const mode = document.getElementById(`mode-${id}`) ? document.getElementById(`mode-${id}`).value : "Verified PDF";
             const ses = document.getElementById(`ses-${id}`).value;
-            const msg = `*NEW ORDER REQUEST*\nCode: ${p.subjectCode}\nMode: ${mode}\nMed: ${med}\nSession: ${ses}\nPrice: ₹${p.price || 50}\n_Hi Vishal, I want to purchase this solved assignment._`;
+            // Naya displayed price uthata hai
+            const currentPrice = document.getElementById(`price-display-${id}`).innerText;
+
+            const msg = `*NEW ORDER REQUEST*\nCode: ${p.subjectCode}\nMode: ${mode}\nMed: ${med}\nSession: ${ses}\nPrice: ₹${currentPrice}\n_Hi Vishal, I want to purchase this solved assignment._`;
             window.open(`https://wa.me/916202368003?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
@@ -309,7 +359,7 @@
         window.checkoutWA = () => {
             if(!cart.length) return;
             let msg = `*BULK ORDER REQUEST*\n`;
-            cart.forEach((c, i) => { msg += `${i + 1}. ${c.subjectCode} (${c.medium}) | ${c.session}\n`; });
+            cart.forEach((c, i) => { msg += `${i + 1}. ${c.subjectCode} (${c.medium}) | ${c.session} - ₹${c.price}\n`; });
             msg += `\nTotal: ₹${document.getElementById('subtotal').innerText}`;
             window.open(`https://wa.me/916202368003?text=${encodeURIComponent(msg)}`, '_blank');
         };
