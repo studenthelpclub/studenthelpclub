@@ -11,42 +11,42 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulk Dashboard | SHC Admin</title>
+    <title>Bulk Dashboard | SHC Admin Pro</title>
 
-    <link rel="icon" href="favicon.ico" sizes="any">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <meta name="robots" content="noindex, nofollow">
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3110600191216941" crossorigin="anonymous"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; }
         .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        input { background: transparent; border-bottom: 1px solid #334155; padding: 4px; outline: none; width: 100%; color: white; }
+        input { background: transparent; border-bottom: 1px solid #334155; padding: 4px; outline: none; width: 100%; color: white; font-size: 12px; }
+        input:focus { border-color: #6366f1; }
         .hidden { display: none; }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
-    <div id="adminPanel" class="max-w-6xl mx-auto hidden">
+    <div id="adminPanel" class="max-w-7xl mx-auto hidden">
         <div class="glass-card p-8 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-indigo-500 flex justify-between items-center">
             <div>
-                <h1 class="text-3xl font-black text-white italic tracking-tight uppercase">Dashboard</h1>
-                <p class="text-indigo-300 text-[10px] font-bold uppercase tracking-widest mt-1">Bulk Importer Tool</p>
+                <h1 class="text-3xl font-black text-white italic tracking-tight uppercase">Admin Pro</h1>
+                <p class="text-indigo-300 text-[10px] font-bold uppercase tracking-widest mt-1">Bulk Importer & Database Control</p>
             </div>
             <button onclick="logout()" class="bg-red-500/10 text-red-500 px-6 py-2 rounded-xl font-black text-xs border border-red-500/20 hover:bg-red-500 hover:text-white transition">LOGOUT</button>
         </div>
 
         <div class="glass-card p-8 rounded-[2.5rem] shadow-xl mb-8">
-            <label class="block text-[10px] font-black text-slate-500 uppercase mb-4 tracking-[0.2em]">Format: Code | Name | Course | Year | Session</label>
-            <textarea id="bulkInput" rows="5" 
-                class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-5 text-sm outline-none focus:border-indigo-500 transition text-white font-mono"
-                placeholder="MCS-011 | Problem Solving | MCA | 1st Year | 2025-26"></textarea>
+            <div class="flex justify-between items-end mb-4">
+                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
+                    Format: Code | Name | Course | Year | Sessions (comma separated) | Price | Typed(Y/N) | Handwritten(Y/N)
+                </label>
+            </div>
+            <textarea id="bulkInput" rows="6" 
+                class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-5 text-xs outline-none focus:border-indigo-500 transition text-white font-mono"
+                placeholder="BPSC-131 | Political Theory | BAG | 1st Year | July 2025, Jan 2026 | 50 | Y | Y"></textarea>
             
             <button onclick="processList()" class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg">
-                <i class="fas fa-microchip mr-2"></i> Parse Data
+                <i class="fas fa-microchip mr-2"></i> Parse & Preview Data
             </button>
         </div>
 
@@ -54,21 +54,24 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead class="bg-slate-800/50">
-                        <tr>
-                            <th class="p-5 text-[10px] font-black uppercase text-indigo-400">Subject Code</th>
-                            <th class="p-5 text-[10px] font-black uppercase text-indigo-400">Subject Name</th>
-                            <th class="p-5 text-[10px] font-black uppercase text-indigo-400">Course</th>
-                            <th class="p-5 text-[10px] font-black uppercase text-indigo-400">Year</th>
-                            <th class="p-5 text-[10px] font-black uppercase text-indigo-400">Session</th>
+                        <tr class="text-[9px] font-black uppercase text-indigo-400">
+                            <th class="p-4">Code</th>
+                            <th class="p-4">Subject Name</th>
+                            <th class="p-4">Course</th>
+                            <th class="p-4">Sessions (Array)</th>
+                            <th class="p-4">Price</th>
+                            <th class="p-4">Typed</th>
+                            <th class="p-4">Hand</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody" class="divide-y divide-slate-800"></tbody>
                 </table>
             </div>
             
-            <div id="saveAction" class="p-8 bg-slate-800/30 hidden">
+            <div id="saveAction" class="p-8 bg-slate-800/30 hidden text-center">
+                <p class="text-xs text-slate-400 mb-4 font-bold uppercase tracking-widest">Verify data before pushing to Live website</p>
                 <button onclick="uploadToFirebase()" id="finalBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 rounded-2xl text-xs uppercase tracking-[0.2em] transition-all">
-                    <i class="fas fa-cloud-upload-alt mr-2"></i> Upload to Firebase Firestore
+                    <i class="fas fa-cloud-upload-alt mr-2"></i> Push to Live Firestore
                 </button>
             </div>
         </div>
@@ -92,7 +95,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Access Control
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('adminPanel').classList.remove('hidden');
@@ -110,14 +112,18 @@
 
             lines.forEach(line => {
                 if(!line.trim()) return;
+                // Code | Name | Course | Year | Sessions | Price | Typed | Hand
                 const p = line.split('|');
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="p-4"><input type="text" value="${p[0]?.trim() || ''}" class="data-code"></td>
                     <td class="p-4"><input type="text" value="${p[1]?.trim() || ''}" class="data-name"></td>
                     <td class="p-4"><input type="text" value="${p[2]?.trim() || ''}" class="data-course"></td>
-                    <td class="p-4"><input type="text" value="${p[3]?.trim() || ''}" class="data-year"></td>
-                    <td class="p-4"><input type="text" value="${p[4]?.trim() || ''}" class="data-session"></td>
+                    <td class="p-4"><input type="text" value="${p[4]?.trim() || 'Latest Session'}" class="data-sessions"></td>
+                    <td class="p-4"><input type="number" value="${p[5]?.trim() || '50'}" class="data-price w-16"></td>
+                    <td class="p-4"><input type="text" value="${p[6]?.trim().toUpperCase() || 'Y'}" class="data-typed w-8"></td>
+                    <td class="p-4"><input type="text" value="${p[7]?.trim().toUpperCase() || 'N'}" class="data-hand w-8"></td>
+                    <input type="hidden" value="${p[3]?.trim() || ''}" class="data-year">
                 `;
                 tbody.appendChild(tr);
             });
@@ -128,29 +134,37 @@
             const btn = document.getElementById('finalBtn');
             const rows = document.querySelectorAll('#tableBody tr');
             btn.disabled = true;
-            btn.innerText = "UPLOADING TO CLOUD...";
+            btn.innerText = "UPLOADING TO LIVE DATABASE...";
 
             try {
                 for (let row of rows) {
                     const code = row.querySelector('.data-code').value;
                     if(!code) continue;
+
+                    // Parse sessions into an array
+                    const sessionsStr = row.querySelector('.data-sessions').value;
+                    const sessionsArray = sessionsStr.split(',').map(s => s.trim());
+
                     await addDoc(collection(db, "pdf_store"), {
                         subjectCode: code,
                         subjectName: row.querySelector('.data-name').value,
                         courseName: row.querySelector('.data-course').value,
                         year: row.querySelector('.data-year').value,
-                        session: row.querySelector('.data-session').value,
-                        price: 50,
+                        sessions: sessionsArray, // Saves as Array for dropdown
+                        session: sessionsArray[0], // Fallback for old code
+                        price: Number(row.querySelector('.data-price').value),
+                        typedPDF: row.querySelector('.data-typed').value === 'Y',
+                        handwrittenPDF: row.querySelector('.data-hand').value === 'Y',
                         whatsapp: "https://wa.me/916202368003",
                         timestamp: serverTimestamp()
                     });
                 }
-                alert("Database Updated Successfully!");
+                alert("Boom! All data is now Live on Student Help Club.");
                 location.reload();
             } catch (err) {
                 alert("Error: " + err.message);
                 btn.disabled = false;
-                btn.innerText = "PUSH TO LIVE DATABASE";
+                btn.innerText = "RETRY PUSHING DATA";
             }
         };
 
