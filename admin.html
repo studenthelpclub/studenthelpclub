@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WKEZF1XEMF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WKEZF1XEMF');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHC Admin Pro | Multi-Management</title>
+
+    <meta name="robots" content="noindex, nofollow">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        input, select, textarea { background: #1e293b; border: 1px solid #334155; padding: 10px; outline: none; width: 100%; color: white; border-radius: 8px; font-size: 13px; }
+        input:focus, textarea:focus { border-color: #6366f1; }
+        .hidden { display: none; }
+        .tab-btn.active { background: #6366f1; color: white; border-color: #6366f1; }
+    </style>
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+</head>
+<body class="p-4 md:p-10">
+
+    <div id="adminPanel" class="max-w-7xl mx-auto hidden">
+        <div class="glass-card p-8 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-indigo-500 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <h1 class="text-3xl font-black text-white italic tracking-tight uppercase leading-none">SHC Admin Pro</h1>
+                <p class="text-indigo-300 text-[10px] font-bold uppercase tracking-widest mt-2">Content & Product Management</p>
+            </div>
+            
+            <div class="flex bg-slate-900 p-1.5 rounded-2xl border border-slate-700">
+                <button onclick="switchTab('assignments')" id="tab-assignments" class="tab-btn active px-6 py-2 rounded-xl text-[10px] font-black uppercase transition-all">Assignments</button>
+                <button onclick="switchTab('articles')" id="tab-articles" class="tab-btn px-6 py-2 rounded-xl text-[10px] font-black uppercase transition-all">Blog Articles</button>
+            </div>
+
+            <button onclick="logout()" class="bg-red-500/10 text-red-500 px-6 py-2 rounded-xl font-black text-xs border border-red-500/20 hover:bg-red-500 hover:text-white transition">LOGOUT</button>
+        </div>
+
+        <div id="section-assignments" class="space-y-8">
+            <div class="glass-card p-8 rounded-[2.5rem] shadow-xl">
+                <label class="block text-[10px] font-black text-slate-500 uppercase mb-4 tracking-[0.2em]">
+                    Bulk Format: Code | Name | Course | Year | Sessions (comma) | Price | Typed(Y/N) | Hand(Y/N)
+                </label>
+                <textarea id="bulkInput" rows="5" class="font-mono" placeholder="BPSC-131 | Political Theory | BAG | 1st Year | July 2025, Jan 2026 | 50 | Y | Y"></textarea>
+                <button onclick="processList()" class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition shadow-lg">
+                    <i class="fas fa-microchip mr-2"></i> Parse Assignments
+                </button>
+            </div>
+
+            <div class="glass-card rounded-[2.5rem] shadow-xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-800/50">
+                            <tr class="text-[9px] font-black uppercase text-indigo-400">
+                                <th class="p-4">Code</th><th class="p-4">Subject Name</th><th class="p-4">Course</th><th class="p-4">Sessions</th><th class="p-4">Price</th><th class="p-4">Typed</th><th class="p-4">Hand</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-slate-800"></tbody>
+                    </table>
+                </div>
+                <div id="saveAction" class="p-8 bg-slate-800/30 hidden">
+                    <button onclick="uploadToFirebase()" id="finalBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 rounded-2xl text-[11px] uppercase tracking-widest transition-all">
+                        <i class="fas fa-cloud-upload-alt mr-2"></i> Push Assignments to Firestore
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-articles" class="hidden space-y-8">
+            <div class="glass-card p-10 rounded-[3rem] shadow-xl border border-indigo-500/20">
+                <h3 class="text-xl font-black uppercase italic mb-8 text-indigo-400">Post New Article</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="text-[9px] font-black uppercase text-slate-500 ml-1">Article Title</label>
+                        <input type="text" id="art-title" placeholder="e.g. How to write 90+ assignments">
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-black uppercase text-slate-500 ml-1">Category</label>
+                        <select id="art-category">
+                            <option value="Assignment Guide">Assignment Guide</option>
+                            <option value="Exam Support">Exam Support</option>
+                            <option value="Student Tips">Student Tips</option>
+                            <option value="Latest Updates">Latest Updates</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-[9px] font-black uppercase text-slate-500 ml-1">Short Description (for list view)</label>
+                        <input type="text" id="art-short" placeholder="Brief 2-line summary of the article">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-[9px] font-black uppercase text-slate-500 ml-1">Article Content (Supports HTML Tags: &lt;h2&gt;, &lt;p&gt;, &lt;b&gt;, &lt;ul&gt;)</label>
+                        <textarea id="art-content" rows="10" placeholder="<p>Dosto, IGNOU me marks lana...</p>"></textarea>
+                    </div>
+                </div>
+                <button onclick="uploadArticle()" id="artBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-12 py-5 rounded-2xl font-black text-xs uppercase tracking-widest transition shadow-xl">
+                    <i class="fas fa-paper-plane mr-2"></i> Publish Article to Blog
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8",
+            authDomain: "ignou-web.firebaseapp.com",
+            projectId: "ignou-web",
+            storageBucket: "ignou-web.firebasestorage.app",
+            messagingSenderId: "854950506403",
+            appId: "1:854950506403:web:941a56126a36fd3f9d7416"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) { document.getElementById('adminPanel').classList.remove('hidden'); } 
+            else { window.location.href = "login.html"; }
+        });
+
+        // Tab Switching Logic
+        window.switchTab = (tab) => {
+            document.getElementById('section-assignments').classList.toggle('hidden', tab !== 'assignments');
+            document.getElementById('section-articles').classList.toggle('hidden', tab !== 'articles');
+            document.getElementById('tab-assignments').classList.toggle('active', tab === 'assignments');
+            document.getElementById('tab-articles').classList.toggle('active', tab === 'articles');
+        };
+
+        // ASSIGNMENTS LOGIC
+        window.processList = () => {
+            const input = document.getElementById('bulkInput').value;
+            if(!input.trim()) return;
+            const lines = input.split('\n');
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = ''; 
+            lines.forEach(line => {
+                if(!line.trim()) return;
+                const p = line.split('|');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-4"><input type="text" value="${p[0]?.trim() || ''}" class="data-code"></td>
+                    <td class="p-4"><input type="text" value="${p[1]?.trim() || ''}" class="data-name"></td>
+                    <td class="p-4"><input type="text" value="${p[2]?.trim() || ''}" class="data-course"></td>
+                    <td class="p-4"><input type="text" value="${p[4]?.trim() || 'July 2025'}" class="data-sessions"></td>
+                    <td class="p-4"><input type="number" value="${p[5]?.trim() || '50'}" class="data-price w-16"></td>
+                    <td class="p-4"><input type="text" value="${p[6]?.trim().toUpperCase() || 'Y'}" class="data-typed w-8"></td>
+                    <td class="p-4"><input type="text" value="${p[7]?.trim().toUpperCase() || 'N'}" class="data-hand w-8"></td>
+                    <input type="hidden" value="${p[3]?.trim() || ''}" class="data-year">
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('saveAction').classList.remove('hidden');
+        };
+
+        window.uploadToFirebase = async () => {
+            const btn = document.getElementById('finalBtn');
+            const rows = document.querySelectorAll('#tableBody tr');
+            btn.disabled = true; btn.innerText = "UPLOADING ASSIGNMENTS...";
+            try {
+                for (let row of rows) {
+                    const code = row.querySelector('.data-code').value;
+                    const sessionsStr = row.querySelector('.data-sessions').value;
+                    const sessionsArray = sessionsStr.split(',').map(s => s.trim());
+                    await addDoc(collection(db, "pdf_store"), {
+                        subjectCode: code, subjectName: row.querySelector('.data-name').value,
+                        courseName: row.querySelector('.data-course').value, year: row.querySelector('.data-year').value,
+                        sessions: sessionsArray, session: sessionsArray[0],
+                        price: Number(row.querySelector('.data-price').value),
+                        typedPDF: row.querySelector('.data-typed').value === 'Y',
+                        handwrittenPDF: row.querySelector('.data-hand').value === 'Y',
+                        whatsapp: "https://wa.me/916202368003", timestamp: serverTimestamp()
+                    });
+                }
+                alert("Assignments uploaded successfully!"); location.reload();
+            } catch (err) { alert("Error: " + err.message); btn.disabled = false; }
+        };
+
+        // ARTICLE LOGIC
+        window.uploadArticle = async () => {
+            const title = document.getElementById('art-title').value;
+            const content = document.getElementById('art-content').value;
+            const btn = document.getElementById('artBtn');
+
+            if(!title || !content) return alert("Title and Content required!");
+            
+            btn.disabled = true; btn.innerText = "PUBLISHING ARTICLE...";
+            try {
+                await addDoc(collection(db, "articles"), {
+                    title: title,
+                    category: document.getElementById('art-category').value,
+                    shortDesc: document.getElementById('art-short').value,
+                    content: content,
+                    date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+                    timestamp: serverTimestamp()
+                });
+                alert("Article published! It will now appear on the Blog page.");
+                location.reload();
+            } catch (err) { alert("Error: " + err.message); btn.disabled = false; }
+        };
+
+        window.logout = () => signOut(auth);
+    </script>
+</body>
+</html>
