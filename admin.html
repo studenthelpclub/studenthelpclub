@@ -52,9 +52,10 @@
         <div id="section-assignments" class="space-y-8">
             <div class="glass-card p-8 rounded-[2.5rem] shadow-xl">
                 <label class="block text-[10px] font-black text-slate-500 uppercase mb-4 tracking-[0.2em]">
-                    Bulk Format: Code | Name | Course | Year | Sessions (comma) | Price | Typed(Y/N) | Hand(Y/N)
+                    Bulk Format: Code | Name | Course (BAG, BCA) | Year | Sessions (comma) | Price | Typed(Y/N) | Hand(Y/N)
                 </label>
-                <textarea id="bulkInput" rows="5" class="font-mono" placeholder="BPSC-131 | Political Theory | BAG | 1st Year | July 2025, Jan 2026 | 50 | Y | Y"></textarea>
+                <textarea id="bulkInput" rows="5" class="font-mono" placeholder="BEVAE-181 | Env Studies | BAG, BCA | 1st Year | July 2025, Jan 2026 | 40 | Y | N"></textarea>
+                <p class="text-[9px] text-indigo-300 mt-2 italic font-medium">*Note: Courses field supports multiple entries separated by commas.</p>
                 <button onclick="processList()" class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition shadow-lg">
                     <i class="fas fa-microchip mr-2"></i> Parse Assignments
                 </button>
@@ -65,7 +66,7 @@
                     <table class="w-full text-left">
                         <thead class="bg-slate-800/50">
                             <tr class="text-[9px] font-black uppercase text-indigo-400">
-                                <th class="p-4">Code</th><th class="p-4">Subject Name</th><th class="p-4">Course</th><th class="p-4">Sessions</th><th class="p-4">Price</th><th class="p-4">Typed</th><th class="p-4">Hand</th>
+                                <th class="p-4">Code</th><th class="p-4">Subject Name</th><th class="p-4">Course(s)</th><th class="p-4">Sessions</th><th class="p-4">Price</th><th class="p-4">Typed</th><th class="p-4">Hand</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody" class="divide-y divide-slate-800"></tbody>
@@ -135,7 +136,6 @@
             else { window.location.href = "login.html"; }
         });
 
-        // Tab Switching Logic
         window.switchTab = (tab) => {
             document.getElementById('section-assignments').classList.toggle('hidden', tab !== 'assignments');
             document.getElementById('section-articles').classList.toggle('hidden', tab !== 'articles');
@@ -143,7 +143,6 @@
             document.getElementById('tab-articles').classList.toggle('active', tab === 'articles');
         };
 
-        // ASSIGNMENTS LOGIC
         window.processList = () => {
             const input = document.getElementById('bulkInput').value;
             if(!input.trim()) return;
@@ -178,28 +177,39 @@
                     const code = row.querySelector('.data-code').value;
                     const sessionsStr = row.querySelector('.data-sessions').value;
                     const sessionsArray = sessionsStr.split(',').map(s => s.trim());
+                    
+                    const courseStr = row.querySelector('.data-course').value;
+                    const courseArray = courseStr.split(',').map(c => c.trim());
+
                     await addDoc(collection(db, "pdf_store"), {
-                        subjectCode: code, subjectName: row.querySelector('.data-name').value,
-                        courseName: row.querySelector('.data-course').value, year: row.querySelector('.data-year').value,
-                        sessions: sessionsArray, session: sessionsArray[0],
+                        subjectCode: code, 
+                        subjectName: row.querySelector('.data-name').value,
+                        courseName: courseArray[0],
+                        courses: courseArray,
+                        year: row.querySelector('.data-year').value,
+                        sessions: sessionsArray, 
+                        session: sessionsArray[0],
                         price: Number(row.querySelector('.data-price').value),
                         typedPDF: row.querySelector('.data-typed').value === 'Y',
                         handwrittenPDF: row.querySelector('.data-hand').value === 'Y',
-                        whatsapp: "https://wa.me/916202368003", timestamp: serverTimestamp()
+                        whatsapp: "https://wa.me/916202368003", 
+                        timestamp: serverTimestamp()
                     });
                 }
-                alert("Assignments uploaded successfully!"); location.reload();
-            } catch (err) { alert("Error: " + err.message); btn.disabled = false; }
+                alert("Assignments uploaded successfully!"); 
+                location.reload();
+            } catch (err) { 
+                alert("Error: " + err.message); 
+                btn.disabled = false; 
+                btn.innerText = "RETRY UPLOAD";
+            }
         };
 
-        // ARTICLE LOGIC
         window.uploadArticle = async () => {
             const title = document.getElementById('art-title').value;
             const content = document.getElementById('art-content').value;
             const btn = document.getElementById('artBtn');
-
             if(!title || !content) return alert("Title and Content required!");
-            
             btn.disabled = true; btn.innerText = "PUBLISHING ARTICLE...";
             try {
                 await addDoc(collection(db, "articles"), {
@@ -210,7 +220,7 @@
                     date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
                     timestamp: serverTimestamp()
                 });
-                alert("Article published! It will now appear on the Blog page.");
+                alert("Article published successfully!");
                 location.reload();
             } catch (err) { alert("Error: " + err.message); btn.disabled = false; }
         };
