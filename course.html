@@ -214,7 +214,7 @@
             const ses = document.getElementById(`ses-${id}`).value;
             const mode = document.getElementById(`mode-${id}`) ? document.getElementById(`mode-${id}`).value : "Verified PDF";
             const msg = `*--- STUDENT HELP CLUB ---*\n*NEW ORDER*\n*Subject:* ${p.subjectCode}\n*Mode:* ${mode}\n*Medium:* ${med}\n*Session:* ${ses}\n*Price:* ₹${p.price || 50}\n_I want to purchase this PDF._`;
-            window.open(`https://wa.me/916202368003?text=${encodeURIComponent(msg)}`, '_blank');
+            window.open(`https://wa.me/919776986830?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
         window.updateUI = () => {
@@ -240,7 +240,7 @@
             let msg = `*--- STUDENT HELP CLUB ---*\n*OFFICIAL BULK ORDER*\n`;
             cart.forEach((c, i) => { msg += `${i + 1}. ${c.subjectCode} (${c.medium}) | ${c.mode}\n`; });
             msg += `*Total: ₹${document.getElementById('subtotal').innerText}*`;
-            window.open(`https://wa.me/916202368003?text=${encodeURIComponent(msg)}`, '_blank');
+            window.open(`https://wa.me/919776986830?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
         initCourse();
