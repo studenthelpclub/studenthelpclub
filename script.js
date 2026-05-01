@@ -154,7 +154,7 @@ function checkoutWA() {
     msg += `-----------------------------------\n`;
     msg += `_Hi Vishal, I want to buy these solved assignments. Please send me the payment details._`;
 
-    window.open(`https://wa.me/916202368003?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/919776986830?text=${encodeURIComponent(msg)}`, '_blank');
 
     // AUTO-CLEAR CART AFTER CHECKOUT
     setTimeout(() => {
@@ -185,7 +185,7 @@ function directBuy(subjectId) {
     msg += `-----------------------------------\n`;
     msg += `_Hi, I want to buy this single assignment. Please guide me for payment._`;
 
-    window.open(`https://wa.me/916202368003?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/919776986830?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 // --- MISC ---
@@ -250,7 +250,7 @@ function toggleTheme() {
 function openLegal(type) {
     const pages = {
         privacy: { title: "Privacy Policy", content: "Hum aapka koi bhi personal data store nahi karte. Saare orders direct WhatsApp par process hote hain safety ke liye." },
-        contact: { title: "Contact Us", content: "WhatsApp: +91 6202368003\nTelegram: @studenthelpclub\nEmail: studenthelpdeskofficial@gmail.com\nWorking Hours: 10 AM - 8 PM" }
+        contact: { title: "Contact Us", content: "WhatsApp: +91 9776986830\nTelegram: @studenthelpclub\nEmail: studenthelpdeskofficial@gmail.com\nWorking Hours: 10 AM - 8 PM" }
     };
     document.getElementById('legalTitle').innerText = pages[type].title;
     document.getElementById('legalContent').innerText = pages[type].content;
