@@ -6,23 +6,9 @@
     <meta name="google-adsense-account" content="ca-pub-7332493779076670">
     
     <title id="page-title">Important Updates | Student Help Club</title>
-    <meta name="description" id="meta-desc" content="Latest IGNOU guides, solved assignments, and Important Updates by Student Help Club.">
+    <meta name="description" id="meta-desc" content="Latest IGNOU guides and official updates by Student Help Club.">
     <meta name="author" content="Vishal Kumar - Student Help Club">
-    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://studenthelpclub.in/blog.html" />
-
-    <meta property="og:title" id="og-title" content="Important Update | Student Help Club">
-    <meta property="og:description" id="og-desc" content="Best resources for IGNOU students at your fingertips.">
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="https://studenthelpclub.in/blog.html">
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WKEZF1XEMF"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-WKEZF1XEMF');
-    </script>
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332493779076670" crossorigin="anonymous"></script>
 
@@ -37,12 +23,15 @@
         
         .content-area h2 { font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-top: 2.5rem; margin-bottom: 1.25rem; text-transform: uppercase; font-style: italic; border-left: 4px solid #d32f2f; padding-left: 15px; }
         .content-area p { margin-bottom: 1.5rem; line-height: 1.9; color: #475569; font-size: 15px; }
-        .content-area ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; color: #475569; }
-        .content-area b { color: #1e293b; font-weight: 700; }
         
         .hidden { display: none !important; }
         #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .hidden-loader { display: none !important; }
+
+        /* Comment Styling */
+        .comment-input { border: 2px solid #f1f5f9; transition: 0.3s; }
+        .comment-input:focus { border-color: #d32f2f; outline: none; background: white; }
+        .user-avatar { width: 40px; height: 40px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #64748b; font-weight: 800; }
     </style>
 </head>
 <body>
@@ -58,24 +47,13 @@
         </div>
     </nav>
 
-    <div id="breadcrumb-nav" class="max-w-4xl mx-auto px-6 pt-8 hidden">
-        <nav class="flex text-gray-400 text-[10px] font-bold uppercase tracking-widest" aria-label="Breadcrumb">
-            <ol class="list-none p-0 inline-flex items-center">
-                <li class="flex items-center"><a href="index.html" class="hover:text-[#d32f2f]">Home</a><i class="fas fa-chevron-right mx-2 text-[7px]"></i></li>
-                <li class="flex items-center"><a href="blog.html" class="hover:text-[#d32f2f]">Updates</a><i class="fas fa-chevron-right mx-2 text-[7px]"></i></li>
-                <li id="breadcrumb-current" class="text-slate-800 truncate max-w-[200px]">Article</li>
-            </ol>
-        </nav>
-    </div>
-
     <main class="max-w-4xl mx-auto px-6 py-12">
         <div id="blogListView">
             <div class="mb-16 text-center md:text-left">
                 <h2 class="text-4xl font-black italic uppercase text-slate-800 mb-3">Important <span class="text-[#d32f2f]">Updates</span></h2>
-                <p class="text-gray-500 text-sm font-medium italic">Latest IGNOU news, official notifications, and student guides.</p>
+                <p class="text-gray-500 text-sm font-medium italic">Latest IGNOU official news and student guides.</p>
             </div>
-            <div id="articleGrid" class="grid grid-cols-1 gap-8">
-                </div>
+            <div id="articleGrid" class="grid grid-cols-1 gap-8"></div>
         </div>
 
         <div id="fullArticleView" class="hidden">
@@ -84,25 +62,35 @@
             </button>
             <div id="articleHeader"></div>
             <div id="articleBody" class="content-area mt-10 border-t pt-10"></div>
+
+            <div class="mt-20 pt-10 border-t border-dashed border-slate-200">
+                <h3 class="text-xl font-black italic uppercase text-slate-800 mb-8"><i class="fas fa-comments text-[#d32f2f] mr-2"></i> Student Discussion</h3>
+                
+                <div class="bg-slate-50 p-6 md:p-8 rounded-[2.5rem] mb-12">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Leave a comment</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <input type="text" id="comm-name" placeholder="Your Name" class="comment-input bg-white p-4 rounded-2xl text-sm font-bold">
+                        <div class="hidden md:block"></div>
+                        <textarea id="comm-text" rows="3" placeholder="Write your question or feedback..." class="comment-input bg-white p-4 rounded-2xl text-sm font-medium md:col-span-2"></textarea>
+                    </div>
+                    <button onclick="submitComment()" id="commBtn" class="bg-slate-800 hover:bg-[#d32f2f] text-white px-8 py-3.5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">Post Comment</button>
+                </div>
+
+                <div id="commentList" class="space-y-6">
+                    </div>
+            </div>
         </div>
     </main>
 
     <footer class="bg-slate-900 py-16 mt-20 text-center">
         <div class="max-w-5xl mx-auto px-6">
-            <h3 class="text-white font-black italic uppercase tracking-tighter text-xl mb-4">Student Help Club</h3>
-            <div class="flex flex-wrap justify-center gap-6 text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-8">
-                <a href="index.html" class="hover:text-white transition">Home</a>
-                <a href="about.html" class="hover:text-white transition">About Us</a>
-                <a href="privacy-policy.html" class="hover:text-white transition">Privacy Policy</a>
-                <a href="disclaimer.html" class="hover:text-white transition">Disclaimer</a>
-            </div>
-            <p class="text-[9px] text-gray-600 uppercase tracking-[0.2em]">© 2026 Student Help Club | Founder: Vishal Kumar</p>
+            <p class="text-[9px] text-gray-600 uppercase tracking-[0.2em]">© 2026 Student Help Club | Vishal Kumar</p>
         </div>
     </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8",
@@ -116,54 +104,35 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         let allArticles = [];
+        let currentArticleId = null;
 
+        // Fetch All Articles
         async function fetchArticles() {
             const grid = document.getElementById('articleGrid');
             const loader = document.getElementById('loader');
-
             try {
-                console.log("Fetching from Firebase...");
-                const colRef = collection(db, "articles");
-                const snap = await getDocs(colRef);
-                
+                const snap = await getDocs(collection(db, "articles"));
                 if (snap.empty) {
-                    grid.innerHTML = `
-                        <div class="text-center py-20">
-                            <i class="fas fa-folder-open text-gray-200 text-6xl mb-4"></i>
-                            <p class="text-gray-400 font-bold uppercase text-xs tracking-widest">No updates found in database.</p>
-                        </div>`;
+                    grid.innerHTML = `<div class="text-center py-20 text-gray-400">No updates found.</div>`;
                 } else {
                     allArticles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    
-                    // Sort: Latest articles first
-                    allArticles.sort((a, b) => {
-                        const timeA = a.timestamp?.seconds || 0;
-                        const timeB = b.timestamp?.seconds || 0;
-                        return timeB - timeA;
-                    });
-                    
+                    allArticles.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
                     renderList();
                     checkURL();
                 }
-            } catch (e) {
-                console.error("Firebase Error:", e);
-                grid.innerHTML = `<div class="text-center py-20 text-red-500 font-bold uppercase text-[10px]">Error: ${e.message}</div>`;
-            } finally {
-                loader.classList.add('hidden-loader');
-            }
+            } catch (e) { console.error(e); }
+            loader.classList.add('hidden-loader');
         }
 
         function renderList() {
             const grid = document.getElementById('articleGrid');
             grid.innerHTML = allArticles.map(art => `
-                <div class="article-card p-8 rounded-[3rem] shadow-sm flex flex-col md:flex-row gap-8 items-center" onclick="openArticle('${art.id}')">
-                    <div class="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center text-[#d32f2f] text-3xl flex-shrink-0">
-                        <i class="fas fa-bell"></i>
-                    </div>
+                <div class="article-card p-8 rounded-[3rem] flex flex-col md:flex-row gap-8 items-center" onclick="openArticle('${art.id}')">
+                    <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center text-[#d32f2f] text-2xl flex-shrink-0"><i class="fas fa-bell"></i></div>
                     <div class="flex-1 text-center md:text-left">
-                        <span class="text-[9px] font-black text-[#d32f2f] uppercase tracking-[0.2em] bg-red-50 px-3 py-1 rounded-full">${art.category || 'Important Update'}</span>
-                        <h3 class="text-xl md:text-2xl font-black text-slate-800 uppercase italic mt-3 mb-2 leading-tight">${art.title}</h3>
-                        <p class="text-gray-400 text-xs leading-relaxed line-clamp-2 font-medium">${art.shortDesc || 'Click to read full update details...'}</p>
+                        <span class="text-[9px] font-black text-[#d32f2f] uppercase tracking-[0.2em] bg-red-50 px-3 py-1 rounded-full">${art.category || 'Update'}</span>
+                        <h3 class="text-xl font-black text-slate-800 uppercase italic mt-3 mb-2 leading-tight">${art.title}</h3>
+                        <p class="text-gray-400 text-xs line-clamp-2">${art.shortDesc || 'Click to read details...'}</p>
                     </div>
                 </div>
             `).join('');
@@ -172,37 +141,82 @@
         window.openArticle = (id) => {
             const art = allArticles.find(a => a.id === id);
             if(!art) return;
-
-            document.title = `${art.title} | Student Help Club`;
-            document.getElementById('meta-desc').setAttribute("content", art.shortDesc || art.title);
-            document.getElementById('og-title').setAttribute("content", art.title);
-
-            document.getElementById('breadcrumb-nav').classList.remove('hidden');
-            document.getElementById('breadcrumb-current').innerText = art.title;
+            currentArticleId = id;
 
             document.getElementById('articleHeader').innerHTML = `
                 <div class="text-center md:text-left">
                     <span class="text-[10px] font-black text-[#d32f2f] uppercase tracking-[0.3em] bg-red-50 px-4 py-1.5 rounded-full">${art.category}</span>
                     <h1 class="text-3xl md:text-5xl font-black text-slate-800 uppercase italic mt-6 mb-6 leading-[1.1]">${art.title}</h1>
-                    <div class="flex items-center justify-center md:justify-start gap-4 text-gray-400 text-[10px] font-bold uppercase italic">
-                        <span>By SHC Admin</span>
-                        <span class="w-1.5 h-1.5 bg-gray-200 rounded-full"></span>
-                        <span>${art.date || 'Latest Update'}</span>
-                    </div>
+                    <div class="text-gray-400 text-[10px] font-bold uppercase italic">By SHC Admin • ${art.date || 'Latest'}</div>
                 </div>
             `;
-            
             document.getElementById('articleBody').innerHTML = art.content;
             document.getElementById('blogListView').classList.add('hidden');
             document.getElementById('fullArticleView').classList.remove('hidden');
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
             window.history.pushState({}, '', `?id=${id}`);
+            
+            loadComments(id); // Load comments for this specific article
         };
 
+        // --- Comment Logic ---
+
+        window.submitComment = async () => {
+            const name = document.getElementById('comm-name').value.trim();
+            const text = document.getElementById('comm-text').value.trim();
+            const btn = document.getElementById('commBtn');
+
+            if(!name || !text) return alert("Please enter your name and comment.");
+
+            btn.disabled = true;
+            btn.innerText = "POSTING...";
+
+            try {
+                await addDoc(collection(db, "comments"), {
+                    articleId: currentArticleId,
+                    name: name,
+                    text: text,
+                    timestamp: serverTimestamp()
+                });
+                document.getElementById('comm-name').value = '';
+                document.getElementById('comm-text').value = '';
+                alert("Comment posted successfully!");
+            } catch (e) {
+                alert("Error: " + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Post Comment";
+            }
+        };
+
+        function loadComments(articleId) {
+            const commList = document.getElementById('commentList');
+            const q = query(collection(db, "comments"), where("articleId", "==", articleId), orderBy("timestamp", "desc"));
+            
+            onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    commList.innerHTML = `<p class="text-slate-400 text-xs italic font-medium">No comments yet. Be the first to ask!</p>`;
+                    return;
+                }
+                commList.innerHTML = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    const initial = data.name.charAt(0).toUpperCase();
+                    return `
+                        <div class="flex gap-4 p-4 rounded-3xl bg-white border border-slate-100 shadow-sm">
+                            <div class="user-avatar flex-shrink-0">${initial}</div>
+                            <div>
+                                <h4 class="text-xs font-black text-slate-800 uppercase mb-1">${data.name}</h4>
+                                <p class="text-sm text-slate-600 leading-relaxed font-medium">${data.text}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            });
+        }
+
         function checkURL() {
-            const params = new URLSearchParams(window.location.search);
-            const id = params.get('id');
+            const id = new URLSearchParams(window.location.search).get('id');
             if(id) openArticle(id);
         }
 
