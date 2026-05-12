@@ -12,104 +12,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>IGNOU Solved Assignments PDF | Student Help Club</title>
-    <meta name="description" content="Download 100% verified IGNOU Solved Assignments. High-quality PDF solutions by Student Help Club.">
-    <meta name="keywords" content="IGNOU Solved Assignment PDF, Student Help Club Solutions">
+    <title id="dynamic-title">IGNOU Solved Assignments PDF | Student Help Club</title>
+    <meta name="description" id="dynamic-desc" content="Download 100% verified IGNOU Solved Assignments for all subjects. High-quality PDF solutions with expert guidance by Student Help Club. Get your subject-specific assignments today.">
+    <meta name="keywords" content="IGNOU Solved Assignment PDF, IGNOU Assignment 2025, IGNOU Handwritten PDF, Student Help Club IGNOU, IGNOU Exam Preparation">
+    <meta name="author" content="Vishal Kumar - Student Help Club">
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332493779076670"
-     crossorigin="anonymous"></script>
+    <meta property="og:title" content="Get IGNOU Solved Assignments - Student Help Club">
+    <meta property="og:description" content="Official store for premium IGNOU academic resources.">
+    <meta property="og:url" content="https://studenthelpclub.in/course.html">
+    <meta property="og:type" content="website">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332493779076670" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; -webkit-font-smoothing: antialiased; }
-        .back-link { transition: 0.2s; color: #64748b; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
-        .back-link:hover { color: #d32f2f; }
-        .course-badge { background: #d32f2f; color: white; padding: 6px 20px; border-radius: 10px; font-size: 14px; font-weight: 900; text-transform: uppercase; box-shadow: 0 4px 10px rgba(211, 47, 47, 0.2); }
-        .cart-sheet { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: white; z-index: 5000; transition: 0.3s ease; box-shadow: -10px 0 30px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; scroll-behavior: smooth; }
+        .hero-banner { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+        .card-shc { border: 1px solid #f1f5f9; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-shc:hover { border-color: #d32f2f; transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+        .cart-sheet { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: white; z-index: 2000; box-shadow: -10px 0 50px rgba(0,0,0,0.1); transition: 0.5s ease; }
         .cart-sheet.active { right: 0; }
-        .subject-card { background: white; border-radius: 16px; border: 1px solid #f1f5f9; padding: 15px; transition: 0.2s; height: 100%; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
-        .subject-card:hover { border-color: #d32f2f; transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0,0,0,0.05); }
-        .year-indicator { border-left: 4px solid #d32f2f; padding-left: 12px; margin-bottom: 24px; font-size: 20px; font-weight: 800; color: #1e293b; }
-        #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .cart-item-box { border: 1px dotted #ccc; padding: 8px; font-size: 9px; background: white; border-radius: 8px; }
+        .bg-red-shc { background-color: #d32f2f; }
+        .text-red-shc { color: #d32f2f; }
+        .hidden { display: none !important; }
     </style>
-    <link rel="manifest" href="site.webmanifest">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 </head>
-<body>
+<body class="antialiased">
 
-    <div id="loader"><i class="fas fa-spinner fa-spin text-xl text-[#d32f2f]"></i></div>
-
-    <nav class="bg-white/90 backdrop-blur-md border-b sticky top-0 z-[1000] px-6 py-4">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="index.html" class="back-link flex items-center gap-2">
-                <i class="fas fa-arrow-left text-[10px]"></i> Home
-            </a>
-            <div class="flex items-center">
-                <span class="course-badge" id="navCourseName">Course</span>
-            </div>
-            <div onclick="toggleCart()" class="relative cursor-pointer bg-gray-100 p-2.5 rounded-xl border">
-                <i class="fas fa-shopping-bag text-[#d32f2f]"></i>
-                <span id="cartCount" class="absolute -top-1 -right-1 bg-[#d32f2f] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
-            </div>
-        </div>
-    </nav>
-
-    <main class="max-w-7xl mx-auto px-6 py-10">
-        <div class="mb-12 text-center md:text-left border-b pb-8">
-            <h1 class="text-3xl font-black italic uppercase text-slate-800 mb-2">IGNOU <span class="text-[#d32f2f]">Solved Papers</span></h1>
-            <p class="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-4">Latest Academic Session</p>
-            <p class="text-gray-600 text-xs max-w-2xl leading-relaxed">Download year-wise IGNOU Solved Assignments and Guess Papers. All PDFs are verified by Student Help Club (SHC) for maximum accuracy and high marks in examinations.</p>
-        </div>
-
-        <div id="yearContent"></div>
-        <div id="noData" class="text-center py-20 text-gray-300 font-bold italic hidden uppercase tracking-widest">No Subjects found.</div>
-
-        <section class="mt-20 py-16 border-t border-gray-100">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div class="text-center md:text-left">
-                    <h2 class="text-3xl font-black italic text-slate-800 mb-6 uppercase tracking-tighter">Quality. Accuracy. <span class="text-[#d32f2f]">Trust.</span></h2>
-                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Student Help Club (SHC) ka maksad har student ko 100% verified assignments pradan karna hai.</p>
-                    <div class="flex flex-wrap justify-center md:justify-start gap-4">
-                        <div class="text-center"><div class="w-10 h-10 bg-red-50 text-[#d32f2f] rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas fa-check-circle"></i></div><p class="text-[8px] font-black uppercase">Verified</p></div>
-                        <div class="text-center"><div class="w-10 h-10 bg-red-50 text-[#d32f2f] rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas fa-bolt"></i></div><p class="text-[8px] font-black uppercase">Instant</p></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="bg-[#0c0c0c] text-white py-16 px-8 rounded-t-[3rem] text-center">
-        <div class="max-w-7xl mx-auto">
-            <h4 class="text-lg font-black text-[#d32f2f] italic uppercase mb-6 tracking-tighter">Student Help Club</h4>
-            <div class="flex justify-center gap-8 mb-8 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                <a href="index.html">Home</a>
-                <a href="blog.html">Articles</a>
-                <a href="privacy-policy.html">Privacy privacy-policy</a>
-                <a href="disclaimer.html">Disclaimer</a>
-            </div>
-            <p class="text-[8px] text-gray-700 uppercase">© 2026 Student Help Club | Managed by Vishal Kumar</p>
-        </div>
-    </footer>
-
-    <div id="cartSheet" class="cart-sheet">
-        <div class="p-6 flex justify-between items-center border-b"><h3 class="font-bold italic">My Cart</h3><button onclick="toggleCart()" class="text-2xl text-gray-300">&times;</button></div>
-        <div id="cartBody" class="flex-1 overflow-y-auto p-6 space-y-6"></div>
-        <div class="p-6 border-t bg-white">
-            <div class="flex justify-between font-black text-lg mb-6"><span>Total:</span><span class="text-[#d32f2f]">₹<span id="subtotal">0.00</span></span></div>
-            <button onclick="checkoutWA()" class="w-full bg-black text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest shadow-xl transition active:scale-95">Checkout WhatsApp</button>
+    <div id="loader" class="fixed inset-0 bg-white z-[3000] flex items-center justify-center">
+        <div class="flex flex-col items-center">
+            <i class="fas fa-circle-notch fa-spin text-4xl text-red-shc mb-4"></i>
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Loading Catalog...</p>
         </div>
     </div>
 
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-[1000] border-b px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-xl font-black italic tracking-tighter uppercase">Student <span class="text-red-shc">Help</span> Club</a>
+            <button onclick="toggleCart()" class="relative p-2 text-slate-800">
+                <i class="fas fa-shopping-bag text-xl"></i>
+                <span id="cartCount" class="absolute -top-1 -right-1 bg-red-shc text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-lg shadow-red-200">0</span>
+            </button>
+        </div>
+    </nav>
+
+    <section class="hero-banner py-16 px-6 text-center text-white">
+        <div class="max-w-3xl mx-auto">
+            <span class="text-red-shc text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">Official Catalog 2025-26</span>
+            <h1 class="text-3xl md:text-5xl font-black italic uppercase leading-none mb-6">Premium <span class="text-slate-400">Solved</span> Assignments</h1>
+            <p class="text-slate-400 text-sm font-medium leading-relaxed italic mb-8">Download high-accuracy solutions verified by academic experts. Ensure your success with SHC premium resources.</p>
+            
+            <div class="relative max-w-xl mx-auto">
+                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" onkeyup="filterSubjects()" placeholder="Search Subject Code (e.g. BEVAE-181)..." class="w-full bg-white/10 border border-white/20 rounded-2xl py-5 pl-14 pr-6 outline-none focus:border-red-shc focus:bg-white focus:text-slate-900 transition-all text-sm font-bold tracking-wider">
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-6 py-16">
+        <div id="subjectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+        
+        <div id="noResults" class="hidden text-center py-20">
+            <i class="fas fa-search text-slate-200 text-6xl mb-4"></i>
+            <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">No matching subject found</p>
+        </div>
+    </main>
+
+    <div id="cartSheet" class="cart-sheet flex flex-col">
+        <div class="p-8 border-b flex justify-between items-center bg-slate-50">
+            <h3 class="font-black italic uppercase text-slate-800">Your Selection</h3>
+            <button onclick="toggleCart()" class="text-slate-400 hover:text-red-shc transition"><i class="fas fa-times text-xl"></i></button>
+        </div>
+        <div id="cartItems" class="flex-1 overflow-y-auto p-8 space-y-4"></div>
+        <div class="p-8 border-t bg-white">
+            <div class="flex justify-between mb-6">
+                <span class="text-[10px] font-black uppercase text-slate-400">Total Price</span>
+                <span class="font-black text-xl text-slate-800 italic">₹<span id="subtotal">0.00</span></span>
+            </div>
+            <button onclick="checkoutWA()" class="w-full bg-green-600 hover:bg-slate-900 text-white py-5 rounded-2xl font-black uppercase text-[10px] tracking-[0.3em] transition-all shadow-xl flex items-center justify-center gap-3">
+                <i class="fab fa-whatsapp text-lg"></i> Checkout via WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <footer class="bg-slate-900 py-16 text-center">
+        <p class="text-[9px] font-medium uppercase tracking-[0.3em] text-gray-600 italic">© 2026 Student Help Club | Founder: Vishal Kumar</p>
+    </footer>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8",
@@ -122,128 +117,122 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        
-        let cart = JSON.parse(localStorage.getItem('shc_final_v15')) || [];
-        let fetchedData = [];
+        let allSubjects = [];
+        let cart = JSON.parse(localStorage.getItem('shc_v2025')) || [];
 
-        async function initCourse() {
-            const params = new URLSearchParams(window.location.search);
-            const type = params.get('type') || 'BAG';
-            document.getElementById('navCourseName').innerText = type;
-
+        async function init() {
+            const grid = document.getElementById('subjectGrid');
             try {
-                const snap = await getDocs(query(collection(db, "pdf_store"), where("courseName", "==", type)));
-                fetchedData = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
-                document.getElementById('loader').style.display = 'none';
-
-                if(fetchedData.length === 0) {
-                    document.getElementById('noData').classList.remove('hidden');
-                    return;
-                }
-
-                const mainGrid = document.getElementById('yearContent');
-                const groupings = [1, 2, 3, 4, 5, 6]; 
-                
-                groupings.forEach(val => {
-                    const filter = fetchedData.filter(p => parseInt(p.year) == val || (val == 1 && !p.year));
-                    if(filter.length > 0) {
-                        const sec = document.createElement('section');
-                        sec.className = "mb-16";
-                        const label = isNaN(val) ? val : `${val}${val==1?'st':val==2?'nd':val==3?'rd':'th'} Year/Sem`;
-                        
-                        sec.innerHTML = `<h3 class="year-indicator italic text-slate-800 uppercase">${label}</h3>
-                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                                ${filter.map(p => {
-                                    const currentPrice = p.price || 50;
-                                    const sessionOptions = p.sessions ? p.sessions.map(s => `<option value="${s}">${s}</option>`).join('') : `<option value="${p.session || 'Latest'}">${p.session || 'Latest'}</option>`;
-                                    
-                                    let modeSelect = "";
-                                    if(p.typedPDF || p.handwrittenPDF) {
-                                        modeSelect = `<select id="mode-${p.id}" class="w-full bg-gray-50 border p-2 rounded-lg text-[9px] font-bold outline-none mb-1">
-                                            ${p.typedPDF ? '<option value="Typed PDF">Typed PDF</option>' : ''}
-                                            ${p.handwrittenPDF ? '<option value="Handwritten Scan">Handwritten Scan</option>' : ''}
-                                        </select>`;
-                                    }
-
-                                    return `
-                                    <div class="subject-card">
-                                        <div>
-                                            <div class="flex justify-between items-start mb-2">
-                                                <span class="text-[7px] font-bold bg-gray-50 text-gray-400 px-1.5 py-0.5 rounded uppercase tracking-tighter">Code: ${p.subjectCode}</span>
-                                                <span class="font-black text-xs text-[#d32f2f]">₹${currentPrice}</span>
-                                            </div>
-                                            <h4 class="text-[10px] font-black text-slate-800 uppercase leading-tight truncate mb-1">${p.subjectCode}</h4>
-                                            <div class="space-y-1 mb-3 mt-2">
-                                                ${modeSelect}
-                                                <select id="ses-${p.id}" class="w-full bg-gray-50 border p-2 rounded-lg text-[9px] font-bold outline-none">${sessionOptions}</select>
-                                                <select id="med-${p.id}" class="w-full bg-gray-50 border p-2 rounded-lg text-[9px] font-bold outline-none">
-                                                    <option value="Hindi Medium">Hindi Medium</option>
-                                                    <option value="English Medium">English Medium</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="flex gap-1">
-                                            <button onclick="addToCart('${p.id}')" class="flex-1 bg-gray-100 py-2.5 rounded-lg font-bold text-[8px] uppercase">Add</button>
-                                            <button onclick="buyNow('${p.id}')" class="flex-[1.5] bg-slate-900 text-white py-2.5 rounded-lg font-bold text-[8px] uppercase">Buy</button>
-                                        </div>
-                                    </div>`;
-                                }).join('')}
-                            </div>`;
-                        mainGrid.appendChild(sec);
-                    }
-                });
-                updateUI();
-            } catch (e) { console.error(e); }
+                const snap = await getDocs(collection(db, "pdf_store"));
+                allSubjects = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                render(allSubjects);
+            } catch (e) {
+                console.error(e);
+            }
+            document.getElementById('loader').classList.add('hidden');
+            updateCartUI();
         }
 
-        window.addToCart = (id) => {
-            const p = fetchedData.find(x => x.id === id);
-            const med = document.getElementById(`med-${id}`).value;
-            const ses = document.getElementById(`ses-${id}`).value;
-            const mode = document.getElementById(`mode-${id}`) ? document.getElementById(`mode-${id}`).value : "Verified PDF";
-            if(!cart.find(c => c.id === id && c.medium === med && c.session === ses && c.mode === mode)) {
-                cart.push({...p, medium: med, session: ses, mode: mode, price: p.price || 50});
-                localStorage.setItem('shc_final_v15', JSON.stringify(cart));
-                updateUI();
+        function render(data) {
+            const grid = document.getElementById('subjectGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (data.length === 0) {
+                grid.innerHTML = "";
+                noResults.classList.remove('hidden');
+                return;
+            }
+            
+            noResults.classList.add('hidden');
+            grid.innerHTML = data.map(sub => `
+                <div class="card-shc bg-white p-8 rounded-[3rem] flex flex-col justify-between" data-code="${sub.subjectCode}">
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="text-[9px] font-black text-red-shc uppercase tracking-widest bg-red-50 px-3 py-1 rounded-full">${sub.courseName || 'IGNOU'}</span>
+                            <span class="font-black italic text-slate-800 text-lg">₹${sub.price}</span>
+                        </div>
+                        <h3 class="text-xl font-black text-slate-800 uppercase italic leading-tight mb-2">${sub.subjectCode}</h3>
+                        <p class="text-gray-500 text-xs font-medium italic mb-6 line-clamp-2">${sub.subjectName}</p>
+                        
+                        <div class="space-y-2 mb-8">
+                            <div class="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase">
+                                <i class="fas fa-check-circle text-green-500"></i> Expert Verified Solution
+                            </div>
+                            <div class="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase">
+                                <i class="fas fa-calendar-alt text-blue-500"></i> ${sub.session || 'Latest Session'}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="addToCart('${sub.id}')" class="w-full border-2 border-slate-900 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95">
+                        Add to Selection
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // SEO FILTER ENGINE
+        window.filterSubjects = () => {
+            const term = document.getElementById('searchInput').value.toUpperCase();
+            const filtered = allSubjects.filter(s => 
+                s.subjectCode.toUpperCase().includes(term) || 
+                s.subjectName.toUpperCase().includes(term)
+            );
+            render(filtered);
+            
+            // DYNAMIC SEO TITLE UPDATE
+            if(term.length > 2) {
+                document.getElementById('dynamic-title').innerText = `${term} Solved Assignment PDF | Student Help Club`;
+                document.getElementById('dynamic-desc').setAttribute("content", `Get high-quality solved PDF for IGNOU ${term} - ${filtered[0]?.subjectName || ''}. Trusted solutions by Vishal Kumar.`);
             }
         };
 
-        window.buyNow = (id) => {
-            const p = fetchedData.find(x => x.id === id);
-            const med = document.getElementById(`med-${id}`).value;
-            const ses = document.getElementById(`ses-${id}`).value;
-            const mode = document.getElementById(`mode-${id}`) ? document.getElementById(`mode-${id}`).value : "Verified PDF";
-            const msg = `*--- STUDENT HELP CLUB ---*\n*NEW ORDER*\n*Subject:* ${p.subjectCode}\n*Mode:* ${mode}\n*Medium:* ${med}\n*Session:* ${ses}\n*Price:* ₹${p.price || 50}\n_I want to purchase this PDF._`;
-            window.open(`https://wa.me/919776986830?text=${encodeURIComponent(msg)}`, '_blank');
+        window.addToCart = (id) => {
+            const sub = allSubjects.find(s => s.id === id);
+            if(!cart.some(item => item.id === id)) {
+                cart.push(sub);
+                localStorage.setItem('shc_v2025', JSON.stringify(cart));
+                updateCartUI();
+                toggleCart();
+            }
         };
 
-        window.updateUI = () => {
+        function updateCartUI() {
+            const body = document.getElementById('cartItems');
+            const total = cart.reduce((acc, curr) => acc + (Number(curr.price) || 0), 0);
             document.getElementById('cartCount').innerText = cart.length;
-            const body = document.getElementById('cartBody');
-            let total = cart.reduce((acc, curr) => acc + curr.price, 0);
-            body.innerHTML = cart.length ? "" : "<p class='text-center py-10 opacity-20 italic font-bold uppercase'>Empty</p>";
-            cart.forEach((c, i) => {
-                body.innerHTML += `
-                <div class="relative bg-gray-50 p-4 rounded-xl border">
-                    <h4 class="font-bold text-[10px] text-slate-800 uppercase">${c.subjectCode}</h4>
-                    <p class="text-[8px] text-gray-500 uppercase">${c.medium} | ${c.mode}</p>
-                    <button onclick="rem(${i})" class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-lg">&times;</button>
-                </div>`;
-            });
             document.getElementById('subtotal').innerText = total.toFixed(2);
+            
+            body.innerHTML = cart.length ? cart.map((c, i) => `
+                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 flex justify-between items-center relative group">
+                    <div>
+                        <h4 class="font-black text-xs text-slate-800 uppercase italic">${c.subjectCode}</h4>
+                        <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">₹${c.price} | Verified PDF</p>
+                    </div>
+                    <button onclick="removeItem(${i})" class="text-slate-300 hover:text-red-shc transition"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            `).join('') : `<p class="text-center py-20 text-slate-300 italic font-medium uppercase text-[10px] tracking-widest">No selections yet</p>`;
+        }
+
+        window.removeItem = (i) => {
+            cart.splice(i, 1);
+            localStorage.setItem('shc_v2025', JSON.stringify(cart));
+            updateCartUI();
         };
 
-        window.rem = (i) => { cart.splice(i, 1); localStorage.setItem('shc_final_v15', JSON.stringify(cart)); updateUI(); };
         window.toggleCart = () => document.getElementById('cartSheet').classList.toggle('active');
+
         window.checkoutWA = () => {
-            if(!cart.length) return;
-            let msg = `*--- STUDENT HELP CLUB ---*\n*OFFICIAL BULK ORDER*\n`;
-            cart.forEach((c, i) => { msg += `${i + 1}. ${c.subjectCode} (${c.medium}) | ${c.mode}\n`; });
-            msg += `*Total: ₹${document.getElementById('subtotal').innerText}*`;
-            window.open(`https://wa.me/919776986830?text=${encodeURIComponent(msg)}`, '_blank');
+            if(!cart.length) return alert("Please select a subject first!");
+            let msg = `*NEW ORDER - STUDENT HELP CLUB*%n%n`;
+            cart.forEach((c, i) => {
+                msg += `*${i+1}.* ${c.subjectCode} - ${c.subjectName} (₹${c.price})%n`;
+            });
+            msg += `%n*Total Items:* ${cart.length}%n*Grand Total:* ₹${document.getElementById('subtotal').innerText}%n%n_Please send this message to process your order._`;
+            window.location.href = `https://wa.me/919776986830?text=${msg}`;
         };
 
-        initCourse();
+        init();
     </script>
 </body>
 </html>
