@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta name="google-adsense-account" content="ca-pub-7332493779076670">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WKEZF1XEMF"></script>
@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title id="dynamic-title">IGNOU Solved Assignments PDF | Student Help Club</title>
-    <meta name="description" id="dynamic-desc" content="Download verified IGNOU Solved Assignments. High-quality PDF solutions categorized by course.">
+    <meta name="description" id="dynamic-desc" content="Download 100% verified IGNOU Solved Assignments. High-quality PDF solutions categorized by course. Trusted by thousands of students.">
     <meta name="author" content="Vishal Kumar - Student Help Club">
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332493779076670" crossorigin="anonymous"></script>
@@ -37,7 +37,7 @@
     <div id="loader" class="fixed inset-0 bg-white z-[3000] flex items-center justify-center">
         <div class="flex flex-col items-center">
             <i class="fas fa-circle-notch fa-spin text-4xl text-[#d32f2f] mb-4"></i>
-            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Loading Categories...</p>
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Loading Catalog...</p>
         </div>
     </div>
 
@@ -56,12 +56,12 @@
             <h1 class="text-3xl md:text-5xl font-black italic uppercase mb-6">Subject <span class="text-slate-400">Catalog</span></h1>
             <div class="relative max-w-xl mx-auto">
                 <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Search Subject Code..." class="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-14 pr-6 outline-none focus:bg-white focus:text-slate-900 transition-all text-sm font-bold">
+                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Search Subject Code (e.g. BEVAE-181)..." class="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-14 pr-6 outline-none focus:bg-white focus:text-slate-900 transition-all text-sm font-bold">
             </div>
         </div>
     </section>
 
-    <main id="mainContainer" class="max-w-7xl mx-auto px-6 py-10">
+    <main id="mainContainer" class="max-w-7xl mx-auto px-6 py-10 pb-24">
         </main>
 
     <div id="cartSheet" class="cart-sheet flex flex-col">
@@ -99,7 +99,7 @@
         let allData = [];
         let cart = JSON.parse(localStorage.getItem('shc_v2025')) || [];
 
-        async function load() {
+        async function init() {
             try {
                 const snap = await getDocs(collection(db, "pdf_store"));
                 allData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -113,16 +113,16 @@
             const container = document.getElementById('mainContainer');
             container.innerHTML = "";
             
-            // Grouping data by Course Name (e.g. BAG, BCA)
+            // Grouping logic by courseName field
             const groups = data.reduce((acc, obj) => {
-                const key = obj.courseName || 'Other Courses';
+                const key = obj.courseName || 'General Courses';
                 if (!acc[key]) acc[key] = [];
                 acc[key].push(obj);
                 return acc;
             }, {});
 
             if(Object.keys(groups).length === 0) {
-                container.innerHTML = `<p class="text-center py-20 text-slate-400 uppercase font-black text-xs">No subjects found.</p>`;
+                container.innerHTML = `<p class="text-center py-20 text-slate-400 uppercase font-black text-xs tracking-widest">No subjects found.</p>`;
                 return;
             }
 
@@ -141,14 +141,14 @@
                                     <div class="flex justify-between items-start mb-6">
                                         <span class="text-[9px] font-black text-[#d32f2f] uppercase tracking-widest bg-red-50 px-3 py-1 rounded-full">${sub.session || '2025'}</span>
                                         <div class="text-right">
-                                            <span class="text-[10px] text-slate-400 line-through block">₹${mrp}</span>
-                                            <span class="font-black italic text-slate-800 text-lg">₹${sub.price}</span>
+                                            <span class="text-[10px] text-slate-400 line-through block italic">₹${mrp}</span>
+                                            <span class="font-black italic text-slate-800 text-lg leading-none">₹${sub.price}</span>
                                         </div>
                                     </div>
                                     <h3 class="text-xl font-black text-slate-800 uppercase italic mb-2">${sub.subjectCode}</h3>
                                     <p class="text-gray-500 text-xs font-medium italic mb-6 line-clamp-2">${sub.subjectName}</p>
                                 </div>
-                                <button onclick="add('${sub.id}')" class="w-full border-2 border-slate-900 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all">Add to Selection</button>
+                                <button onclick="add('${sub.id}')" class="w-full border-2 border-slate-900 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95">Add to Selection</button>
                             </div>`;
                         }).join('')}
                     </div>
@@ -161,7 +161,12 @@
             const term = document.getElementById('searchInput').value.toUpperCase();
             const filtered = allData.filter(s => s.subjectCode.toUpperCase().includes(term) || s.subjectName.toUpperCase().includes(term));
             renderCategorized(filtered);
-            if(term.length > 2) document.title = `${term} Solved PDF | Student Help Club`;
+            
+            // SEO Title Change on Search
+            if(term.length > 2) {
+                document.getElementById('dynamic-title').innerText = `${term} Solved Assignment PDF | Student Help Club`;
+                document.getElementById('dynamic-desc').setAttribute("content", `Buy IGNOU ${term} solved assignment PDF. Best accuracy guaranteed by Vishal Kumar.`);
+            }
         };
 
         window.add = (id) => {
@@ -183,11 +188,11 @@
                 <div class="bg-slate-50 p-4 rounded-2xl border flex justify-between items-center">
                     <div>
                         <h4 class="font-black text-[10px] text-slate-800 uppercase italic">${c.subjectCode}</h4>
-                        <p class="text-[8px] font-bold text-slate-400 uppercase">Price: ₹${c.price}</p>
+                        <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">₹${c.price} | Verified PDF</p>
                     </div>
                     <button onclick="removeItem(${i})" class="text-red-400 hover:text-red-600 transition"><i class="fas fa-trash-alt"></i></button>
                 </div>
-            `).join('') : `<p class="text-center py-10 opacity-30 text-[10px] font-black uppercase">Empty</p>`;
+            `).join('') : `<p class="text-center py-10 opacity-30 text-[10px] font-black uppercase">Cart is Empty</p>`;
         }
 
         window.removeItem = (i) => {
@@ -199,23 +204,24 @@
         window.toggleCart = () => document.getElementById('cartSheet').classList.toggle('active');
 
         window.checkoutWA = () => {
-            if(!cart.length) return alert("Empty Selection!");
+            if(!cart.length) return alert("Select a subject first!");
             let msg = `*OFFICIAL ORDER - STUDENT HELP CLUB*%n`;
             msg += `------------------------------------------%n`;
-            msg += `*Customer Inquiry From Store Page*%n`;
+            msg += `*Order From:* _studenthelpclub.in_%n`;
             msg += `------------------------------------------%n`;
             cart.forEach((c, i) => {
                 msg += `*${i+1}.* Subject: *${c.subjectCode}*%n`;
                 msg += `   Price: ₹${c.price}%n%n`;
             });
             msg += `------------------------------------------%n`;
+            msg += `*Total Items:* ${cart.length}%n`;
             msg += `*Total Amount:* ₹${document.getElementById('subtotal').innerText}%n`;
             msg += `------------------------------------------%n`;
-            msg += `_Please provide payment details to deliver my PDF._`;
+            msg += `_Please share payment details to deliver my PDF solutions instantly._`;
             window.location.href = `https://wa.me/919776986830?text=${msg}`;
         };
 
-        load();
+        init();
     </script>
 </body>
 </html>
