@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-adsense-account" content="ca-pub-7332493779076670">
     
-    <title id="page-title">Important Update | Student Help Club</title>
+    <title id="page-title">Important Updates | Student Help Club</title>
     <meta name="description" id="meta-desc" content="Latest IGNOU guides, solved assignments, and Important Updates by Student Help Club.">
     <meta name="author" content="Vishal Kumar - Student Help Club">
     <meta name="robots" content="index, follow">
@@ -32,7 +32,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; scroll-behavior: smooth; }
-        .article-card { transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: 1px solid transparent; }
+        .article-card { transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: 1px solid #eee; background: white; }
         .article-card:hover { transform: translateY(-8px); border-color: #d32f2f; box-shadow: 0 20px 30px rgba(0,0,0,0.05); }
         
         .content-area h2 { font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-top: 2.5rem; margin-bottom: 1.25rem; text-transform: uppercase; font-style: italic; border-left: 4px solid #d32f2f; padding-left: 15px; }
@@ -54,7 +54,7 @@
             <a href="index.html" class="flex items-center gap-2 text-[#d32f2f] font-black uppercase text-xs hover:opacity-70 transition">
                 <i class="fas fa-arrow-left"></i> Back to Store
             </a>
-            <h1 class="text-lg font-black italic text-slate-800 uppercase tracking-tighter">Important Update</h1>
+            <h1 class="text-lg font-black italic text-slate-800 uppercase tracking-tighter">Important Updates</h1>
         </div>
     </nav>
 
@@ -72,9 +72,10 @@
         <div id="blogListView">
             <div class="mb-16 text-center md:text-left">
                 <h2 class="text-4xl font-black italic uppercase text-slate-800 mb-3">Important <span class="text-[#d32f2f]">Updates</span></h2>
-                <p class="text-gray-500 text-sm font-medium italic">Latest IGNOU guides, solved assignments, and official news.</p>
+                <p class="text-gray-500 text-sm font-medium italic">Latest IGNOU news, official notifications, and student guides.</p>
             </div>
-            <div id="articleGrid" class="grid grid-cols-1 gap-8"></div>
+            <div id="articleGrid" class="grid grid-cols-1 gap-8">
+                </div>
         </div>
 
         <div id="fullArticleView" class="hidden">
@@ -101,7 +102,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8",
@@ -121,15 +122,20 @@
             const loader = document.getElementById('loader');
 
             try {
+                console.log("Fetching from Firebase...");
                 const colRef = collection(db, "articles");
                 const snap = await getDocs(colRef);
                 
                 if (snap.empty) {
-                    grid.innerHTML = `<div class="text-center py-20 text-gray-400">No updates found in database. Please check Admin Panel.</div>`;
+                    grid.innerHTML = `
+                        <div class="text-center py-20">
+                            <i class="fas fa-folder-open text-gray-200 text-6xl mb-4"></i>
+                            <p class="text-gray-400 font-bold uppercase text-xs tracking-widest">No updates found in database.</p>
+                        </div>`;
                 } else {
                     allArticles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     
-                    // Sorting by timestamp - handle both new and old articles
+                    // Sort: Latest articles first
                     allArticles.sort((a, b) => {
                         const timeA = a.timestamp?.seconds || 0;
                         const timeB = b.timestamp?.seconds || 0;
@@ -139,10 +145,10 @@
                     renderList();
                     checkURL();
                 }
-                loader.classList.add('hidden-loader');
             } catch (e) {
                 console.error("Firebase Error:", e);
-                grid.innerHTML = `<div class="text-center py-20 text-red-500 font-bold uppercase text-[10px]">Error: Database connection failed. Check your Firebase Rules.</div>`;
+                grid.innerHTML = `<div class="text-center py-20 text-red-500 font-bold uppercase text-[10px]">Error: ${e.message}</div>`;
+            } finally {
                 loader.classList.add('hidden-loader');
             }
         }
@@ -150,14 +156,14 @@
         function renderList() {
             const grid = document.getElementById('articleGrid');
             grid.innerHTML = allArticles.map(art => `
-                <div class="article-card bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm flex flex-col md:flex-row gap-8 items-center" onclick="openArticle('${art.id}')">
+                <div class="article-card p-8 rounded-[3rem] shadow-sm flex flex-col md:flex-row gap-8 items-center" onclick="openArticle('${art.id}')">
                     <div class="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center text-[#d32f2f] text-3xl flex-shrink-0">
-                        <i class="fas fa-file-alt"></i>
+                        <i class="fas fa-bell"></i>
                     </div>
                     <div class="flex-1 text-center md:text-left">
-                        <span class="text-[9px] font-black text-[#d32f2f] uppercase tracking-[0.2em] bg-red-50 px-3 py-1 rounded-full">${art.category || 'Updates'}</span>
+                        <span class="text-[9px] font-black text-[#d32f2f] uppercase tracking-[0.2em] bg-red-50 px-3 py-1 rounded-full">${art.category || 'Important Update'}</span>
                         <h3 class="text-xl md:text-2xl font-black text-slate-800 uppercase italic mt-3 mb-2 leading-tight">${art.title}</h3>
-                        <p class="text-gray-400 text-xs leading-relaxed line-clamp-2 font-medium">${art.shortDesc || 'Click to read full update...'}</p>
+                        <p class="text-gray-400 text-xs leading-relaxed line-clamp-2 font-medium">${art.shortDesc || 'Click to read full update details...'}</p>
                     </div>
                 </div>
             `).join('');
@@ -181,7 +187,7 @@
                     <div class="flex items-center justify-center md:justify-start gap-4 text-gray-400 text-[10px] font-bold uppercase italic">
                         <span>By SHC Admin</span>
                         <span class="w-1.5 h-1.5 bg-gray-200 rounded-full"></span>
-                        <span>${art.date || 'Latest'}</span>
+                        <span>${art.date || 'Latest Update'}</span>
                     </div>
                 </div>
             `;
