@@ -21,7 +21,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
-        /* FOOTER FIX: Keeps footer at bottom even if page is empty */
+        /* STICKY FOOTER FIX */
         html, body { height: 100%; margin: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; display: flex; flex-direction: column; }
         main { flex: 1 0 auto; }
@@ -77,9 +77,20 @@
         </div>
     </main>
 
-    <footer class="bg-slate-900 py-12 text-center text-gray-500">
-        <div class="max-w-6xl mx-auto">
-            <p class="text-[9px] uppercase tracking-[0.2em]">© 2026 Student Help Club | Vishal Kumar</p>
+    <footer class="bg-slate-900 py-16 text-center">
+        <div class="max-w-6xl mx-auto px-6">
+            <h3 class="text-white font-black italic uppercase tracking-tighter text-xl mb-8">Student Help Club</h3>
+            <div class="flex flex-wrap justify-center gap-8 text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-10">
+                <a href="index.html" class="hover:text-white transition">Home</a>
+                <a href="blog.html" class="hover:text-white transition">Important Updates</a>
+                <a href="privacy-policy.html" class="hover:text-white transition">Privacy Policy</a>
+                <a href="disclaimer.html" class="hover:text-white transition">Disclaimer</a>
+                <a href="about.html" class="hover:text-white transition">About Us</a>
+                <a href="contact.html" class="hover:text-white transition">Contact Us</a>
+            </div>
+            <div class="pt-8 border-t border-white/5">
+                <p class="text-[9px] font-medium uppercase tracking-[0.3em] text-gray-600 italic">© 2026 Student Help Club | Founder: Vishal Kumar</p>
+            </div>
         </div>
     </footer>
 
@@ -104,13 +115,11 @@
         async function load() {
             const grid = document.getElementById('articleGrid');
             try {
-                // Fetching data without complex queries first to ensure it loads
                 const snap = await getDocs(collection(db, "articles"));
                 if (snap.empty) {
                     grid.innerHTML = `<div class="text-center py-20 text-gray-400 font-bold uppercase text-[10px]">No articles found in Firebase.</div>`;
                 } else {
                     allArticles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    // Local JS sorting is safer and faster
                     allArticles.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
                     renderList();
                     const params = new URLSearchParams(window.location.search);
@@ -141,7 +150,6 @@
             const art = allArticles.find(a => a.id === id);
             if(!art) return;
             activeId = id;
-
             document.getElementById('articleHeader').innerHTML = `
                 <span class="text-[9px] font-black text-[#d32f2f] uppercase tracking-widest bg-red-50 px-3 py-1 rounded-full">${art.category}</span>
                 <h1 class="text-2xl md:text-4xl font-black text-slate-800 uppercase italic mt-4 leading-tight">${art.title}</h1>
@@ -176,7 +184,6 @@
                 }).join('');
             });
         }
-
         load();
     </script>
 </body>
