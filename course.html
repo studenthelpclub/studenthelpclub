@@ -33,6 +33,8 @@
         .year-indicator { border-left: 4px solid #d32f2f; padding-left: 12px; margin-bottom: 24px; font-size: 20px; font-weight: 800; color: #1e293b; }
         #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .cart-item-box { border: 1px dotted #ccc; padding: 8px; font-size: 9px; background: white; border-radius: 8px; }
+        /* AdSense Responsive Box */
+        .ad-placeholder { background: #f8fafc; border: 1px dashed #cbd5e1; text-align: center; padding: 20px; margin-bottom: 20px; border-radius: 15px; color: #94a3b8; font-size: 10px; font-weight: bold; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -55,24 +57,32 @@
     </nav>
 
     <main class="max-w-7xl mx-auto px-6 py-10">
+        <div class="ad-placeholder">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3110600191216941" data-ad-slot="YOUR_SLOT_ID" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            Google Ad Space
+        </div>
+
         <div class="mb-12 text-center md:text-left border-b pb-8">
             <h1 class="text-3xl font-black italic uppercase text-slate-800 mb-2">IGNOU <span class="text-[#d32f2f]">Solved Papers</span></h1>
             <p class="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-4">Latest 2025-26 Academic Session</p>
-            <p class="text-gray-600 text-xs max-w-2xl leading-relaxed">Download year-wise IGNOU Solved Assignments and Guess Papers. All PDFs are verified by Student Help Club (SHC) for maximum accuracy and high marks in examinations.</p>
+            <p class="text-gray-600 text-xs max-w-2xl leading-relaxed">Score 90%+ with Student Help Club (SHC) verified assignments. High accuracy, professional formatting, and instant WhatsApp delivery for all IGNOU subjects.</p>
         </div>
 
         <div id="yearContent"></div>
         <div id="noData" class="text-center py-20 text-gray-300 font-bold italic hidden uppercase tracking-widest">No Subjects found.</div>
 
+        <div class="ad-placeholder mt-10">
+            Google Ad Space
+        </div>
+
         <section class="mt-20 py-16 border-t border-gray-100">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <div class="text-center md:text-left">
-                    <h2 class="text-3xl font-black italic text-slate-800 mb-6 uppercase tracking-tighter">Premium Quality. <span class="text-[#d32f2f]">Verified Solutions.</span></h2>
-                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Student Help Club provides accurately solved assignments to help you score 90%+. Our academic experts verify every answer to ensure success in your IGNOU journey.</p>
+                    <h2 class="text-3xl font-black italic text-slate-800 mb-6 uppercase tracking-tighter">Expert Verified. <span class="text-[#d32f2f]">High Marks Guaranteed.</span></h2>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Student Help Club (SHC) specializes in high-quality IGNOU resources. Our solutions are cross-checked by academic experts to ensure you get the best possible grades.</p>
                     <div class="flex flex-wrap justify-center md:justify-start gap-4">
-                        <div class="text-center"><div class="w-10 h-10 bg-red-50 text-[#d32f2f] rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas fa-check-circle"></i></div><p class="text-[8px] font-black uppercase">Verified</p></div>
-                        <div class="text-center"><div class="w-10 h-10 bg-red-50 text-[#d32f2f] rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas fa-bolt"></i></div><p class="text-[8px] font-black uppercase">Instant Delivery</p></div>
-                        <div class="text-center"><div class="w-10 h-10 bg-red-50 text-[#d32f2f] rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas fa-shield-alt"></i></div><p class="text-[8px] font-black uppercase">Secure</p></div>
+                        <div class="text-center"><div class="w-10 h-10 bg-red-50 text-[#d32f2f] rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas fa-check-circle"></i></div><p class="text-[8px] font-black uppercase">100% Accuracy</p></div>
+                        <div class="text-center"><div class="w-10 h-10 bg-red-50 text-[#d32f2f] rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas fa-bolt"></i></div><p class="text-[8px] font-black uppercase">Fast Delivery</p></div>
                     </div>
                 </div>
             </div>
@@ -125,9 +135,9 @@
             const type = params.get('type') || 'BAG';
             document.getElementById('navCourseName').innerText = type;
 
-            // SEO DYNAMIC UPDATE
-            document.getElementById('dynamic-title').innerText = `${type} Solved Assignments 2025-26 | Student Help Club`;
-            document.getElementById('dynamic-desc').setAttribute("content", `Get high-quality ${type} IGNOU Solved Assignments PDF for 2025-26 session. Verified solutions by Student Help Club.`);
+            // DYNAMIC SEO TITLE & DESC BASED ON COURSE TYPE
+            document.title = `${type} Solved Assignments PDF 2025-26 | Student Help Club`;
+            document.getElementById('dynamic-desc').setAttribute("content", `Download verified ${type} IGNOU Solved Assignments PDF. Score high with SHC accurate solutions for 2025-26 session.`);
 
             try {
                 const snap = await getDocs(query(collection(db, "pdf_store"), where("courseName", "==", type)));
@@ -170,8 +180,8 @@
                                             <div class="flex justify-between items-start mb-2">
                                                 <span class="text-[7px] font-bold bg-gray-50 text-gray-400 px-1.5 py-0.5 rounded uppercase tracking-tighter">Code: ${p.subjectCode}</span>
                                                 <div class="text-right">
-                                                    <span class="text-[7px] text-gray-300 line-through block">₹${mrp}</span>
-                                                    <span class="font-black text-xs text-[#d32f2f]">₹${currentPrice}</span>
+                                                    <span class="text-[8px] text-gray-300 line-through block italic">₹${mrp}</span>
+                                                    <span class="font-black text-lg text-[#d32f2f]">₹${currentPrice}</span>
                                                 </div>
                                             </div>
                                             <h4 class="text-[10px] font-black text-slate-800 uppercase leading-tight truncate mb-1">${p.subjectCode}</h4>
@@ -216,7 +226,6 @@
             const ses = document.getElementById(`ses-${id}`).value;
             const mode = document.getElementById(`mode-${id}`) ? document.getElementById(`mode-${id}`).value : "Verified PDF";
             
-            // PROFESSIONAL MESSAGE
             const msg = `*OFFICIAL ORDER - STUDENT HELP CLUB*\n` +
                         `------------------------------------------\n` +
                         `*Subject Code:* ${p.subjectCode}\n` +
@@ -252,8 +261,6 @@
         
         window.checkoutWA = () => {
             if(!cart.length) return;
-            
-            // PROFESSIONAL BULK MESSAGE
             let msg = `*OFFICIAL BULK ORDER - STUDENT HELP CLUB*\n`;
             msg += `------------------------------------------\n`;
             cart.forEach((c, i) => {
