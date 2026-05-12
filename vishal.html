@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+# Full content for vishal.html (Admin Panel)
+vishal_html_content = """<!DOCTYPE html>
 <html lang="hi">
 <head>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332493779076670"
@@ -27,12 +28,6 @@
         .hidden { display: none; }
         .tab-btn.active { background: #6366f1; color: white; border-color: #6366f1; }
     </style>
-    <link rel="manifest" href="site.webmanifest">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 </head>
 <body class="p-4 md:p-10">
 
@@ -54,10 +49,9 @@
         <div id="section-assignments" class="space-y-8">
             <div class="glass-card p-8 rounded-[2.5rem] shadow-xl">
                 <label class="block text-[10px] font-black text-slate-500 uppercase mb-4 tracking-[0.2em]">
-                    Bulk Format: Code | Name | Course (BAG, BCA) | Year | Sessions (comma) | Price | Typed(Y/N) | Hand(Y/N)
+                    Bulk Format: Code | Name | Course | Year | Sessions | Price | Typed(Y/N) | Hand(Y/N)
                 </label>
-                <textarea id="bulkInput" rows="5" class="font-mono" placeholder="BEVAE-181 | Env Studies | BAG, BCA | 1st Year | July 2025, Jan 2026 | 40 | Y | N"></textarea>
-                <p class="text-[9px] text-indigo-300 mt-2 italic font-medium">*Note: Courses field supports multiple entries separated by commas.</p>
+                <textarea id="bulkInput" rows="5" class="font-mono" placeholder="BEVAE-181 | Env Studies | BAG, BCA | 1st Year | July 2025 | 40 | Y | N"></textarea>
                 <button onclick="processList()" class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition shadow-lg">
                     <i class="fas fa-microchip mr-2"></i> Parse Assignments
                 </button>
@@ -88,7 +82,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label class="text-[9px] font-black uppercase text-slate-500 ml-1">Article Title</label>
-                        <input type="text" id="art-title" placeholder="e.g. How to write 90+ assignments">
+                        <input type="text" id="art-title" placeholder="Article title for SEO">
                     </div>
                     <div>
                         <label class="text-[9px] font-black uppercase text-slate-500 ml-1">Category</label>
@@ -100,16 +94,16 @@
                         </select>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="text-[9px] font-black uppercase text-slate-500 ml-1">Short Description (for list view)</label>
-                        <input type="text" id="art-short" placeholder="Brief 2-line summary of the article">
+                        <label class="text-[9px] font-black uppercase text-slate-500 ml-1">Short Description</label>
+                        <input type="text" id="art-short" placeholder="Brief summary for Google snippets">
                     </div>
                     <div class="md:col-span-2">
-                        <label class="text-[9px] font-black uppercase text-slate-500 ml-1">Article Content (Supports HTML Tags: &lt;h2&gt;, &lt;p&gt;, &lt;b&gt;, &lt;ul&gt;)</label>
-                        <textarea id="art-content" rows="10" placeholder="<p>Dosto, IGNOU me marks lana...</p>"></textarea>
+                        <label class="text-[9px] font-black uppercase text-slate-500 ml-1">Article Content (HTML Allowed)</label>
+                        <textarea id="art-content" rows="15" placeholder="Pura article yahan likhein..."></textarea>
                     </div>
                 </div>
                 <button onclick="uploadArticle()" id="artBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-12 py-5 rounded-2xl font-black text-xs uppercase tracking-widest transition shadow-xl">
-                    <i class="fas fa-paper-plane mr-2"></i> Publish Article to Blog
+                    <i class="fas fa-paper-plane mr-2"></i> Publish Article
                 </button>
             </div>
         </div>
@@ -148,7 +142,7 @@
         window.processList = () => {
             const input = document.getElementById('bulkInput').value;
             if(!input.trim()) return;
-            const lines = input.split('\n');
+            const lines = input.split('\\n');
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = ''; 
             lines.forEach(line => {
@@ -156,14 +150,14 @@
                 const p = line.split('|');
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="p-4"><input type="text" value="${p[0]?.trim() || ''}" class="data-code"></td>
-                    <td class="p-4"><input type="text" value="${p[1]?.trim() || ''}" class="data-name"></td>
-                    <td class="p-4"><input type="text" value="${p[2]?.trim() || ''}" class="data-course"></td>
-                    <td class="p-4"><input type="text" value="${p[4]?.trim() || 'July 2025'}" class="data-sessions"></td>
-                    <td class="p-4"><input type="number" value="${p[5]?.trim() || '50'}" class="data-price w-16"></td>
-                    <td class="p-4"><input type="text" value="${p[6]?.trim().toUpperCase() || 'Y'}" class="data-typed w-8"></td>
-                    <td class="p-4"><input type="text" value="${p[7]?.trim().toUpperCase() || 'N'}" class="data-hand w-8"></td>
-                    <input type="hidden" value="${p[3]?.trim() || ''}" class="data-year">
+                    <td class=\"p-4\"><input type=\"text\" value=\"${p[0]?.trim() || ''}\" class=\"data-code\"></td>
+                    <td class=\"p-4\"><input type=\"text\" value=\"${p[1]?.trim() || ''}\" class=\"data-name\"></td>
+                    <td class=\"p-4\"><input type=\"text\" value=\"${p[2]?.trim() || ''}\" class=\"data-course\"></td>
+                    <td class=\"p-4\"><input type=\"text\" value=\"${p[4]?.trim() || 'July 2025'}\" class=\"data-sessions\"></td>
+                    <td class=\"p-4\"><input type=\"number\" value=\"${p[5]?.trim() || '50'}\" class=\"data-price w-16\"></td>
+                    <td class=\"p-4\"><input type=\"text\" value=\"${p[6]?.trim().toUpperCase() || 'Y'}\" class=\"data-typed w-8\"></td>
+                    <td class=\"p-4\"><input type=\"text\" value=\"${p[7]?.trim().toUpperCase() || 'N'}\" class=\"data-hand w-8\"></td>
+                    <input type=\"hidden\" value=\"${p[3]?.trim() || ''}\" class=\"data-year\">
                 `;
                 tbody.appendChild(tr);
             });
@@ -173,18 +167,14 @@
         window.uploadToFirebase = async () => {
             const btn = document.getElementById('finalBtn');
             const rows = document.querySelectorAll('#tableBody tr');
-            btn.disabled = true; btn.innerText = "UPLOADING ASSIGNMENTS...";
+            btn.disabled = true; btn.innerText = \"UPLOADING...\";
             try {
                 for (let row of rows) {
-                    const code = row.querySelector('.data-code').value;
-                    const sessionsStr = row.querySelector('.data-sessions').value;
-                    const sessionsArray = sessionsStr.split(',').map(s => s.trim());
-                    
-                    const courseStr = row.querySelector('.data-course').value;
-                    const courseArray = courseStr.split(',').map(c => c.trim());
+                    const sessionsArray = row.querySelector('.data-sessions').value.split(',').map(s => s.trim());
+                    const courseArray = row.querySelector('.data-course').value.split(',').map(c => c.trim());
 
-                    await addDoc(collection(db, "pdf_store"), {
-                        subjectCode: code, 
+                    await addDoc(collection(db, \"pdf_store\"), {
+                        subjectCode: row.querySelector('.data-code').value, 
                         subjectName: row.querySelector('.data-name').value,
                         courseName: courseArray[0],
                         courses: courseArray,
@@ -194,16 +184,15 @@
                         price: Number(row.querySelector('.data-price').value),
                         typedPDF: row.querySelector('.data-typed').value === 'Y',
                         handwrittenPDF: row.querySelector('.data-hand').value === 'Y',
-                        whatsapp: "https://wa.me/919776986830", 
+                        whatsapp: \"https://wa.me/919776986830\", 
                         timestamp: serverTimestamp()
                     });
                 }
-                alert("Assignments uploaded successfully!"); 
+                alert(\"Assignments Pushed!\"); 
                 location.reload();
             } catch (err) { 
-                alert("Error: " + err.message); 
+                alert(\"Error: \" + err.message); 
                 btn.disabled = false; 
-                btn.innerText = "RETRY UPLOAD";
             }
         };
 
@@ -211,10 +200,10 @@
             const title = document.getElementById('art-title').value;
             const content = document.getElementById('art-content').value;
             const btn = document.getElementById('artBtn');
-            if(!title || !content) return alert("Title and Content required!");
-            btn.disabled = true; btn.innerText = "PUBLISHING ARTICLE...";
+            if(!title || !content) return alert(\"Title and Content missing!\");
+            btn.disabled = true; btn.innerText = \"PUBLISHING...\";
             try {
-                await addDoc(collection(db, "articles"), {
+                await addDoc(collection(db, \"articles\"), {
                     title: title,
                     category: document.getElementById('art-category').value,
                     shortDesc: document.getElementById('art-short').value,
@@ -222,12 +211,250 @@
                     date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
                     timestamp: serverTimestamp()
                 });
-                alert("Article published successfully!");
+                alert(\"Article Published!\");
                 location.reload();
-            } catch (err) { alert("Error: " + err.message); btn.disabled = false; }
+            } catch (err) { alert(\"Error: \" + err.message); btn.disabled = false; }
         };
 
         window.logout = () => signOut(auth);
     </script>
 </body>
-</html>
+</html>"""
+
+# Full content for blog.html (Blog Display Page)
+blog_html_content = """<!DOCTYPE html>
+<html lang=\"hi\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <meta name=\"google-adsense-account\" content=\"ca-pub-7332493779076670\">
+    
+    <title id=\"page-title\">Educational Articles | Student Help Club</title>
+    <meta name=\"description\" id=\"meta-desc\" content=\"IGNOU Solved Assignments, Exam Tips, and Latest University Updates by Student Help Club.\">
+    <meta name=\"keywords\" content=\"IGNOU, Solved Assignments, Exam Tips, Student Help Club, Vishal Kumar, IGNOU Result, IGNOU Assignment\">
+    <meta name=\"author\" content=\"Vishal Kumar - Student Help Club\">
+    <meta name=\"robots\" content=\"index, follow\">
+    <link rel=\"canonical\" href=\"https://studenthelpclub.in/blog.html\" />
+
+    <meta property=\"og:title\" id=\"og-title\" content=\"Knowledge Hub | Student Help Club\">
+    <meta property=\"og:description\" id=\"og-desc\" content=\"Best resources for IGNOU students at your fingertips.\">
+    <meta property=\"og:type\" content=\"article\">
+    <meta property=\"og:url\" content=\"https://studenthelpclub.in/blog.html\">
+
+    <script type=\"application/ld+json\" id=\"schema-data\">
+    {
+      \"@context\": \"https://schema.org\",
+      \"@type\": \"Blog\",
+      \"name\": \"Student Help Club Knowledge Hub\",
+      \"url\": \"https://studenthelpclub.in/blog.html\",
+      \"description\": \"IGNOU Student Support Portal for assignments and exam guides.\"
+    }
+    </script>
+
+    <script async src=\"https://www.googletagmanager.com/gtag/js?id=G-WKEZF1XEMF\"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WKEZF1XEMF');
+    </script>
+
+    <script async src=\"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332493779076670\" crossorigin=\"anonymous\"></script>
+
+    <script src=\"https://cdn.tailwindcss.com\"></script>
+    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css\">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; scroll-behavior: smooth; }
+        .article-card { transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        .article-card:hover { transform: translateY(-8px); border-color: #d32f2f; box-shadow: 0 20px 30px rgba(0,0,0,0.05); }
+        
+        .content-area h2 { font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-top: 2.5rem; margin-bottom: 1.25rem; text-transform: uppercase; font-style: italic; border-left: 4px solid #d32f2f; padding-left: 15px; }
+        .content-area p { margin-bottom: 1.5rem; line-height: 1.9; color: #475569; font-size: 15px; }
+        .content-area ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; color: #475569; }
+        .content-area b { color: #1e293b; font-weight: 700; }
+        
+        .hidden { display: none !important; }
+        #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .hidden-loader { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id=\"loader\"><i class=\"fas fa-circle-notch fa-spin text-4xl text-[#d32f2f]\"></i></div>
+
+    <nav class=\"bg-white/80 backdrop-blur-md border-b px-6 py-5 sticky top-0 z-[1000]\">
+        <div class=\"max-w-5xl mx-auto flex justify-between items-center\">
+            <a href=\"index.html\" class=\"flex items-center gap-2 text-[#d32f2f] font-black uppercase text-xs hover:opacity-70 transition\">
+                <i class=\"fas fa-arrow-left\"></i> Back to Store
+            </a>
+            <h1 class=\"text-lg font-black italic text-slate-800 uppercase tracking-tighter\">Knowledge Hub</h1>
+        </div>
+    </nav>
+
+    <div id=\"breadcrumb-nav\" class=\"max-w-4xl mx-auto px-6 pt-8 hidden\">
+        <nav class=\"flex text-gray-400 text-[10px] font-bold uppercase tracking-widest\" aria-label=\"Breadcrumb\">
+            <ol class=\"list-none p-0 inline-flex items-center\">
+                <li class=\"flex items-center\"><a href=\"index.html\" class=\"hover:text-[#d32f2f]\">Home</a><i class=\"fas fa-chevron-right mx-2 text-[7px]\"></i></li>
+                <li class=\"flex items-center\"><a href=\"blog.html\" class=\"hover:text-[#d32f2f]\">Blog</a><i class=\"fas fa-chevron-right mx-2 text-[7px]\"></i></li>
+                <li id=\"breadcrumb-current\" class=\"text-slate-800 truncate max-w-[200px]\">Article</li>
+            </ol>
+        </nav>
+    </div>
+
+    <main class=\"max-w-4xl mx-auto px-6 py-12\">
+        <div id=\"blogListView\">
+            <div class=\"mb-16 text-center md:text-left\">
+                <h2 class=\"text-4xl font-black italic uppercase text-slate-800 mb-3\">Student <span class=\"text-[#d32f2f]\">Resources</span></h2>
+                <p class=\"text-gray-500 text-sm font-medium italic\">Expert IGNOU guides and preparation strategies.</p>
+            </div>
+            <div id=\"articleGrid\" class=\"grid grid-cols-1 gap-8\"></div>
+        </div>
+
+        <div id=\"fullArticleView\" class=\"hidden\">
+            <button onclick=\"window.location.href='blog.html'\" class=\"mb-10 text-slate-400 font-black uppercase text-[10px] flex items-center gap-2 hover:text-[#d32f2f] transition-all\">
+                <i class=\"fas fa-long-arrow-alt-left text-lg\"></i> Back to All Articles
+            </button>
+            <div id=\"articleHeader\"></div>
+            <div id=\"articleBody\" class=\"content-area mt-10 border-t pt-10\"></div>
+        </div>
+    </main>
+
+    <footer class=\"bg-slate-900 py-16 mt-20 text-center\">
+        <div class=\"max-w-5xl mx-auto px-6\">
+            <h3 class=\"text-white font-black italic uppercase tracking-tighter text-xl mb-4\">Student Help Club</h3>
+            <div class=\"flex flex-wrap justify-center gap-6 text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-8\">
+                <a href=\"index.html\" class=\"hover:text-white\">Home</a>
+                <a href=\"about.html\" class=\"hover:text-white\">About</a>
+                <a href=\"privacy-policy.html\" class=\"hover:text-white\">Privacy</a>
+                <a href=\"disclaimer.html\" class=\"hover:text-white\">Disclaimer</a>
+            </div>
+            <p class=\"text-[9px] text-gray-600 uppercase tracking-[0.2em]\">© 2026 Student Help Club | Vishal Kumar</p>
+        </div>
+    </footer>
+
+    <script type=\"module\">
+        import { initializeApp } from \"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js\";
+        import { getFirestore, collection, getDocs } from \"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js\";
+
+        const firebaseConfig = {
+            apiKey: \"AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8\",
+            authDomain: \"ignou-web.firebaseapp.com\",
+            projectId: \"ignou-web\",
+            storageBucket: \"ignou-web.firebasestorage.app\",
+            messagingSenderId: \"854950506403\",
+            appId: \"1:854950506403:web:941a56126a36fd3f9d7416\"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        let allArticles = [];
+
+        async function fetchArticles() {
+            const grid = document.getElementById('articleGrid');
+            const loader = document.getElementById('loader');
+
+            try {
+                const colRef = collection(db, \"articles\");
+                const snap = await getDocs(colRef);
+                
+                if (snap.empty) {
+                    grid.innerHTML = `<div class=\"text-center py-20 text-gray-400\">No articles found in database.</div>`;
+                } else {
+                    allArticles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    
+                    // FIX: Sorting by timestamp with fallback for old articles
+                    allArticles.sort((a, b) => {
+                        const timeA = a.timestamp?.seconds || 0;
+                        const timeB = b.timestamp?.seconds || 0;
+                        return timeB - timeA;
+                    });
+                    
+                    renderList();
+                    checkURL();
+                }
+                loader.classList.add('hidden-loader');
+            } catch (e) {
+                console.error(\"Firebase Error:\", e);
+                grid.innerHTML = `<div class=\"text-center py-20 text-red-500 font-bold uppercase text-[10px]\">Error: Database connection failed. Check console.</div>`;
+                loader.classList.add('hidden-loader');
+            }
+        }
+
+        function renderList() {
+            const grid = document.getElementById('articleGrid');
+            grid.innerHTML = allArticles.map(art => `
+                <div class=\"article-card bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm flex flex-col md:flex-row gap-8 items-center\" onclick=\"openArticle('${art.id}')\">
+                    <div class=\"w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center text-[#d32f2f] text-3xl flex-shrink-0\">
+                        <i class=\"fas fa-file-alt\"></i>
+                    </div>
+                    <div class=\"flex-1 text-center md:text-left\">
+                        <span class=\"text-[9px] font-black text-[#d32f2f] uppercase tracking-[0.2em] bg-red-50 px-3 py-1 rounded-full\">${art.category || 'Updates'}</span>
+                        <h3 class=\"text-xl md:text-2xl font-black text-slate-800 uppercase italic mt-3 mb-2 leading-tight\">${art.title}</h3>
+                        <p class=\"text-gray-400 text-xs leading-relaxed line-clamp-2 font-medium\">${art.shortDesc || 'Click to read full guide...'}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.openArticle = (id) => {
+            const art = allArticles.find(a => a.id === id);
+            if(!art) return;
+
+            // SEO Metadata Update
+            document.title = `${art.title} | Student Help Club`;
+            document.getElementById('meta-desc').setAttribute(\"content\", art.shortDesc || art.title);
+            document.getElementById('og-title').setAttribute(\"content\", art.title);
+            
+            // Dynamic Schema Update
+            const schema = document.getElementById('schema-data');
+            schema.textContent = JSON.stringify({
+                \"@context\": \"https://schema.org\",
+                \"@type\": \"BlogPosting\",
+                \"headline\": art.title,
+                \"description\": art.shortDesc,
+                \"author\": { \"@type\": \"Person\", \"name\": \"Vishal Kumar\" }
+            });
+
+            document.getElementById('breadcrumb-nav').classList.remove('hidden');
+            document.getElementById('breadcrumb-current').innerText = art.title;
+
+            document.getElementById('articleHeader').innerHTML = `
+                <div class=\"text-center md:text-left\">
+                    <span class=\"text-[10px] font-black text-[#d32f2f] uppercase tracking-[0.3em] bg-red-50 px-4 py-1.5 rounded-full\">${art.category}</span>
+                    <h1 class=\"text-3xl md:text-5xl font-black text-slate-800 uppercase italic mt-6 mb-6 leading-[1.1]\">${art.title}</h1>
+                    <div class=\"flex items-center justify-center md:justify-start gap-4 text-gray-400 text-[10px] font-bold uppercase italic\">
+                        <span>By SHC Admin</span>
+                        <span class=\"w-1.5 h-1.5 bg-gray-200 rounded-full\"></span>
+                        <span>${art.date || 'Latest'}</span>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('articleBody').innerHTML = art.content;
+            document.getElementById('blogListView').classList.add('hidden');
+            document.getElementById('fullArticleView').classList.remove('hidden');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.history.pushState({}, '', `?id=${id}`);
+        };
+
+        function checkURL() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if(id) openArticle(id);
+        }
+
+        fetchArticles();
+    </script>
+</body>
+</html>\"\"\"
+
+with open('vishal.html', 'w', encoding='utf-8') as f:
+    f.write(vishal_html_content)
+
+with open('blog.html', 'w', encoding='utf-8') as f:
+    f.write(blog_html_content)
+
+print("Files generated: vishal.html, blog.html")
