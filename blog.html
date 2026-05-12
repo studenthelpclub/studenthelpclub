@@ -4,16 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Updates | Student Help Club</title>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WKEZF1XEMF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WKEZF1XEMF');
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332493779076670" crossorigin="anonymous"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; display: flex; flex-direction: column; min-height: 100vh; }
-        .art-card { transition: 0.2s; cursor: pointer; border: 1px solid #f1f5f9; background: white; border-radius: 1.5rem; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; min-height: 100vh; display: flex; flex-direction: column; }
+        main { flex: 1; }
+        .art-card { transition: 0.2s; cursor: pointer; border: 1px solid #f1f5f9; background: white; border-radius: 1.2rem; }
         .art-card:hover { border-color: #d32f2f; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .hidden { display: none !important; }
         #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        footer { margin-top: auto; }
+        .content-area h2 { font-size: 1.4rem; font-weight: 800; border-left: 4px solid #d32f2f; padding-left: 12px; margin-top: 1.5rem; }
+        .content-area p { margin-bottom: 1rem; color: #4b5563; line-height: 1.7; }
     </style>
 </head>
 <body>
@@ -21,39 +34,50 @@
     <div id="loader"><i class="fas fa-spinner fa-spin text-3xl text-[#d32f2f]"></i></div>
 
     <nav class="bg-white/80 border-b px-6 py-4 sticky top-0 z-50 backdrop-blur-md">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <a href="index.html" class="text-[#d32f2f] font-black uppercase text-xs"><i class="fas fa-arrow-left"></i> Store</a>
-            <h1 class="text-sm font-black uppercase text-slate-800 italic">Student Help Club</h1>
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-[#d32f2f] font-black uppercase text-xs flex items-center gap-2"><i class="fas fa-store"></i> Store</a>
+            <h1 class="text-sm font-black uppercase text-slate-800 italic">SHC Updates</h1>
         </div>
     </nav>
 
     <main class="max-w-4xl mx-auto px-6 py-10 w-full">
         <div id="listView">
-            <h2 class="text-3xl font-black italic uppercase text-slate-800 mb-8">Latest <span class="text-[#d32f2f]">News</span></h2>
+            <div class="mb-8">
+                <h2 class="text-3xl font-black italic uppercase text-slate-800">Latest <span class="text-[#d32f2f]">News</span></h2>
+                <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest mt-1">Verified IGNOU Updates</p>
+            </div>
             <div id="grid" class="grid gap-4"></div>
         </div>
 
         <div id="fullView" class="hidden">
-            <button onclick="location.href='blog.html'" class="mb-6 text-slate-400 font-bold uppercase text-[10px]"><i class="fas fa-arrow-left"></i> Back</button>
+            <button onclick="location.href='blog.html'" class="mb-6 text-slate-400 font-bold uppercase text-[9px] flex items-center gap-2"><i class="fas fa-arrow-left"></i> Back to Updates</button>
             <div id="header"></div>
-            <div id="body" class="mt-8 border-t pt-8 text-slate-600 leading-relaxed text-sm"></div>
+            <div id="body" class="mt-8 border-t pt-8 text-sm leading-relaxed content-area"></div>
+            
+            <div class="mt-12 p-6 bg-slate-900 rounded-3xl text-white">
+                <h4 class="text-xs font-black uppercase text-[#d32f2f] mb-2">Need Help with Assignments?</h4>
+                <p class="text-slate-400 text-[11px] mb-4">Download 100% verified solutions from our store.</p>
+                <a href="index.html" class="inline-block bg-[#d32f2f] px-6 py-3 rounded-xl font-black text-[10px] uppercase">Visit Store</a>
+            </div>
         </div>
     </main>
 
-    <footer class="bg-slate-900 py-12 text-center text-gray-500">
-        <div class="flex flex-wrap justify-center gap-6 text-[9px] font-bold uppercase mb-6">
-            <a href="index.html">Home</a>
-            <a href="privacy-policy.html">Privacy</a>
-            <a href="disclaimer.html">Disclaimer</a>
-            <a href="about.html">About</a>
-            <a href="contact.html">Contact</a>
+    <footer class="bg-slate-900 py-12 text-center text-gray-500 mt-20">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="flex flex-wrap justify-center gap-6 text-[9px] font-bold uppercase mb-8">
+                <a href="index.html" class="hover:text-white transition">Home</a>
+                <a href="privacy-policy.html" class="hover:text-white transition">Privacy</a>
+                <a href="disclaimer.html" class="hover:text-white transition">Disclaimer</a>
+                <a href="about.html" class="hover:text-white transition">About Us</a>
+                <a href="contact.html" class="hover:text-white transition">Contact</a>
+            </div>
+            <p class="text-[8px] uppercase tracking-[0.2em]">© 2026 Student Help Club | Vishal Kumar</p>
         </div>
-        <p class="text-[8px] uppercase tracking-widest">© 2026 Student Help Club | Vishal Kumar</p>
     </footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8",
@@ -66,42 +90,53 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        let data = [];
+        let articles = [];
 
-        async function init() {
+        async function start() {
             try {
                 const snap = await getDocs(collection(db, "articles"));
-                data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                data.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-                
+                articles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // Local Sorting
+                articles.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
                 const grid = document.getElementById('grid');
-                grid.innerHTML = data.map(item => `
-                    <div class="art-card p-5 flex gap-4 items-center" onclick="show('${item.id}')">
-                        <div class="w-10 h-10 bg-red-50 text-[#d32f2f] rounded-xl flex items-center justify-center flex-shrink-0"><i class="fas fa-bolt text-sm"></i></div>
+                grid.innerHTML = articles.map(item => `
+                    <div class="art-card p-5 flex gap-4 items-center" onclick="renderSingle('${item.id}')">
+                        <div class="w-10 h-10 bg-red-50 text-[#d32f2f] rounded-xl flex items-center justify-center flex-shrink-0"><i class="fas fa-bolt"></i></div>
                         <div>
                             <h3 class="font-black text-slate-800 uppercase italic text-sm leading-tight">${item.title}</h3>
-                            <p class="text-gray-400 text-[10px] mt-1 line-clamp-1">${item.shortDesc || 'Click to read'}</p>
+                            <p class="text-gray-400 text-[10px] mt-1 line-clamp-1">${item.shortDesc || 'Click to read full guide...'}</p>
                         </div>
                     </div>
                 `).join('');
 
-                const id = new URLSearchParams(location.search).get('id');
-                if(id) show(id);
-            } catch(e) { document.getElementById('grid').innerHTML = "Check connection."; }
+                const urlId = new URLSearchParams(location.search).get('id');
+                if(urlId) renderSingle(urlId);
+
+            } catch (err) {
+                console.log(err);
+                document.getElementById('grid').innerHTML = "<p class='text-center py-10 uppercase font-bold text-[10px] text-red-500'>Connection Error. Refresh Page.</p>";
+            }
             document.getElementById('loader').classList.add('hidden');
         }
 
-        window.show = (id) => {
-            const art = data.find(x => x.id === id);
+        window.renderSingle = (id) => {
+            const art = articles.find(x => x.id === id);
             if(!art) return;
-            document.getElementById('header').innerHTML = `<h1 class="text-3xl font-black text-slate-800 uppercase italic leading-tight">${art.title}</h1><p class="text-gray-400 text-[9px] mt-3 uppercase font-bold tracking-widest">Published on: ${art.date || 'Recent'}</p>`;
+
+            document.getElementById('header').innerHTML = `
+                <span class="text-[9px] font-black text-[#d32f2f] uppercase tracking-widest bg-red-50 px-3 py-1 rounded-full">${art.category || 'Updates'}</span>
+                <h1 class="text-3xl font-black text-slate-800 uppercase italic mt-4 leading-tight">${art.title}</h1>
+                <p class="text-gray-400 text-[9px] font-bold mt-2 uppercase tracking-widest">Published on: ${art.date || 'Recent'}</p>
+            `;
             document.getElementById('body').innerHTML = art.content;
             document.getElementById('listView').classList.add('hidden');
             document.getElementById('fullView').classList.remove('hidden');
+            window.scrollTo(0,0);
             window.history.pushState({}, '', `?id=${id}`);
         };
 
-        init();
+        start();
     </script>
 </body>
 </html>
