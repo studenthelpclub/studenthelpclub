@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Latest Updates | Student Help Club</title>
+    <title id="page-title">Important Updates | Student Help Club</title>
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WKEZF1XEMF"></script>
     <script>
@@ -18,57 +18,62 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
         html, body { height: 100%; margin: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; display: flex; flex-direction: column; }
         main { flex: 1 0 auto; }
-        footer { flex-shrink: 0; background: #0f172a; color: #94a3b8; padding: 3rem 1.5rem; }
+        footer { flex-shrink: 0; background: #0f172a; padding: 3rem 1rem; text-align: center; }
         .art-card { transition: 0.2s; cursor: pointer; border: 1px solid #f1f5f9; background: white; border-radius: 1.2rem; }
         .art-card:hover { border-color: #d32f2f; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .hidden { display: none !important; }
-        #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .content-area h2 { font-size: 1.4rem; font-weight: 800; border-left: 4px solid #d32f2f; padding-left: 12px; margin-top: 1.5rem; color: #1e293b; }
     </style>
 </head>
 <body>
 
-    <div id="loader"><i class="fas fa-circle-notch fa-spin text-3xl text-[#d32f2f]"></i></div>
+    <div id="loader">
+        <i class="fas fa-circle-notch fa-spin text-3xl text-[#d32f2f]"></i>
+        <p class="text-[9px] font-bold uppercase tracking-widest mt-4 text-slate-400">Loading Latest News...</p>
+    </div>
 
     <nav class="bg-white/80 border-b px-6 py-4 sticky top-0 z-50 backdrop-blur-md">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <a href="index.html" class="text-[#d32f2f] font-black uppercase text-xs flex items-center gap-2"><i class="fas fa-arrow-left"></i> Store</a>
-            <h1 class="text-sm font-black uppercase text-slate-800 italic">SHC News</h1>
+            <h1 class="text-xs font-black uppercase text-slate-800 italic">SHC News Portal</h1>
         </div>
     </nav>
 
     <main class="max-w-4xl mx-auto px-6 py-10 w-full">
         <div id="listView">
-            <h2 class="text-3xl font-black italic uppercase text-slate-800 mb-8 border-b pb-4">Latest <span class="text-[#d32f2f]">News</span></h2>
+            <h2 class="text-3xl font-black italic uppercase text-slate-800 mb-8">Latest <span class="text-[#d32f2f]">Updates</span></h2>
             <div id="grid" class="grid gap-4"></div>
         </div>
 
-        <div id="fullView" class="hidden pb-20">
+        <div id="fullView" class="hidden">
             <button onclick="location.href='blog.html'" class="mb-6 text-slate-400 font-bold uppercase text-[9px] flex items-center gap-2"><i class="fas fa-arrow-left"></i> Back</button>
             <div id="header"></div>
-            <div id="body" class="mt-8 border-t pt-8 text-slate-600 leading-relaxed text-sm"></div>
+            <div id="body" class="mt-8 border-t pt-8 text-slate-600 leading-relaxed text-sm content-area"></div>
             
             <div class="mt-12 p-8 bg-slate-900 rounded-3xl text-white shadow-xl">
-                <h4 class="text-xs font-black uppercase text-[#d32f2f] mb-2">Academic Help Needed?</h4>
-                <p class="text-slate-400 text-[11px] mb-4">Contact us for 100% verified assignments and support.</p>
-                <a href="https://wa.me/919776986830" class="inline-block bg-green-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest"><i class="fab fa-whatsapp"></i> WhatsApp Us</a>
+                <h4 class="text-xs font-black uppercase text-[#d32f2f] mb-2 tracking-widest">Need Solved Assignments?</h4>
+                <p class="text-slate-400 text-[11px] mb-4">Aap humare store se 100% verified PDF download kar sakte hain.</p>
+                <a href="index.html" class="inline-block bg-[#d32f2f] px-6 py-3 rounded-xl font-black text-[10px] uppercase">Visit Store</a>
             </div>
         </div>
     </main>
 
     <footer>
-        <div class="max-w-6xl mx-auto text-center">
-            <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 text-[9px] font-bold uppercase mb-8">
-                <a href="index.html" class="hover:text-white">Home</a>
-                <a href="privacy-policy.html" class="hover:text-white">Privacy</a>
-                <a href="disclaimer.html" class="hover:text-white">Disclaimer</a>
-                <a href="about.html" class="hover:text-white">About Us</a>
-                <a href="contact.html" class="hover:text-white">Contact Us</a>
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 text-[10px] font-bold uppercase tracking-widest mb-8">
+                <a href="index.html" class="text-gray-400 hover:text-white transition">Home</a>
+                <a href="blog.html" class="text-gray-400 hover:text-white transition">News Updates</a>
+                <a href="privacy-policy.html" class="text-gray-400 hover:text-white transition">Privacy Policy</a>
+                <a href="disclaimer.html" class="text-gray-400 hover:text-white transition">Disclaimer</a>
+                <a href="about.html" class="text-gray-400 hover:text-white transition">About Us</a>
+                <a href="contact.html" class="text-gray-400 hover:text-white transition">Contact Us</a>
             </div>
-            <p class="text-[8px] uppercase tracking-widest">© 2026 Student Help Club | Vishal Kumar</p>
+            <p class="text-[8px] uppercase tracking-widest text-gray-600">© 2026 Student Help Club | Managed by Vishal Kumar</p>
         </div>
     </footer>
 
@@ -90,8 +95,8 @@
         let items = [];
 
         async function init() {
-            // Loader Fail-safe: Hide after 2.5 seconds regardless of data
-            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 2500);
+            // Speed Fix: Auto-hide loader even if Firebase is slow
+            setTimeout(() => document.getElementById('loader').classList.add('hidden'), 3000);
 
             try {
                 const snap = await getDocs(collection(db, "articles"));
@@ -99,24 +104,23 @@
                 items.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
                 const grid = document.getElementById('grid');
-                if (items.length === 0) {
-                    grid.innerHTML = "<p class='text-center py-20 text-slate-300 font-bold uppercase text-[10px]'>Database sync issue. Please check Firebase Rules.</p>";
+                if(items.length === 0) {
+                    grid.innerHTML = "<p class='text-center py-20 text-slate-300 font-bold uppercase text-[10px]'>Database is Empty or Rules Blocked.</p>";
                 } else {
                     grid.innerHTML = items.map(i => `
                         <div class="art-card p-5 flex gap-4 items-center" onclick="show('${i.id}')">
                             <div class="w-10 h-10 bg-red-50 text-[#d32f2f] rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"><i class="fas fa-bell text-sm"></i></div>
                             <div>
                                 <h3 class="font-black text-slate-800 uppercase italic text-sm leading-tight">${i.title}</h3>
-                                <p class="text-gray-400 text-[10px] mt-1 line-clamp-1">${i.shortDesc || 'Click to view'}</p>
+                                <p class="text-gray-400 text-[10px] mt-1 line-clamp-1">${i.shortDesc || 'Click to view details'}</p>
                             </div>
                         </div>`).join('');
                 }
                 
                 const urlId = new URLSearchParams(location.search).get('id');
                 if(urlId) show(urlId);
-
             } catch (err) {
-                console.log("Error:", err);
+                console.log(err);
             }
             document.getElementById('loader').classList.add('hidden');
         }
@@ -124,7 +128,7 @@
         window.show = (id) => {
             const art = items.find(x => x.id === id);
             if(!art) return;
-            document.getElementById('header').innerHTML = `<h1 class="text-3xl font-black text-slate-800 uppercase italic leading-tight">${art.title}</h1><p class="text-gray-400 text-[9px] mt-4 font-bold uppercase">Updated: ${art.date || 'Recent'}</p>`;
+            document.getElementById('header').innerHTML = `<h1 class="text-3xl font-black text-slate-800 uppercase italic leading-tight">${art.title}</h1><p class="text-gray-400 text-[9px] mt-4 font-bold uppercase">Update: ${art.date || 'Recent'}</p>`;
             document.getElementById('body').innerHTML = art.content;
             document.getElementById('listView').classList.add('hidden');
             document.getElementById('fullView').classList.remove('hidden');
