@@ -11,7 +11,7 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://studenthelpclub.in/blog.html" />
 
-    <meta property="og:title" id="og-title" content="Important Updates | Student Help Club">
+    <meta property="og:title" id="og-title" content="Important Update | Student Help Club">
     <meta property="og:description" id="og-desc" content="Best resources for IGNOU students at your fingertips.">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://studenthelpclub.in/blog.html">
@@ -32,7 +32,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; scroll-behavior: smooth; }
-        .article-card { transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        .article-card { transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: 1px solid transparent; }
         .article-card:hover { transform: translateY(-8px); border-color: #d32f2f; box-shadow: 0 20px 30px rgba(0,0,0,0.05); }
         
         .content-area h2 { font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-top: 2.5rem; margin-bottom: 1.25rem; text-transform: uppercase; font-style: italic; border-left: 4px solid #d32f2f; padding-left: 15px; }
@@ -54,7 +54,7 @@
             <a href="index.html" class="flex items-center gap-2 text-[#d32f2f] font-black uppercase text-xs hover:opacity-70 transition">
                 <i class="fas fa-arrow-left"></i> Back to Store
             </a>
-            <h1 class="text-lg font-black italic text-slate-800 uppercase tracking-tighter">Important Updates</h1>
+            <h1 class="text-lg font-black italic text-slate-800 uppercase tracking-tighter">Important Update</h1>
         </div>
     </nav>
 
@@ -101,7 +101,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8",
@@ -121,12 +121,11 @@
             const loader = document.getElementById('loader');
 
             try {
-                // Fetching with explicit sorting
                 const colRef = collection(db, "articles");
                 const snap = await getDocs(colRef);
                 
                 if (snap.empty) {
-                    grid.innerHTML = `<div class="text-center py-20 text-gray-400">No updates found in database.</div>`;
+                    grid.innerHTML = `<div class="text-center py-20 text-gray-400">No updates found in database. Please check Admin Panel.</div>`;
                 } else {
                     allArticles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     
@@ -143,7 +142,7 @@
                 loader.classList.add('hidden-loader');
             } catch (e) {
                 console.error("Firebase Error:", e);
-                grid.innerHTML = `<div class="text-center py-20 text-red-500 font-bold uppercase text-[10px]">Error: Database connection failed.</div>`;
+                grid.innerHTML = `<div class="text-center py-20 text-red-500 font-bold uppercase text-[10px]">Error: Database connection failed. Check Console.</div>`;
                 loader.classList.add('hidden-loader');
             }
         }
