@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta name="google-adsense-account" content="ca-pub-7332493779076670">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WKEZF1XEMF"></script>
@@ -13,14 +13,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title id="dynamic-title">IGNOU Solved Assignments PDF | Student Help Club</title>
-    <meta name="description" id="dynamic-desc" content="Download 100% verified IGNOU Solved Assignments for all subjects. High-quality PDF solutions with expert guidance by Student Help Club. Get your subject-specific assignments today.">
-    <meta name="keywords" content="IGNOU Solved Assignment PDF, IGNOU Assignment 2025, IGNOU Handwritten PDF, Student Help Club IGNOU, IGNOU Exam Preparation">
+    <meta name="description" id="dynamic-desc" content="Download verified IGNOU Solved Assignments. High-quality PDF solutions with expert guidance by Student Help Club.">
     <meta name="author" content="Vishal Kumar - Student Help Club">
-
-    <meta property="og:title" content="Get IGNOU Solved Assignments - Student Help Club">
-    <meta property="og:description" content="Official store for premium IGNOU academic resources.">
-    <meta property="og:url" content="https://studenthelpclub.in/course.html">
-    <meta property="og:type" content="website">
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332493779076670" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -62,11 +56,10 @@
         <div class="max-w-3xl mx-auto">
             <span class="text-red-shc text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">Official Catalog 2025-26</span>
             <h1 class="text-3xl md:text-5xl font-black italic uppercase leading-none mb-6">Premium <span class="text-slate-400">Solved</span> Assignments</h1>
-            <p class="text-slate-400 text-sm font-medium leading-relaxed italic mb-8">Download high-accuracy solutions verified by academic experts. Ensure your success with SHC premium resources.</p>
             
-            <div class="relative max-w-xl mx-auto">
+            <div class="relative max-w-xl mx-auto mt-8">
                 <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="searchInput" onkeyup="filterSubjects()" placeholder="Search Subject Code (e.g. BEVAE-181)..." class="w-full bg-white/10 border border-white/20 rounded-2xl py-5 pl-14 pr-6 outline-none focus:border-red-shc focus:bg-white focus:text-slate-900 transition-all text-sm font-bold tracking-wider">
+                <input type="text" id="searchInput" onkeyup="filterSubjects()" placeholder="Search Subject Code..." class="w-full bg-white/10 border border-white/20 rounded-2xl py-5 pl-14 pr-6 outline-none focus:border-red-shc focus:bg-white focus:text-slate-900 transition-all text-sm font-bold tracking-wider">
             </div>
         </div>
     </section>
@@ -104,7 +97,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8",
@@ -121,14 +114,11 @@
         let cart = JSON.parse(localStorage.getItem('shc_v2025')) || [];
 
         async function init() {
-            const grid = document.getElementById('subjectGrid');
             try {
                 const snap = await getDocs(collection(db, "pdf_store"));
                 allSubjects = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 render(allSubjects);
-            } catch (e) {
-                console.error(e);
-            }
+            } catch (e) { console.error(e); }
             document.getElementById('loader').classList.add('hidden');
             updateCartUI();
         }
@@ -144,22 +134,25 @@
             }
             
             noResults.classList.add('hidden');
-            grid.innerHTML = data.map(sub => `
-                <div class="card-shc bg-white p-8 rounded-[3rem] flex flex-col justify-between" data-code="${sub.subjectCode}">
+            grid.innerHTML = data.map(sub => {
+                // Formatting original price (Price + 20 as placeholder MRP)
+                const mrp = Number(sub.price) + 20;
+                return `
+                <div class="card-shc bg-white p-8 rounded-[3rem] flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-6">
                             <span class="text-[9px] font-black text-red-shc uppercase tracking-widest bg-red-50 px-3 py-1 rounded-full">${sub.courseName || 'IGNOU'}</span>
-                            <span class="font-black italic text-slate-800 text-lg">₹${sub.price}</span>
+                            <div class="text-right">
+                                <span class="text-[10px] text-slate-400 line-through block">₹${mrp}</span>
+                                <span class="font-black italic text-slate-800 text-lg">₹${sub.price}</span>
+                            </div>
                         </div>
                         <h3 class="text-xl font-black text-slate-800 uppercase italic leading-tight mb-2">${sub.subjectCode}</h3>
                         <p class="text-gray-500 text-xs font-medium italic mb-6 line-clamp-2">${sub.subjectName}</p>
                         
                         <div class="space-y-2 mb-8">
                             <div class="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase">
-                                <i class="fas fa-check-circle text-green-500"></i> Expert Verified Solution
-                            </div>
-                            <div class="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase">
-                                <i class="fas fa-calendar-alt text-blue-500"></i> ${sub.session || 'Latest Session'}
+                                <i class="fas fa-check-circle text-green-500"></i> Verified Expert Solution
                             </div>
                         </div>
                     </div>
@@ -167,23 +160,16 @@
                     <button onclick="addToCart('${sub.id}')" class="w-full border-2 border-slate-900 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all active:scale-95">
                         Add to Selection
                     </button>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
-        // SEO FILTER ENGINE
         window.filterSubjects = () => {
             const term = document.getElementById('searchInput').value.toUpperCase();
-            const filtered = allSubjects.filter(s => 
-                s.subjectCode.toUpperCase().includes(term) || 
-                s.subjectName.toUpperCase().includes(term)
-            );
+            const filtered = allSubjects.filter(s => s.subjectCode.toUpperCase().includes(term) || s.subjectName.toUpperCase().includes(term));
             render(filtered);
-            
-            // DYNAMIC SEO TITLE UPDATE
             if(term.length > 2) {
-                document.getElementById('dynamic-title').innerText = `${term} Solved Assignment PDF | Student Help Club`;
-                document.getElementById('dynamic-desc').setAttribute("content", `Get high-quality solved PDF for IGNOU ${term} - ${filtered[0]?.subjectName || ''}. Trusted solutions by Vishal Kumar.`);
+                document.title = `${term} Solved PDF | Student Help Club`;
             }
         };
 
@@ -207,11 +193,11 @@
                 <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 flex justify-between items-center relative group">
                     <div>
                         <h4 class="font-black text-xs text-slate-800 uppercase italic">${c.subjectCode}</h4>
-                        <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">₹${c.price} | Verified PDF</p>
+                        <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">₹${c.price} | PDF Copy</p>
                     </div>
                     <button onclick="removeItem(${i})" class="text-slate-300 hover:text-red-shc transition"><i class="fas fa-trash-alt"></i></button>
                 </div>
-            `).join('') : `<p class="text-center py-20 text-slate-300 italic font-medium uppercase text-[10px] tracking-widest">No selections yet</p>`;
+            `).join('') : `<p class="text-center py-20 text-slate-300 italic font-medium uppercase text-[10px] tracking-widest">Empty</p>`;
         }
 
         window.removeItem = (i) => {
@@ -222,13 +208,28 @@
 
         window.toggleCart = () => document.getElementById('cartSheet').classList.toggle('active');
 
+        // PROFESSIONAL CHECKOUT MESSAGE
         window.checkoutWA = () => {
-            if(!cart.length) return alert("Please select a subject first!");
-            let msg = `*NEW ORDER - STUDENT HELP CLUB*%n%n`;
+            if(!cart.length) return alert("Select a subject first!");
+            
+            let msg = `*OFFICIAL ORDER - STUDENT HELP CLUB*%n`;
+            msg += `------------------------------------------%n`;
+            msg += `*Customer Inquiry From Website*%n`;
+            msg += `------------------------------------------%n`;
+            msg += `*I want to purchase the following:*%n%n`;
+            
             cart.forEach((c, i) => {
-                msg += `*${i+1}.* ${c.subjectCode} - ${c.subjectName} (₹${c.price})%n`;
+                msg += `*${i+1}.* Subject: *${c.subjectCode}*%n`;
+                msg += `   Name: _${c.subjectName}_%n`;
+                msg += `   Price: ₹${c.price}%n%n`;
             });
-            msg += `%n*Total Items:* ${cart.length}%n*Grand Total:* ₹${document.getElementById('subtotal').innerText}%n%n_Please send this message to process your order._`;
+            
+            msg += `------------------------------------------%n`;
+            msg += `*Total Subjects:* ${cart.length}%n`;
+            msg += `*Total Amount:* ₹${document.getElementById('subtotal').innerText}%n`;
+            msg += `------------------------------------------%n`;
+            msg += `_Please share the payment details to process my order instantly._`;
+            
             window.location.href = `https://wa.me/919776986830?text=${msg}`;
         };
 
