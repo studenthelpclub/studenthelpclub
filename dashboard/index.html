@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | Student Help Club</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: #f8fafc; color: #0f172a; min-height: 100vh; overflow-x: hidden; }
+        
+        /* ==================== 🔒 PREMIUM SPLIT LOGIN SCREEN ==================== */
+        .login-wrapper { display: flex; min-height: 100vh; background: #ffffff; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; }
+        
+        /* Left Side: Cinematic Brand Panel */
+        .login-left { flex: 1.2; background: linear-gradient(135deg, #4c1d95 0%, #1e1b4b 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 50px; color: #ffffff; position: relative; overflow: hidden; }
+        .login-left::before { content: ''; position: absolute; width: 300px; height: 300px; background: rgba(111, 66, 193, 0.2); filter: blur(80px); border-radius: 50%; top: -50px; left: -50px; }
+        .brand-header { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; display: flex; align-items: center; gap: 10px; }
+        .brand-header i { color: #a78bfa; }
+        .login-left-content h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 20px; background: linear-gradient(to right, #ffffff, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .login-left-content p { color: #cbd5e1; font-size: 16px; line-height: 1.6; max-width: 460px; }
+        .brand-footer { font-size: 13px; color: #94a3b8; font-weight: 500; }
+
+        /* Right Side: Clean Modern Form Panel */
+        .login-right { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; background: #ffffff; }
+        .auth-box { width: 100%; max-width: 400px; }
+        .auth-box h2 { font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .auth-box p { color: #64748b; font-size: 15px; margin-bottom: 35px; line-height: 1.5; }
+        
+        /* Luxury Google Button */
+        .btn-google-premium { width: 100%; padding: 16px; background: #ffffff; color: #1e293b; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-google-premium:hover { background: #f8fafc; border-color: #cbd5e1; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .btn-google-premium img { width: 22px; height: 22px; }
+
+        /* Mobile View Fix for Split Screen */
+        @media (max-width: 900px) {
+            .login-left { display: none; }
+            .login-wrapper { background: #f8fafc; }
+            .login-right { background: #f8fafc; }
+            .auth-box { background: #ffffff; padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
+        }
+
+        /* ==================== 📊 PREMIUM DASHBOARD WORKSPACE ==================== */
+        .nav-bar { background: #ffffff; padding: 16px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
+        .logo-dash { font-size: 18px; font-weight: 800; color: #4c1d95; display: flex; align-items: center; gap: 8px; }
+        .nav-links a { margin-left: 28px; text-decoration: none; color: #64748b; font-weight: 600; font-size: 14px; transition: 0.2s; }
+        .nav-links a:hover { color: #4c1d95; }
+        .user-pill { background: #f1f5f9; padding: 8px 16px; border-radius: 30px; font-weight: 700; color: #1e293b; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+        
+        .workspace-grid { display: flex; gap: 30px; max-width: 1280px; margin: 40px auto; padding: 0 24px; flex-wrap: wrap; }
+        .center-panel { flex: 7.5; min-width: 320px; }
+        .side-panel { flex: 2.5; min-width: 290px; }
+
+        /* Card Architecture */
+        .premium-card { background: #ffffff; padding: 32px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.01); margin-bottom: 28px; transition: 0.3s; }
+        .premium-card h3 { color: #0f172a; font-size: 18px; font-weight: 700; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+        
+        /* Refer Progress Elements */
+        .bar-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; color: #334155; margin-bottom: 10px; }
+        .bar-outer { background: #f1f5f9; border-radius: 30px; height: 14px; overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0; }
+        .bar-inner { background: linear-gradient(90deg, #10b981, #34d399); height: 100%; width: 0%; border-radius: 30px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        /* Copy System Elements */
+        .url-box { display: flex; gap: 12px; margin-top: 18px; }
+        .url-box input { flex: 1; padding: 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #f8fafc; color: #334155; font-weight: 500; outline: none; }
+        .btn-action { padding: 14px 24px; background: #4c1d95; color: #fff; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; transition: 0.2s; }
+        .btn-action:hover { background: #3b1375; }
+        
+        .btn-whatsapp-direct { background: #25d366; width: 100%; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; text-decoration: none; font-size: 14px; transition: 0.2s; }
+        .btn-whatsapp-direct:hover { background: #1fae53; }
+
+        /* Tables Data Format */
+        .scroll-wrapper { overflow-x: auto; margin-top: 12px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th, td { padding: 16px; border-bottom: 1px solid #f1f5f9; }
+        th { background: #f8fafc; color: #475569; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        td { color: #334155; font-weight: 500; }
+        .badge-live { background: #dcfce7; color: #16a34a; padding: 6px 12px; border-radius: 50px; font-size: 12px; font-weight: 700; }
+        .btn-dl-system { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; padding: 8px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-dl-system:hover { background: #e2e8f0; color: #000; }
+
+        .ad-banner-slot { background: #f8fafc; border: 2px dashed #cbd5e1; height: 250px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #94a3b8; border-radius: 12px; margin-top: 15px; font-weight: 600; }
+        footer { text-align: center; padding: 50px 20px; color: #94a3b8; font-size: 13px; border-top: 1px solid #e2e8f0; margin-top: 60px; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+<div id="loginGate" class="login-wrapper">
+    <div class="login-left">
+        <div class="brand-header"><i class="fa-solid fa-graduation-cap"></i> STUDENT HELP CLUB</div>
+        <div class="login-left-content">
+            <h1>Your Ultimate IGNOU Companion Portal.</h1>
+            <p>Unlock premium solved assignments, handwritten soft copies, exam guides, and real-time trackers instantly under one dedicated workspace.</p>
+        </div>
+        <div class="brand-footer">© 2026 Student Help Club Ecosystem.</div>
+    </div>
+    <div class="login-right">
+        <div class="auth-box">
+            <h2>Welcome Back</h2>
+            <p>Please connect your institutional or personal Google account to access your live student dashboard.</p>
+            
+            <button class="btn-google-premium" onclick="loginWithGoogle()">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google Logo">
+                Sign in with Google
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="dashboardView" style="display: none;">
+    <div class="nav-bar">
+        <div class="logo-dash"><i class="fa-solid fa-graduation-cap"></i> STUDENT HELP CLUB</div>
+        <div class="nav-links">
+            <a href="/"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="/shop"><i class="fa-solid fa-bag-shopping"></i> Assignment Shop</a>
+            <span id="userInfo" class="user-pill"></span>
+            <a href="#" id="logoutBtn" onclick="logout()" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i></a>
+        </div>
+    </div>
+    
+    <div class="workspace-grid">
+        <div class="center-panel">
+            <div class="premium-card" style="border-left: 6px solid #4c1d95; background: linear-gradient(to right, #ffffff, #fdfbf7);">
+                <h2 style="font-size: 24px; font-weight: 800; color: #0f172a;">Hello, <span id="dashName">Student</span>!</h2>
+                <p style="color: #64748b; font-size: 14px; margin-top: 4px; font-weight: 500;">Account Tier: <span id="userTier" style="font-weight: 800; color: #4c1d95;">Standard Learner</span></p>
+            </div>
+
+            <div class="premium-card">
+                <h3><i class="fa-solid fa-gift" style="color: #4c1d95;"></i> Share & Unlock 30% Flat Bulk Discount</h3>
+                <p style="font-size: 14.5px; color: #475569; line-height: 1.6;">Viral your unique invitation link inside your IGNOU WhatsApp & Telegram support groups. As soon as 10 peers register for free, your wholesale discount code triggers automatically across the checkout system!</p>
+                
+                <div style="margin-top: 24px;">
+                    <div class="bar-header">
+                        <span>Milestone Progress</span>
+                        <span id="referStatus" style="color: #4c1d95;">0 / 10 Completed</span>
+                    </div>
+                    <div class="bar-outer">
+                        <div id="progressBar" class="bar-inner"></div>
+                    </div>
+                </div>
+
+                <div class="url-box">
+                    <input type="text" id="refLinkInput" readonly value="Syncing referral keys...">
+                    <button class="btn-action" onclick="copyReferLink()"><i class="fa-regular fa-copy"></i> Copy</button>
+                </div>
+            </div>
+
+            <div class="premium-card">
+                <h3><i class="fa-solid fa-box-open" style="color: #4c1d95;"></i> Secure Document Downloads / Purchases</h3>
+                <div class="scroll-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order Token</th>
+                                <th>Course Reference</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: #94a3b8; padding: 40px 0; font-weight: 500;">No active purchase history detected under this wallet token.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-panel">
+            <div class="premium-card">
+                <h3><i class="fa-solid fa-circle-question" style="color: #25d366;"></i> Direct Helpdesk</h3>
+                <p style="font-size: 13.5px; color: #475569; line-height: 1.5; margin-bottom: 5px;">Stuck on download errors or need specific handwritten assignment combinations? Connect directly with Vishal Bhaiya.</p>
+                <a href="https://wa.me/919776986830" target="_blank" class="btn-whatsapp-direct"><i class="fa-brands fa-whatsapp"></i> WhatsApp Support</a>
+            </div>
+
+            <div class="premium-card">
+                <h3><i class="fa-solid fa-chart-line" style="color: #64748b;"></i> Recommended Deals</h3>
+                <div class="ad-banner-slot">
+                    [ Google AdSense Responsive Unit ]
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>© 2026 Student Help Club Ecosystem. All Rights Reserved.</p>
+    <p style="margin-top: 6px; font-size: 12px; color: #94a3b8; max-width: 600px; margin-left: auto; margin-right: auto;">Disclaimer: Student Help Club is an independent educational helper utility and has no corporate or structural dependency on the Indira Gandhi National Open University (IGNOU Official).</p>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script>
+// 🎯 Real Firebase Configuration Keys (Compat Mode Stacked)
+const firebaseConfig = {
+    apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8",
+    authDomain: "ignou-web.firebaseapp.com",
+    projectId: "ignou-web",
+    storageBucket: "ignou-web.firebasestorage.app",
+    messagingSenderId: "854950506403",
+    appId: "1:854950506403:web:941a56126a36fd3f9d7416"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ==================== ENGINE STATE CONTROLLERS ====================
+
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        document.getElementById('loginGate').style.display = 'none';
+        document.getElementById('dashboardView').style.display = 'block';
+        
+        const badge = document.getElementById('userInfo');
+        badge.innerHTML = `<i class="fa-solid fa-user-check"></i> ${user.displayName.split(' ')[0]}`;
+        
+        document.getElementById('dashName').innerText = user.displayName;
+        setupUserDatabaseAndDashboard(user);
+    } else {
+        document.getElementById('loginGate').style.display = 'flex';
+        document.getElementById('dashboardView').style.display = 'none';
+    }
+});
+
+function loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(err => alert("Ecosystem Lock Warning: " + err.message));
+}
+
+function setupUserDatabaseAndDashboard(user) {
+    const userRef = db.collection("users").doc(user.uid);
+    const customRefCode = "SHC" + user.uid.substring(0, 6).toUpperCase();
+    const generatedLink = `https://studenthelpclub.in/register?ref=${customRefCode}`;
+    
+    document.getElementById('refLinkInput').value = generatedLink;
+
+    userRef.get().then((doc) => {
+        if (!doc.exists) {
+            userRef.set({
+                name: user.displayName,
+                email: user.email,
+                refer_code: customRefCode,
+                total_refers: 0,
+                created_at: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } else {
+            const userData = doc.data();
+            const refers = userData.total_refers || 0;
+            
+            const percent = Math.min((refers / 10) * 100, 100);
+            document.getElementById('progressBar').style.width = percent + "%";
+            document.getElementById('referStatus').innerText = `${refers} / 10 Completed`;
+            
+            if(refers >= 10) {
+                const tier = document.getElementById('userTier');
+                tier.innerText = "👑 VIP Wholesale Discount Unlocked";
+                tier.style.color = "#16a34a";
+            }
+        }
+        loadUserPurchaseOrders(user.uid);
+    });
+}
+
+function loadUserPurchaseOrders(uid) {
+    const ordersContainer = document.getElementById('ordersTableBody');
+    db.collection("orders").where("user_id", "==", uid).get().then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+            ordersContainer.innerHTML = ""; 
+            querySnapshot.forEach((doc) => {
+                const order = doc.data();
+                ordersContainer.innerHTML += `
+                    <tr>
+                        <td>#${doc.id.substring(0,7).toUpperCase()}</td>
+                        <td><strong>${order.course_code}</strong></td>
+                        <td><span class="badge-live">Success</span></td>
+                        <td><button class="btn-dl-system" onclick="window.open('${order.download_url}')"><i class="fa-solid fa-download"></i> Download</button></td>
+                    </tr>
+                `;
+            });
+        }
+    });
+}
+
+function copyReferLink() {
+    const copyText = document.getElementById("refLinkInput");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    alert("🚀 Brand link successfully locked onto clipboard! Spread it in IGNOU circles.");
+}
+
+function logout() {
+    auth.signOut();
+}
+</script>
+</body>
+</html>
