@@ -258,3 +258,17 @@ function openLegal(type) {
 }
 function closeLegal() { document.getElementById('legalModal').style.display = 'none'; }
 window.onclick = (e) => { if (e.target.className === 'shc-modal') { closeCart(); closeLegal(); } };
+// Floating WhatsApp Button Dynamic Injection
+document.addEventListener("DOMContentLoaded", function() {
+    var waButton = document.createElement('a');
+    waButton.href = "https://wa.me/919999999999?text=Hello%20Student%20Help%20Club,%20mujhe%20assignments%20ke%20baare%20me%20puchna%20hai."; // <-- Apna number change karein
+    waButton.className = "whatsapp-float";
+    waButton.target = "_blank";
+    waButton.rel = "noopener noreferrer";
+    waButton.innerHTML = `
+        <svg viewBox="0 0 24 24" class="whatsapp-icon" style="width:32px; height:32px; fill:#fff;">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397 0 11.948 0c3.179.001 6.165 1.24 8.413 3.494 2.25 2.253 3.489 5.24 3.487 8.425-.004 6.599-5.342 11.947-11.893 11.947-1.997-.001-3.956-.5-5.694-1.448L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.852.002-2.63-1.023-5.101-2.884-6.963C16.53 1.878 14.06 1.85 11.95 1.85c-5.438 0-9.863 4.42-9.866 9.853-.001 1.762.478 3.48 1.383 5.004L2.408 21.6l5.032-1.317zM17.76 14.77c-.317-.159-1.88-.928-2.172-1.034-.29-.105-.503-.159-.715.159-.211.318-.82.1.034-1.006.105-.185.212-.39.212-.607 0-.212-.105-.424-.212-.636-.106-.211-.715-1.74-.98-2.375-.256-.616-.517-.533-.715-.543-.185-.01-.397-.01-.61-.01-.211 0-.555.08-.846.397-.291.318-1.11 1.086-1.11 2.65s1.14 3.072 1.298 3.284c.159.212 2.24 3.42 5.423 4.793.758.327 1.35.521 1.812.667.76.241 1.454.207 2.002.125.61-.091 1.88-.768 2.144-1.483.264-.714.264-1.324.185-1.454-.078-.129-.29-.211-.607-.37z"/>
+        </svg>
+    `;
+    document.body.appendChild(waButton);
+});
