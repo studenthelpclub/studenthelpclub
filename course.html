@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title id="dynamic-title">IGNOU Solved Assignments PDF | Student Help Club</title>
-    <meta name="description" id="dynamic-desc" content="Download 100% verified IGNOU Solved Assignments. High-quality PDF solutions by Student Help Club. Get subject-specific verified assignments.">
+    <meta name="description" id="dynamic-desc" content="Download 100% verified IGNOU Solved Assignments PDF. High-quality PDF solutions by Student Help Club. Get subject-specific verified assignments.">
     <meta name="keywords" content="IGNOU Solved Assignment PDF, Student Help Club Solutions, IGNOU Guess Paper, IGNOU Assignment ">
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3110600191216941" crossorigin="anonymous"></script>
@@ -35,6 +35,48 @@
         .cart-item-box { border: 1px dotted #ccc; padding: 8px; font-size: 9px; background: white; border-radius: 8px; }
         /* AdSense Responsive Box */
         .ad-placeholder { background: #f8fafc; border: 1px dashed #cbd5e1; text-align: center; padding: 20px; margin-bottom: 20px; border-radius: 15px; color: #94a3b8; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+
+        /* Floating Social Buttons Layout */
+        .floating-social-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 9999;
+        }
+        .social-float {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 26px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .social-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .whatsapp-btn { background-color: #25d366; }
+        .telegram-btn { background-color: #0088cc; }
+        
+        @media screen and (max-width: 768px) {
+            .floating-social-container {
+                bottom: 20px;
+                right: 20px;
+                gap: 12px;
+            }
+            .social-float {
+                width: 48px;
+                height: 48px;
+                font-size: 22px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -64,7 +106,7 @@
 
         <div class="mb-12 text-center md:text-left border-b pb-8">
             <h1 class="text-3xl font-black italic uppercase text-slate-800 mb-2">IGNOU <span class="text-[#d32f2f]">Solved Papers</span></h1>
-            <p class="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-4">Latest 2025-26 Academic Session</p>
+            <p class="text-gray-500 text-[10px] uppercase font-bold tracking-widest mb-4">Latest Academic Solutions</p>
             <p class="text-gray-600 text-xs max-w-2xl leading-relaxed">Score 90%+ with Student Help Club (SHC) verified assignments. High accuracy, professional formatting, and instant WhatsApp delivery for all IGNOU subjects.</p>
         </div>
 
@@ -75,30 +117,69 @@
             Google Ad Space
         </div>
 
-        <section class="mt-20 py-16 border-t border-gray-100">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div class="text-center md:text-left">
-                    <h2 class="text-3xl font-black italic text-slate-800 mb-6 uppercase tracking-tighter">Expert Verified. <span class="text-[#d32f2f]">High Marks Guaranteed.</span></h2>
-                    <p class="text-gray-500 text-sm leading-relaxed mb-6">Student Help Club (SHC) specializes in high-quality IGNOU resources. Our solutions are cross-checked by academic experts to ensure you get the best possible grades.</p>
-                    <div class="flex flex-wrap justify-center md:justify-start gap-4">
-                        <div class="text-center"><div class="w-10 h-10 bg-red-50 text-[#d32f2f] rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas fa-check-circle"></i></div><p class="text-[8px] font-black uppercase">100% Accuracy</p></div>
-                        <div class="text-center"><div class="w-10 h-10 bg-red-50 text-[#d32f2f] rounded-lg flex items-center justify-center mx-auto mb-2"><i class="fas fa-bolt"></i></div><p class="text-[8px] font-black uppercase">Fast Delivery</p></div>
+        <section class="mt-20 py-16 border-t border-gray-100 bg-white rounded-3xl shadow-sm px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center text-center md:text-left">
+                <div class="order-2 md:order-1 flex flex-col items-center md:items-start text-center md:text-left mx-auto md:mx-0 max-w-xl">
+                    <h2 class="text-3xl font-black italic text-slate-800 mb-6 uppercase tracking-tighter">Verified Solutions. <span class="text-[#d32f2f]">Academic Excellence Guaranteed.</span></h2>
+                    
+                    <div class="space-y-4 text-gray-600 text-sm leading-loose font-medium">
+                        <p>Our solutions provide the foundation for IGNOU students to understand complex subject matter and structure their academic submissions for maximum grading potential. SHC resources are designed to reduce research time, offering concise, factual, and academically formatted content.</p>
+                        <p>Student Help Club (SHC) specializes in curated IGNOU resources. Our solved assignments are cross-checked by academic subject experts to ensure adherence to university guidelines and the highest standards of content accuracy.</p>
+                        <p>We prioritize providing evergreen academic support. By choosing our verified solutions, you are investing in reliable educational content that supports consistent grades throughout your academic journey.</p>
+                    </div>
+
+                    <a href="blog.html" class="mt-10 inline-block bg-black text-white px-8 py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest shadow-lg transition hover:bg-[#d32f2f]">Check Important Academic Updates</a>
+                </div>
+                
+                <div class="order-1 md:order-2 flex flex-col items-center justify-center border-l-0 md:border-l border-dashed border-gray-200 pl-0 md:pl-10">
+                    <h3 class="text-xl font-black uppercase text-slate-800 mb-8 tracking-wide">SHC Quality Features</h3>
+                    <div class="flex flex-wrap justify-center gap-6">
+                        <div class="text-center w-28"><div class="w-12 h-12 bg-red-50 text-[#d32f2f] rounded-lg flex items-center justify-center mx-auto mb-2 shadow-inner"><i class="fas fa-check-circle text-lg"></i></div><p class="text-[9px] font-black uppercase tracking-wider text-slate-700">100% Accuracy</p></div>
+                        <div class="text-center w-28"><div class="w-12 h-12 bg-red-50 text-[#d32f2f] rounded-lg flex items-center justify-center mx-auto mb-2 shadow-inner"><i class="fas fa-bolt text-lg"></i></div><p class="text-[9px] font-black uppercase tracking-wider text-slate-700">Fast Delivery</p></div>
+                        <div class="text-center w-28"><div class="w-12 h-12 bg-red-50 text-[#d32f2f] rounded-lg flex items-center justify-center mx-auto mb-2 shadow-inner"><i class="fas fa-edit text-lg"></i></div><p class="text-[9px] font-black uppercase tracking-wider text-slate-700">Proper Format</p></div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="bg-[#0c0c0c] text-white py-16 px-8 rounded-t-[3rem] text-center">
+    <footer class="bg-[#0c0c0c] text-white pt-8 pb-4 md:pt-12 md:pb-6 px-10 mt-12 rounded-t-[3rem] border-t-4 border-[#d32f2f]">
         <div class="max-w-7xl mx-auto">
-            <h4 class="text-lg font-black text-[#d32f2f] italic uppercase mb-6 tracking-tighter">Student Help Club</h4>
-            <div class="flex justify-center gap-8 mb-8 text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                <a href="index.html">Home</a>
-                <a href="blog.html">Articles</a>
-                <a href="privacy-policy.html">Privacy Policy</a>
-                <a href="disclaimer.html">Disclaimer</a>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-10 border-b border-white/5 pb-6 md:pb-10">
+                <div class="md:col-span-2 space-y-4 text-center md:text-left">
+                    <h4 class="text-xl md:text-2xl font-black text-[#d32f2f] italic uppercase tracking-tighter">Student Help Club</h4>
+                    <p class="text-gray-400 text-[10px] md:text-xs leading-loose max-w-md font-medium uppercase tracking-widest mx-auto md:mx-0">Managed by Vishal Kumar.</p>
+                    <div class="flex justify-center md:justify-start gap-6 text-lg md:text-xl pt-2">
+                        <a href="https://wa.me/919776986830" target="_blank" class="text-gray-500 hover:text-green-500 transition-transform"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://youtube.com/@vishalhelpclub" target="_blank" class="text-gray-500 hover:text-red-600 transition-transform"><i class="fab fa-youtube"></i></a>
+                        <a href="https://t.me/studenthelpclub" target="_blank" class="text-gray-500 hover:text-blue-500 transition-transform"><i class="fab fa-telegram-plane"></i></a>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 text-center md:text-left">
+                    <h5 class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-white italic border-b border-[#d32f2f] pb-1 inline-block">Policies</h5>
+                    <ul class="grid grid-cols-2 md:grid-cols-1 gap-2 text-[9px] md:text-[11px] font-bold uppercase text-gray-500">
+                        <li><a href="privacy-policy.html" class="hover:text-white transition">Privacy</a></li>
+                        <li><a href="terms.html" class="hover:text-white transition">Terms</a></li>
+                        <li><a href="refund-policy.html" class="hover:text-white transition">Refund</a></li>
+                        <li><a href="disclaimer.html" class="hover:text-white transition">Disclaimer</a></li>
+                        <li><a href="about.html" class="hover:text-white transition">About</a></li>
+                        <li><a href="contact.html" class="hover:text-white transition">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="space-y-4 text-center md:text-right">
+                    <h5 class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-white italic border-b border-[#d32f2f] pb-1 inline-block">Services</h5>
+                    <ul class="space-y-2 text-[9px] md:text-[11px] font-bold uppercase text-gray-500">
+                        <li><a href="https://tools.studenthelpclub.in" target="_blank" class="hover:text-white transition">Tools </a></li>
+                        <li><a href="https://jobs.studenthelpclub.in" target="_blank" class="hover:text-white transition">Govt Jobs</a></li>
+                        <li><a href="blog.html" class="hover:text-white transition">Latest Updates</a></li>
+                    </ul>
+                </div>
             </div>
-            <p class="text-[8px] text-gray-700 uppercase">© 2026 Student Help Club | Managed by Vishal Kumar</p>
+            <div class="mt-4 md:mt-6 text-center text-gray-700 text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em]">
+                 &copy; 2026 Student Help Club. All Rights Reserved.
+            </div>
         </div>
     </footer>
 
@@ -109,6 +190,15 @@
             <div class="flex justify-between font-black text-lg mb-6"><span>Total:</span><span class="text-[#d32f2f]">₹<span id="subtotal">0.00</span></span></div>
             <button onclick="checkoutWA()" class="w-full bg-black text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest shadow-xl transition active:scale-95">Checkout WhatsApp</button>
         </div>
+    </div>
+
+    <div class="floating-social-container">
+        <a href="https://t.me/studenthelpclubb" target="_blank" rel="noopener noreferrer" class="social-float telegram-btn" title="Join Telegram">
+            <i class="fab fa-telegram-plane"></i>
+        </a>
+        <a href="https://wa.me/919776986830?text=Hello%20Student%20Help%20Club" target="_blank" rel="noopener noreferrer" class="social-float whatsapp-btn" title="Contact WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
     </div>
 
     <script type="module">
@@ -136,8 +226,8 @@
             document.getElementById('navCourseName').innerText = type;
 
             // DYNAMIC SEO TITLE & DESC BASED ON COURSE TYPE
-            document.title = `${type} Solved Assignments PDF 2025-26 | Student Help Club`;
-            document.getElementById('dynamic-desc').setAttribute("content", `Download verified ${type} IGNOU Solved Assignments PDF. Score high with SHC accurate solutions for 2025-26 session.`);
+            document.title = `${type} Solved Assignments PDF | Academic Solutions | Student Help Club`;
+            document.getElementById('dynamic-desc').setAttribute("content", `Download verified ${type} IGNOU Solved Assignments PDF. Score high with SHC accurate academic solutions.`);
 
             try {
                 const snap = await getDocs(query(collection(db, "pdf_store"), where("courseName", "==", type)));
@@ -162,8 +252,8 @@
                         sec.innerHTML = `<h3 class="year-indicator italic text-slate-800 uppercase">${label}</h3>
                             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                                 ${filter.map(p => {
-                                    const currentPrice = p.price || 50;
-                                    const mrp = currentPrice + 20; // Price cut logic
+                                    const currentPrice = p.price || 20; 
+                                    const mrp = 40; 
                                     const sessionOptions = p.sessions ? p.sessions.map(s => `<option value="${s}">${s}</option>`).join('') : `<option value="${p.session || 'Latest'}">${p.session || 'Latest'}</option>`;
                                     
                                     let modeSelect = "";
@@ -181,7 +271,7 @@
                                                 <span class="text-[7px] font-bold bg-gray-50 text-gray-400 px-1.5 py-0.5 rounded uppercase tracking-tighter">Code: ${p.subjectCode}</span>
                                                 <div class="text-right">
                                                     <span class="text-[8px] text-gray-300 line-through block italic">₹${mrp}</span>
-                                                    <span class="font-black text-lg text-[#d32f2f]">₹${currentPrice}</span>
+                                                    <span class="font-black text-xl text-[#d32f2f]">₹${currentPrice}</span>
                                                 </div>
                                             </div>
                                             <h4 class="text-[10px] font-black text-slate-800 uppercase leading-tight truncate mb-1">${p.subjectCode}</h4>
@@ -214,7 +304,7 @@
             const ses = document.getElementById(`ses-${id}`).value;
             const mode = document.getElementById(`mode-${id}`) ? document.getElementById(`mode-${id}`).value : "Verified PDF";
             if(!cart.find(c => c.id === id && c.medium === med && c.session === ses && c.mode === mode)) {
-                cart.push({...p, medium: med, session: ses, mode: mode, price: p.price || 50});
+                cart.push({...p, medium: med, session: ses, mode: mode, price: p.price || 20});
                 localStorage.setItem('shc_final_v15', JSON.stringify(cart));
                 updateUI();
             }
@@ -233,7 +323,7 @@
                         `*Medium:* ${med}\n` +
                         `*Session:* ${ses}\n` +
                         `*Format:* ${mode}\n` +
-                        `*Price:* ₹${p.price || 50}\n` +
+                        `*Price:* ₹${p.price || 20}\n` +
                         `------------------------------------------\n` +
                         `_I want to purchase this solved assignment PDF._`;
             
