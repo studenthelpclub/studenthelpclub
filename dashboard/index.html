@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | Student Help Club</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: #f8fafc; color: #1e293b; min-height: 100vh; }
+        
+        /* 🌐 Navbar Style */
+        .nav-bar { background: #ffffff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .logo { font-size: 20px; font-weight: 700; color: #6f42c1; display: flex; align-items: center; gap: 8px; }
+        .nav-links a { margin-left: 24px; text-decoration: none; color: #64748b; font-weight: 500; font-size: 14px; transition: 0.2s; }
+        .nav-links a:hover { color: #6f42c1; }
+        .user-badge { background: #f1f5f9; padding: 6px 12px; border-radius: 20px; font-weight: 600; color: #334155; font-size: 13px; }
+        
+        /* 🔒 PROFESSIONAL LOGIN SCREEN (Cinematic Dark Gradient) */
+        .login-container { display: flex; justify-content: center; align-items: center; min-height: 85vh; padding: 20px; }
+        .login-card { background: #ffffff; width: 100%; max-width: 420px; padding: 40px 35px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; text-align: center; }
+        .login-brand { font-size: 24px; font-weight: 700; color: #6f42c1; margin-bottom: 8px; }
+        .login-card h2 { font-size: 20px; font-weight: 600; color: #0f172a; margin-bottom: 10px; }
+        .login-card p { color: #64748b; font-size: 14px; line-height: 1.5; margin-bottom: 30px; }
+        
+        .btn-google { width: 100%; padding: 14px; background: #ffffff; color: #334155; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.2s; }
+        .btn-google:hover { background: #f8fafc; border-color: #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .btn-google img { width: 20px; height: 20px; }
+
+        /* 📊 DASHBOARD LAYOUT GRID */
+        .grid-container { display: flex; gap: 24px; max-width: 1240px; margin: 30px auto; padding: 0 20px; flex-wrap: wrap; }
+        .main-content { flex: 7; min-width: 320px; }
+        .sidebar { flex: 3; min-width: 280px; }
+
+        /* Premium Cards styling */
+        .card { background: #ffffff; padding: 28px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 24px; }
+        .card h3 { color: #0f172a; font-size: 17px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        
+        /* Progress Bar Engine */
+        .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 8px; }
+        .progress-container { background: #f1f5f9; border-radius: 20px; height: 12px; overflow: hidden; margin-bottom: 10px; }
+        .progress-bar { background: linear-gradient(90deg, #28a745, #34d399); height: 100%; width: 0%; border-radius: 20px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        /* Copy System Layout */
+        .copy-box { display: flex; gap: 10px; margin-top: 15px; }
+        .copy-box input { flex: 1; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: #f8fafc; color: #475569; outline: none; }
+        .btn-purple { padding: 12px 20px; background: #6f42c1; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; }
+        .btn-purple:hover { background: #5a32a3; }
+        
+        .btn-whatsapp { background: #25d366; width: 100%; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none; font-size: 14px; }
+        .btn-whatsapp:hover { background: #20ba59; }
+
+        /* Tables Formatting */
+        .table-wrapper { overflow-x: auto; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th, td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; }
+        th { background: #f8fafc; color: #64748b; font-weight: 600; }
+        td { color: #334155; }
+        .status-badge { background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .btn-download { background: #f1f5f9; color: #0f172a; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 6px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+        .btn-download:hover { background: #e2e8f0; }
+
+        .ad-placeholder { background: #f8fafc; border: 2px dashed #cbd5e1; height: 250px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #94a3b8; border-radius: 10px; margin-top: 15px; font-weight: 500; }
+        
+        /* Footer section */
+        footer { text-align: center; padding: 40px 20px; color: #94a3b8; font-size: 13px; border-top: 1px solid #e2e8f0; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+<div class="nav-bar">
+    <div class="logo"><i class="fa-solid fa-graduation-cap"></i> STUDENT HELP CLUB</div>
+    <div class="nav-links">
+        <a href="/"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="/shop"><i class="fa-solid fa-cart-shopping"></i> Shop Assignments</a>
+        <span id="userInfo" class="user-badge" style="display: none;"></span>
+        <a href="#" id="logoutBtn" onclick="logout()" style="display:none; color: #ef4444; font-weight: 600;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+    </div>
+</div>
+
+<div id="loginGate" class="login-container">
+    <div class="login-card">
+        <div class="login-brand"><i class="fa-solid fa-shield-halved"></i></div>
+        <h2>Student Portal Login</h2>
+        <p>Sign in with your Google account to unlock your dashboard, track your bulk assignment discounts, and access your download history safely.</p>
+        
+        <button class="btn-google" onclick="loginWithGoogle()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google Logo">
+            Continue with Google
+        </button>
+    </div>
+</div>
+
+<div id="dashboardView" class="grid-container" style="display: none;">
+    
+    <div class="main-content">
+        
+        <div class="card" style="border-left: 5px solid #6f42c1;">
+            <h2 style="font-size: 22px; color: #0f172a;">Hello, <span id="dashName">Student</span>!</h2>
+            <p style="color: #64748b; font-size: 14px; margin-top: 4px;">Account Status: <span id="userTier" style="font-weight: 700; color: #6f42c1;">Standard Learner</span></p>
+        </div>
+
+        <div class="card">
+            <h3><i class="fa-solid fa-gift" style="color: #6f42c1;"></i> Invite Friends & Unlock 30% Flat Bulk Discount</h3>
+            <p style="font-size: 14px; color: #475569; line-height: 1.6;">Share your personalized link in your IGNOU WhatsApp & Telegram communities. Once 10 peers register for free, your wholesale bundle engine activates instantly!</p>
+            
+            <div style="margin-top: 20px;">
+                <div class="progress-header">
+                    <span>Referral Progress</span>
+                    <span id="referStatus">0 / 10 Completed</span>
+                </div>
+                <div class="progress-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+            </div>
+
+            <div class="copy-box">
+                <input type="text" id="refLinkInput" readonly value="Generating Secure Link...">
+                <button class="btn-purple" onclick="copyReferLink()"><i class="fa-regular fa-copy"></i> Copy Link</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3><i class="fa-solid fa-cloud-arrow-down" style="color: #6f42c1;"></i> Your Purchased Materials / Assignments</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Course Code</th>
+                            <th>Delivery Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #94a3b8; padding: 30px 0;">No purchase records found under this account yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="card">
+            <h3><i class="fa-solid fa-headset" style="color: #25d366;"></i> Instant Helpdesk</h3>
+            <p style="font-size: 13px; color: #475569; line-height: 1.5;">Facing downloading hitches or need specific solved assignments? Get connected to Vishal Bhaiya right away.</p>
+            <a href="https://wa.me/919776986830" target="_blank" class="btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Chat via WhatsApp</a>
+        </div>
+
+        <div class="card">
+            <h3><i class="fa-solid fa-rectangle-ad" style="color: #64748b;"></i> Sponsored Content</h3>
+            <div class="ad-placeholder">
+                [ Google AdSense Banner Slot ]
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>© 2026 Student Help Club. All Rights Reserved.</p>
+    <p style="margin-top: 5px; font-size: 12px; color: #cbd5e1;">Disclaimer: Student Help Club is a self-regulated guide portal and holds no structural affiliation with IGNOU Official University.</p>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script>
+// 🔥 PASTE YOUR ACTUAL FIREBASE CONFIG CREDENTIALS HERE:
+const firebaseConfig = {
+    apiKey: "AIzaSyA1-YOUR_ACTUAL_API_KEY",
+    authDomain: "studenthelpclub-in.firebaseapp.com",
+    projectId: "studenthelpclub-in",
+    storageBucket: "studenthelpclub-in.appspot.com",
+    messagingSenderId: "1234567890",
+    appId: "1:12345678:web:abcdef123456"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ==================== CONTROLLER FLOW ====================
+
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        document.getElementById('loginGate').style.display = 'none';
+        document.getElementById('dashboardView').style.display = 'flex';
+        document.getElementById('logoutBtn').style.display = 'inline-block';
+        
+        const badge = document.getElementById('userInfo');
+        badge.style.display = 'inline-block';
+        badge.innerHTML = `<i class="fa-solid fa-user"></i> ${user.displayName.split(' ')[0]}`;
+        
+        document.getElementById('dashName').innerText = user.displayName;
+        setupUserDatabaseAndDashboard(user);
+    } else {
+        document.getElementById('loginGate').style.display = 'flex';
+        document.getElementById('dashboardView').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'none';
+    }
+});
+
+function loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(err => alert("Login Warning: " + err.message));
+}
+
+function setupUserDatabaseAndDashboard(user) {
+    const userRef = db.collection("users").doc(user.uid);
+    const customRefCode = "SHC" + user.uid.substring(0, 6).toUpperCase();
+    const generatedLink = `https://studenthelpclub.in/register?ref=${customRefCode}`;
+    
+    document.getElementById('refLinkInput').value = generatedLink;
+
+    userRef.get().then((doc) => {
+        if (!doc.exists) {
+            userRef.set({
+                name: user.displayName,
+                email: user.email,
+                refer_code: customRefCode,
+                total_refers: 0,
+                created_at: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } else {
+            const userData = doc.data();
+            const refers = userData.total_refers || 0;
+            
+            const percent = Math.min((refers / 10) * 100, 100);
+            document.getElementById('progressBar').style.width = percent + "%";
+            document.getElementById('referStatus').innerText = `${refers} / 10 Completed`;
+            
+            if(refers >= 10) {
+                const tier = document.getElementById('userTier');
+                tier.innerText = "👑 VIP Golden Discount Unlocked";
+                tier.style.color = "#15803d";
+            }
+        }
+        loadUserPurchaseOrders(user.uid);
+    });
+}
+
+function loadUserPurchaseOrders(uid) {
+    const ordersContainer = document.getElementById('ordersTableBody');
+    db.collection("orders").where("user_id", "==", uid).get().then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+            ordersContainer.innerHTML = ""; 
+            querySnapshot.forEach((doc) => {
+                const order = doc.data();
+                ordersContainer.innerHTML += `
+                    <tr>
+                        <td>#${doc.id.substring(0,7).toUpperCase()}</td>
+                        <td><strong>${order.course_code}</strong></td>
+                        <td><span class="status-badge">Success</span></td>
+                        <td><button class="btn-download" onclick="window.open('${order.download_url}')"><i class="fa-solid fa-download"></i> Get PDF</button></td>
+                    </tr>
+                `;
+            });
+        }
+    });
+}
+
+function copyReferLink() {
+    const copyText = document.getElementById("refLinkInput");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    alert("🚀 Unique link successfully copied! Ready to viral in IGNOU groups.");
+}
+
+function logout() {
+    auth.signOut();
+}
+</script>
+</body>
+</html>
