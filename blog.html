@@ -8,7 +8,6 @@
     <meta name="description" id="meta-desc" content="Latest IGNOU updates, solved assignments, and student guides by Student Help Club.">
     <meta name="author" content="Vishal Kumar">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://studenthelpclub.in/blog.html">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -29,7 +28,7 @@
 
     <nav class="bg-white/90 backdrop-blur-md border-b px-4 py-4 sticky top-0 z-[1000]">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <a href="index.html" class="text-[#d32f2f] font-bold text-[10px] uppercase"><i class="fas fa-arrow-left"></i> Store</a>
+            <a href="/" class="text-[#d32f2f] font-bold text-[10px] uppercase"><i class="fas fa-arrow-left"></i> Store</a>
             <h1 class="text-md font-black italic text-slate-800 uppercase tracking-tighter">Important Updates</h1>
         </div>
     </nav>
@@ -65,11 +64,11 @@
         <div class="max-w-5xl mx-auto px-6">
             <h3 class="text-white font-black italic uppercase text-lg mb-8 tracking-tighter">Student Help Club</h3>
             <div class="flex flex-wrap justify-center gap-6 text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-10">
-                <a href="index.html" class="hover:text-white transition">Home</a>
-                <a href="about.html" class="hover:text-white transition">About Us</a>
-                <a href="contact.html" class="hover:text-white transition">Contact</a>
-                <a href="privacy-policy.html" class="hover:text-white transition">Privacy Policy</a>
-                <a href="disclaimer.html" class="hover:text-white transition">Disclaimer</a>
+                <a href="/" class="hover:text-white transition">Home</a>
+                <a href="/about.html" class="hover:text-white transition">About Us</a>
+                <a href="/contact.html" class="hover:text-white transition">Contact</a>
+                <a href="/privacy-policy.html" class="hover:text-white transition">Privacy Policy</a>
+                <a href="/disclaimer.html" class="hover:text-white transition">Disclaimer</a>
             </div>
             <p class="text-[9px] font-medium uppercase tracking-[0.3em] text-gray-600 italic">© 2026 Student Help Club | Founder: Vishal Kumar</p>
         </div>
@@ -93,10 +92,26 @@
         let allArticles = [];
         let activeId = null;
 
+        // Title se automatic Clean URL Friendly Slug banane ka function
+        function generateSlug(title) {
+            return title
+                .toString()
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, '-')         // Spaces ko hyphen (-) se badlein
+                .replace(/[^\w\-]+/g, '')       // Special characters hatayein
+                .replace(/\-\-+/g, '-');        // Double hyphen hatayein
+        }
+
         async function fetchArticles() {
             try {
                 const snap = await getDocs(collection(db, "articles"));
-                allArticles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // database ke data me automatic slug add kar rahe hain title ke basis par
+                allArticles = snap.docs.map(doc => {
+                    const data = doc.data();
+                    const slug = data.slug || generateSlug(data.title);
+                    return { id: doc.id, slug: slug, ...data };
+                });
                 renderList();
                 checkURL();
             } catch (e) { console.error(e); }
@@ -106,7 +121,7 @@
         function renderList() {
             const grid = document.getElementById('articleGrid');
             grid.innerHTML = allArticles.map(art => `
-                <div class="article-card p-5 flex gap-4 items-center" onclick="openArticle('${art.id}')">
+                <div class="article-card p-5 flex gap-4 items-center" onclick="openArticleBySlug('${art.slug}')">
                     <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center text-[#d32f2f] shrink-0"><i class="fas fa-file-alt"></i></div>
                     <div class="text-left">
                         <h3 class="text-sm font-bold text-slate-800 uppercase italic">${art.title}</h3>
@@ -115,10 +130,10 @@
             `).join('');
         }
 
-        window.openArticle = async (id) => {
-            const art = allArticles.find(a => a.id === id);
+        window.openArticleBySlug = async (slug) => {
+            const art = allArticles.find(a => a.slug === slug);
             if(!art) return;
-            activeId = id;
+            activeId = art.id; // Comments ke liye real unique ID save rakhenge
             
             // --- SEO DYNAMIC UPDATES ---
             document.title = `${art.title} | Student Help Club`;
@@ -133,8 +148,9 @@
             document.getElementById('blogListView').classList.add('hidden');
             document.getElementById('fullArticleView').classList.remove('hidden');
             
-            window.history.pushState({id: id}, art.title, `?id=${id}`);
-            loadComments(id);
+            // YAHAN BADLAV KIYA: URL me ab ID nahi, Title wala Slug dikhega
+            window.history.pushState({slug: slug}, art.title, `/blog/${slug}`);
+            loadComments(activeId);
             window.scrollTo(0,0);
         };
 
@@ -142,7 +158,7 @@
             document.title = "Important Updates | Student Help Club";
             document.getElementById('blogListView').classList.remove('hidden');
             document.getElementById('fullArticleView').classList.add('hidden');
-            window.history.pushState({}, '', 'blog.html');
+            window.history.pushState({}, '', '/blog.html');
             window.scrollTo(0,0);
         };
 
@@ -178,9 +194,20 @@
             } catch(e) { alert("Error!"); }
         };
 
+        // URL check logic updated for slug string instead of direct firestore ID
         function checkURL() {
-            const id = new URLSearchParams(window.location.search).get('id');
-            if(id) openArticle(id);
+            const pathArray = window.location.pathname.split('/');
+            if (pathArray.includes('blog') && pathArray[pathArray.length - 1] !== 'blog' && pathArray[pathArray.length - 1] !== 'blog.html') {
+                const currentSlug = pathArray[pathArray.length - 1];
+                if(currentSlug) openArticleBySlug(currentSlug);
+            } else {
+                // Purani query structure (?id=) ka fallback backup
+                const fallbackId = new URLSearchParams(window.location.search).get('id');
+                if(fallbackId) {
+                    const art = allArticles.find(a => a.id === fallbackId);
+                    if(art) openArticleBySlug(art.slug);
+                }
+            }
         }
 
         fetchArticles();
