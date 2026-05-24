@@ -4,54 +4,201 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
-
-
 <url>
   <loc>https://studenthelpclub.in/</loc>
-  <lastmod>2026-05-12T07:23:45+00:00</lastmod>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
   <priority>1.00</priority>
 </url>
 <url>
   <loc>https://studenthelpclub.in/blog.html</loc>
-  <lastmod>2026-05-12T07:23:45+00:00</lastmod>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://studenthelpclub.in/privacy-policy.html</loc>
-  <lastmod>2026-05-12T07:23:45+00:00</lastmod>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://studenthelpclub.in/terms.html</loc>
-  <lastmod>2026-05-12T07:23:45+00:00</lastmod>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://studenthelpclub.in/refund-policy.html</loc>
-  <lastmod>2026-05-12T07:23:45+00:00</lastmod>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/disclaimer.html</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://studenthelpclub.in/about.html</loc>
-  <lastmod>2026-05-12T07:23:45+00:00</lastmod>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/contact.html</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://studenthelpclub.in/index.html</loc>
-  <lastmod>2026-05-12T07:23:45+00:00</lastmod>
-  <priority>0.64</priority>
-</url>
-<url>
-  <loc>https://studenthelpclub.in/disclaimer.html</loc>
-  <lastmod>2026-05-12T07:23:45+00:00</lastmod>
-  <priority>0.64</priority>
-</url>
-<url>
-  <loc>https://studenthelpclub.in/contact.html</loc>
-  <lastmod>2026-05-12T07:23:45+00:00</lastmod>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-admission-2026</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-re-evaluation</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-abc-id-digilocker</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-credit-system</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-convocation-registration-aur-original-degree-lene-ka-tarika-ignou</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-online-exam-form-kaise-bharen-registration-aur-fees-ki-poori-jankari</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-study-material-status-2026-ignou</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/is-ignou-degree-valid-for-govt-jobs-and-abroad-value-and-recognition-guide-ignou</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-project-and-synopsis-guide-from-topic-selection-to-passing-viva-ignou-viva</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-2026-nsp</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-admission-status-2026-check-registration-profile-by-enrollment-number-ignou-2026</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-address</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-assignment-2025-26-ignou-2025-26</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-survival-guide-ignou-2026-10</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/how-to-write-ignou-assignment-secret-tips-to-get-90-plus-marks-ignou-90</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-result-and-grade-card-not-updated-igram-complaint-and-solution-guide-ignou-igram</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-exam-preparation-2026-tips-to-get-more-than-90-percent-marks-ignou-2026-90</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-hall-ticket-2026-how-to-download-and-exam-hall-checklist-ignou-2026</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-credit-transfer-guide-2026-how-to-save-expired-admission-ignou-credit-transfer-2026</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-re-registration-2026-step-by-step-process-and-subject-guide-ignou</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-grade-card-explained-passing-marks-weightage-and-percentage-calculator-ignou-7030-percentage</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-placement-cell-and-job-opportunities-complete-career-guide-ignou-2026</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-passing-marks-and-grace-marks-policy-2026-complete-rules-ignou-grace-marks-2026</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-re-registration-2026-step-by-step-process-and-subject-guide-ignou-re-registration-2026</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/how-to-score-90-percent-in-ignou-exam-paper-presentation-secret-guide-ignou-exam-90-2026</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-digital-resource-guide-egyankosh-and-mobile-apps-tutorial-ignou-egyankosh</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-marksheet-provisional-and-migration-certificate-2026-process-ignou-2026</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/ignou-result-and-reevaluation-process-2026-complete-guide-to-check-marks-and-apply-for-rechecking</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://studenthelpclub.in/blog/how-to-change-ignou-study-center-and-regional-center-online-stepbystep-portal-mapping-guide</loc>
+  <lastmod>2026-05-24T08:40:30+00:00</lastmod>
+  <priority>0.70</priority>
+</url>
 
 </urlset>
