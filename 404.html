@@ -94,14 +94,15 @@
 
         // Title se automatic Clean URL Friendly Slug banane ka function
         function generateSlug(title) {
-            return title
-                .toString()
-                .toLowerCase()
-                .trim()
-                .replace(/\s+/g, '-')         // Spaces ko hyphen (-) se badlein
-                .replace(/[^\w\-]+/g, '')       // Special characters hatayein
-                .replace(/\-\-+/g, '-');        // Double hyphen hatayein
-        }
+    return title
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')          // Spaces ko hyphen mein badlein
+        .replace(/[^\w\-]+/g, '')        // Special characters hatayein
+        .replace(/\-\-+/g, '-')         // Double hyphen hatayein
+        .replace(/^-+|-+$/g, '');       // 🔥 SEEDHE FIX: Aakhiri aur shuruat ke saare extra hyphens (-) ko automatic hatao
+}
 
         async function fetchArticles() {
             try {
