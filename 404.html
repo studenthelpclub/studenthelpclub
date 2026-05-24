@@ -92,10 +92,26 @@
         let allArticles = [];
         let activeId = null;
 
+        // Title se automatic Clean URL Friendly Slug banane ka function
+        function generateSlug(title) {
+            return title
+                .toString()
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, '-')         // Spaces ko hyphen (-) se badlein
+                .replace(/[^\w\-]+/g, '')       // Special characters hatayein
+                .replace(/\-\-+/g, '-');        // Double hyphen hatayein
+        }
+
         async function fetchArticles() {
             try {
                 const snap = await getDocs(collection(db, "articles"));
-                allArticles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // database ke data me automatic slug add kar rahe hain title ke basis par
+                allArticles = snap.docs.map(doc => {
+                    const data = doc.data();
+                    const slug = data.slug || generateSlug(data.title);
+                    return { id: doc.id, slug: slug, ...data };
+                });
                 renderList();
                 checkURL();
             } catch (e) { console.error(e); }
@@ -105,7 +121,7 @@
         function renderList() {
             const grid = document.getElementById('articleGrid');
             grid.innerHTML = allArticles.map(art => `
-                <div class="article-card p-5 flex gap-4 items-center" onclick="openArticle('${art.id}')">
+                <div class="article-card p-5 flex gap-4 items-center" onclick="openArticleBySlug('${art.slug}')">
                     <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center text-[#d32f2f] shrink-0"><i class="fas fa-file-alt"></i></div>
                     <div class="text-left">
                         <h3 class="text-sm font-bold text-slate-800 uppercase italic">${art.title}</h3>
@@ -114,11 +130,12 @@
             `).join('');
         }
 
-        window.openArticle = async (id) => {
-            const art = allArticles.find(a => a.id === id);
+        window.openArticleBySlug = async (slug) => {
+            const art = allArticles.find(a => a.slug === slug);
             if(!art) return;
-            activeId = id;
+            activeId = art.id; // Comments ke liye real unique ID save rakhenge
             
+            // --- SEO DYNAMIC UPDATES ---
             document.title = `${art.title} | Student Help Club`;
             const metaDesc = document.getElementById('meta-desc');
             if(art.shortDesc) metaDesc.setAttribute("content", art.shortDesc);
@@ -131,9 +148,9 @@
             document.getElementById('blogListView').classList.add('hidden');
             document.getElementById('fullArticleView').classList.remove('hidden');
             
-            // --- NEW CLEAN URL PUSH ---
-            window.history.pushState({id: id}, art.title, `/blog/${id}`);
-            loadComments(id);
+            // YAHAN BADLAV KIYA: URL me ab ID nahi, Title wala Slug dikhega
+            window.history.pushState({slug: slug}, art.title, `/blog/${slug}`);
+            loadComments(activeId);
             window.scrollTo(0,0);
         };
 
@@ -145,6 +162,7 @@
             window.scrollTo(0,0);
         };
 
+        // Comments loading...
         async function loadComments(id) {
             const list = document.getElementById('commentList');
             list.innerHTML = "<p class='text-xs italic text-gray-400'>Loading...</p>";
@@ -176,13 +194,19 @@
             } catch(e) { alert("Error!"); }
         };
 
-        // --- NEW CLEAN URL CHECK ---
+        // URL check logic updated for slug string instead of direct firestore ID
         function checkURL() {
             const pathArray = window.location.pathname.split('/');
-            // Agar URL me /blog/ ke baad kuch likha hai, toh use ID maan lo
             if (pathArray.includes('blog') && pathArray[pathArray.length - 1] !== 'blog' && pathArray[pathArray.length - 1] !== 'blog.html') {
-                const id = pathArray[pathArray.length - 1];
-                if(id) openArticle(id);
+                const currentSlug = pathArray[pathArray.length - 1];
+                if(currentSlug) openArticleBySlug(currentSlug);
+            } else {
+                // Purani query structure (?id=) ka fallback backup
+                const fallbackId = new URLSearchParams(window.location.search).get('id');
+                if(fallbackId) {
+                    const art = allArticles.find(a => a.id === fallbackId);
+                    if(art) openArticleBySlug(art.slug);
+                }
             }
         }
 
