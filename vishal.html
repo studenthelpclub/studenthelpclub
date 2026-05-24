@@ -144,10 +144,21 @@
             const btn = document.getElementById('artBtn');
             if(!title || !content) return alert("Bhai, Title aur Content likho!");
             btn.disabled = true; btn.innerText = "PUBLISHING...";
+            
+            // SEO Ke liye Unique Name (Slug) automatic banane ka process
+            const slug = title
+                .toLowerCase()
+                .replace(/[^a-zA-Z0-9\s]/g, '')
+                .trim()
+                .replace(/\s+/g, '-');
+
             try {
                 await addDoc(collection(db, "articles"), {
-                    title: title, category: document.getElementById('art-category').value,
-                    shortDesc: document.getElementById('art-short').value, content: content,
+                    title: title, 
+                    slug: slug,
+                    category: document.getElementById('art-category').value,
+                    shortDesc: document.getElementById('art-short').value, 
+                    content: content,
                     date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
                     timestamp: serverTimestamp()
                 });
