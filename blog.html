@@ -9,6 +9,9 @@
     <meta name="author" content="Vishal Kumar">
     <meta name="robots" content="index, follow">
 
+    <!-- FIX: Added Canonical Tag -->
+    <link rel="canonical" href="https://studenthelpclub.in/blog.html" />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
@@ -29,14 +32,16 @@
     <nav class="bg-white/90 backdrop-blur-md border-b px-4 py-4 sticky top-0 z-[1000]">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
             <a href="/" class="text-[#d32f2f] font-bold text-[10px] uppercase"><i class="fas fa-arrow-left"></i> Store</a>
-            <h1 class="text-md font-black italic text-slate-800 uppercase tracking-tighter">Important Updates</h1>
+            <!-- FIX: Changed h1 to span to prevent multiple H1 errors -->
+            <span class="text-md font-black italic text-slate-800 uppercase tracking-tighter">Important Updates</span>
         </div>
     </nav>
 
     <main class="max-w-4xl mx-auto px-4 py-8 min-h-[70vh]">
         <div id="blogListView">
             <div class="mb-10 text-center md:text-left">
-                <h2 class="text-3xl md:text-4xl font-black italic uppercase text-slate-800 mb-2">IGNOU <span class="text-[#d32f2f]">Updates</span></h2>
+                <!-- FIX: Promoted this h2 to h1 as it is the main heading of this view -->
+                <h1 class="text-3xl md:text-4xl font-black italic uppercase text-slate-800 mb-2">IGNOU <span class="text-[#d32f2f]">Updates</span></h1>
             </div>
             <section id="articleGrid" class="grid grid-cols-1 gap-4"></section>
         </div>
