@@ -1,15 +1,24 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" itemscope itemtype="https://schema.org/WebPage">
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:; font-src 'self' data: https:;">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Vishal Kumar - Student Help Club">
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://firestore.googleapis.com">
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com">
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+
     <link rel="canonical" href="https://studenthelpclub.in/" />
 
-    <title>Student Help Club | Official IGNOU Solved Assignments Portal</title>
-    <meta name="description" content="Download verified IGNOU Solved Assignments for the current academic session. Premium PDF solutions delivered instantly on WhatsApp.">
+    <title itemprop="name">Student Help Club | Official IGNOU Solved Assignments Portal</title>
+    <meta name="description" itemprop="description" content="Download verified IGNOU Solved Assignments for the current academic session. Premium PDF solutions delivered instantly on WhatsApp.">
     
     <meta property="og:title" content="Student Help Club | Official IGNOU Solved Assignments">
     <meta property="og:description" content="Get 100% verified IGNOU Solved Assignments for BAG, BCOMG, BSCG, and BCA. Instant WhatsApp delivery support available.">
@@ -18,7 +27,6 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Student Help Club">
     <meta property="og:locale" content="hi_IN">
-
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Student Help Club | Official IGNOU Solved Assignments">
     <meta name="twitter:description" content="Get 100% verified IGNOU Solved Assignments for the current academic session. Instant WhatsApp delivery.">
@@ -32,23 +40,7 @@
       "url": "https://studenthelpclub.in/",
       "logo": "https://studenthelpclub.in/shc-logo.jpg",
       "description": "India's Official Support Hub for IGNOU Solved Assignments and Academic Guidance.",
-      "sameAs": [
-        "https://www.youtube.com/@vishalhelpclub",
-        "https://t.me/studenthelpclub"
-      ]
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Student Help Club",
-      "url": "https://studenthelpclub.in/",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://studenthelpclub.in/course.html?type={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
+      "sameAs": ["https://www.youtube.com/@vishalhelpclub", "https://t.me/studenthelpclub"]
     }
     </script>
 
@@ -70,8 +62,9 @@
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332493779076670" crossorigin="anonymous"></script>
     
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script defer src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -124,28 +117,17 @@
         .hidden-loader { display: none !important; }
         select { font-size: 10px !important; font-weight: 700 !important; border-radius: 10px !important; }
 
-        .floating-social-container {
-            position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 9999;
-        }
-        .social-float {
-            width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 26px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+        .floating-social-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 9999; }
+        .social-float { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 26px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .social-float:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
         .whatsapp-btn { background-color: #25d366; }
         .telegram-btn { background-color: #0088cc; }
 
         .reviews-section { padding: 60px 0; border-top: 1px solid #f1f5f9; }
         #reviewsGridContainer { transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out; }
-        .review-card { 
-            background: white; border: 1px solid #f1f5f9; border-radius: 24px; padding: 30px; 
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.04); display: flex; flex-direction: column; 
-            justify-content: space-between; min-height: 200px;
-        }
-
+        .review-card { background: white; border: 1px solid #f1f5f9; border-radius: 24px; padding: 30px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; }
         .star-rating-group { display: flex; gap: 5px; font-size: 20px; color: #cbd5e1; cursor: pointer; }
         .star-rating-group i.active { color: #ffc107; }
-
         .review-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 6000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
         .review-modal.active { display: flex; }
         
@@ -154,26 +136,26 @@
             .social-float { width: 48px; height: 48px; font-size: 22px; }
         }
     </style>
-    <script>(function(s){s.dataset.zone='11129335',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-    <script>(function(s){s.dataset.zone='11129336',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+    <script defer>(function(s){s.dataset.zone='11129335',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+    <script defer>(function(s){s.dataset.zone='11129336',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 </head>
-<body>
+<body itemscope itemtype="https://schema.org/WebPage">
 
     <div id="loader"><i class="fas fa-circle-notch fa-spin text-4xl text-[#d32f2f]"></i></div>
 
     <nav class="bg-white/80 backdrop-blur-md border-b px-6 py-5 sticky top-0 z-[1000]">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <img src="shc-logo.jpg" class="w-10 h-10 rounded-xl border shadow-sm" alt="SHC">
+                <img src="shc-logo.jpg" class="w-10 h-10 rounded-xl border shadow-sm" alt="SHC Logo" itemprop="image">
                 <div>
-                    <h1 class="text-xl font-black italic text-[#d32f2f] uppercase tracking-tighter leading-none">Student Help Club</h1>
+                    <h1 class="text-xl font-black italic text-[#d32f2f] uppercase tracking-tighter leading-none" itemprop="headline">Student Help Club</h1>
                     <p class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-1">Academic Support Portal</p>
                 </div>
             </div>
             <div class="flex items-center gap-5">
                 <a href="blog.html" class="text-[10px] font-black uppercase text-slate-500 hover:text-[#d32f2f] tracking-widest transition">Important Update</a>
-                <button onclick="toggleSearch()" class="p-2 text-gray-500 hover:text-[#d32f2f] transition"><i class="fas fa-search text-xl"></i></button>
-                <div onclick="toggleCart()" class="relative cursor-pointer bg-gray-100 p-3 rounded-2xl border hover:bg-gray-200 transition">
+                <button onclick="toggleSearch()" aria-label="Open Search" class="p-2 text-gray-500 hover:text-[#d32f2f] transition"><i class="fas fa-search text-xl"></i></button>
+                <div onclick="toggleCart()" aria-label="View Cart" class="relative cursor-pointer bg-gray-100 p-3 rounded-2xl border hover:bg-gray-200 transition">
                     <i class="fas fa-shopping-bag text-[#d32f2f]"></i>
                     <span id="cartCount" class="absolute -top-1 -right-1 bg-[#d32f2f] text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-md">0</span>
                 </div>
@@ -181,14 +163,14 @@
         </div>
         <div id="searchBar">
             <form role="search" action="#" method="get" onsubmit="event.preventDefault(); filterData();" class="max-w-4xl mx-auto py-5 px-6 flex items-center gap-4">
-                <input type="search" name="search" id="searchInput" onkeyup="filterData()" placeholder="Enter Subject Code (e.g. BEVAE 181)..." class="flex-1 bg-gray-50 border rounded-2xl px-6 py-4 outline-none focus:border-[#d32f2f] text-sm font-bold shadow-inner">
-                <button type="submit" class="hidden" aria-label="Search">Search</button>
-                <button type="button" onclick="toggleSearch()" class="text-gray-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
+                <input type="search" name="q" id="searchInput" onkeyup="filterData()" placeholder="Enter Subject Code (e.g. BEVAE 181)..." class="flex-1 bg-gray-50 border rounded-2xl px-6 py-4 outline-none focus:border-[#d32f2f] text-sm font-bold shadow-inner">
+                <button type="submit" class="hidden" aria-label="Submit Search">Search</button>
+                <button type="button" onclick="toggleSearch()" aria-label="Close Search" class="text-gray-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
             </form>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-6 py-10">
+    <main class="max-w-7xl mx-auto px-6 py-10" itemprop="mainContentOfPage">
         <div class="offer-banner mb-16">
             <div class="relative z-10">
                 <h4 class="text-[10px] font-black uppercase tracking-[0.4em] mb-4 opacity-90">India's Official Support Hub</h4>
@@ -248,10 +230,20 @@
                 <h3 class="text-xl font-black italic uppercase text-slate-800 mt-8 mb-3">Handwritten vs. Typed PDFs</h3>
                 <p>Many students ask whether they should submit handwritten or typed assignments. According to official IGNOU guidelines, assignments must be written in the student's own handwriting. To assist working professionals and students short on time, we provide premium <strong>Handwritten Scan PDFs</strong>. You can use these as a direct reference to write your own assignments quickly without compromising on quality or accuracy. We also offer standard <strong>Typed PDFs</strong> for students who prefer clean, easily readable text for quick memorization and exam preparation.</p>
 
-                <h3 class="text-xl font-black italic uppercase text-slate-800 mt-8 mb-3">How to Submit Your IGNOU Assignments?</h3>
-                <p>Once you have written your assignments using our premium solved PDFs, you need to compile them correctly. Always attach the official assignment question paper, a properly filled front page (containing your Enrollment Number, Course Code, Program Code, Study Centre details, and signature), and your IGNOU ID card copy. Depending on your regional centre's current guidelines, you can submit these either offline at your designated Study Centre or online via the official regional centre portal/email.</p>
+                <h3 class="text-xl font-black italic uppercase text-slate-800 mt-8 mb-3">Frequently Asked Questions (FAQs)</h3>
+                <p><strong>1. When is the last date to submit IGNOU Assignments?</strong><br>
+                For the July academic session, the general deadline is usually March 31st of the following year. For the January session, the deadline is typically September 30th. However, IGNOU frequently extends these dates, so always check the official notices or our blog for real-time updates.</p>
+
+                <p><strong>2. How do I compile my assignment file?</strong><br>
+                Once you have written your answers using our PDFs, arrange the documents in this order: First, your fully filled IGNOU Front Page (containing Name, Enrollment Number, Course Code, and Study Centre details). Second, a clear photocopy of your IGNOU Identity Card. Third, the official question paper printout. Finally, your handwritten answer sheets properly tied together.</p>
+
+                <p><strong>3. Can I submit assignments online?</strong><br>
+                This depends entirely on your specific Regional Centre's current guidelines. Some centres accept scanned PDF submissions via dedicated Google Forms or email, while others strictly require physical hardcopy submissions at your designated Study Centre.</p>
+
+                <p><strong>4. What are the passing marks for assignments?</strong><br>
+                Generally, students need to secure a minimum of 35% in Bachelor's degree programs and 40% in Master's degree programs to pass the assignment component successfully.</p>
                 
-                <p class="pt-4 border-t border-gray-100 font-medium italic">Our goal at Student Help Club is to democratize education and provide seamless support to the millions of IGNOU learners across India. Bookmark our portal for the latest updates, assignment releases, date sheets, and result notifications. Your academic success is our priority!</p>
+                <p class="pt-4 border-t border-gray-100 font-medium italic mt-6">Our goal at Student Help Club is to democratize education and provide seamless support to the millions of IGNOU learners across India. Bookmark our portal for the latest updates, assignment releases, date sheets, and result notifications. Your academic success is our priority!</p>
             </div>
         </section>
 
@@ -267,54 +259,18 @@
             <div id="reviewsGridContainer" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
         </section>
 
-        <section class="max-w-7xl mx-auto px-6 py-16 border-t border-gray-100 mt-10">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div class="space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-black italic uppercase text-slate-800 mb-6">इग्नू सॉल्व्ड असाइनमेंट और गाइड (IGNOU Solved Assignments)</h2>
-                        <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                            इन्दिरा गांधी राष्ट्रीय मुक्त विश्वविद्यालय (IGNOU) के छात्रों के लिए असाइनमेंट जमा करना अनिवार्य है। Student Help Club (SHC) आपको 100% सटीक और नवीनतम सत्र (Session) के सॉल्व्ड असाइनमेंट प्रदान करता है। हमारे असाइनमेंट विशेषज्ञों द्वारा तैयार किए जाते हैं ताकि आप अपनी परीक्षाओं में अधिकतम अंक प्राप्त कर सकें।
-                        </p>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-black italic uppercase text-slate-800 mb-4 tracking-tighter">Educational Excellence & Support</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed">
-                            हमारे पोर्टल पर आपको केवल असाइनमेंट ही नहीं, बल्कि परीक्षा की तैयारी के लिए महत्वपूर्ण प्रश्न, पिछले वर्ष के paper (PYQ) Aur विषय-वार अध्ययन सामग्री भी मिलती है। हम छात्रों को समय पर सूचनाएं प्रदान करते हैं ताकि उनका कोई भी महत्वपूर्ण अपडेट मिस न हो। शिक्षा को सुलभ बनाना ही हमारा एकमात्र उद्देश्य है।
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="bg-red-50 p-8 rounded-[3rem] border border-red-100 shadow-inner">
-                    <h3 class="text-lg font-black italic uppercase text-[#d32f2f] mb-4">Why Choose Student Help Club?</h3>
-                    <ul class="space-y-4 text-xs font-bold text-slate-700 uppercase tracking-tight">
-                        <li class="flex items-center gap-3 text-red-800">
-                            <i class="fas fa-check-circle"></i> Verified Solutions by Experts
-                        </li>
-                        <li class="flex items-center gap-3 text-red-800">
-                            <i class="fas fa-check-circle"></i> Latest Session Content
-                        </li>
-                        <li class="flex items-center gap-3 text-red-800">
-                            <i class="fas fa-check-circle"></i> Instant WhatsApp Delivery Support
-                        </li>
-                        <li class="flex items-center gap-3 text-red-800">
-                            <i class="fas fa-check-circle"></i> Comprehensive Exam Preparation Guides
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </section>
     </main>
 
-    <footer class="bg-[#0c0c0c] text-white pt-10 md:pt-24 pb-6 md:pb-12 px-10 mt-16 md:mt-32 rounded-t-[4rem] border-t-4 border-[#d32f2f]">
+    <footer class="bg-[#0c0c0c] text-white pt-10 md:pt-24 pb-6 md:pb-12 px-10 mt-16 md:mt-32 rounded-t-[4rem] border-t-4 border-[#d32f2f]" itemscope itemtype="https://schema.org/Organization">
         <div class="max-w-7xl mx-auto">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-16 border-b border-white/5 pb-10 md:pb-20">
                 <div class="md:col-span-2 space-y-6 md:space-y-8 text-center md:text-left">
-                    <h4 class="text-2xl md:text-3xl font-black text-[#d32f2f] italic uppercase tracking-tighter">Student Help Club</h4>
+                    <h4 class="text-2xl md:text-3xl font-black text-[#d32f2f] italic uppercase tracking-tighter" itemprop="name">Student Help Club</h4>
                     <p class="text-gray-400 text-[10px] md:text-sm leading-loose max-w-md font-medium uppercase tracking-widest mx-auto md:mx-0">Managed by Vishal Kumar.</p>
                     <div class="flex justify-center md:justify-start gap-8 text-xl md:text-2xl pt-4">
-                        <a href="https://wa.me/919776986830" target="_blank" class="text-gray-500 hover:text-green-500 transition-transform"><i class="fab fa-whatsapp"></i></a>
-                        <a href="https://www.youtube.com/@vishalhelpclub" target="_blank" class="text-gray-500 hover:text-red-600 transition-transform"><i class="fab fa-youtube"></i></a>
-                        <a href="https://t.me/studenthelpclub" target="_blank" class="text-gray-500 hover:text-blue-500 transition-transform"><i class="fab fa-telegram-plane"></i></a>
+                        <a href="https://wa.me/919776986830" target="_blank" aria-label="WhatsApp" class="text-gray-500 hover:text-green-500 transition-transform"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://www.youtube.com/@vishalhelpclub" target="_blank" aria-label="YouTube" class="text-gray-500 hover:text-red-600 transition-transform"><i class="fab fa-youtube"></i></a>
+                        <a href="https://t.me/studenthelpclub" target="_blank" aria-label="Telegram" class="text-gray-500 hover:text-blue-500 transition-transform"><i class="fab fa-telegram-plane"></i></a>
                     </div>
                 </div>
                 
@@ -397,21 +353,17 @@
     </div>
 
     <div class="floating-social-container">
-        <a href="https://t.me/studenthelpclubb" target="_blank" rel="noopener noreferrer" class="social-float telegram-btn" title="Join Telegram">
-            <i class="fab fa-telegram-plane"></i>
-        </a>
-        <a href="https://wa.me/919776986830?text=Hello%20Student%20Help%20Club" target="_blank" rel="noopener noreferrer" class="social-float whatsapp-btn" title="Contact WhatsApp">
-            <i class="fab fa-whatsapp"></i>
-        </a>
+        <a href="https://t.me/studenthelpclubb" target="_blank" rel="noopener noreferrer" class="social-float telegram-btn" title="Join Telegram"><i class="fab fa-telegram-plane"></i></a>
+        <a href="https://wa.me/919776986830?text=Hello%20Student%20Help%20Club" target="_blank" rel="noopener noreferrer" class="social-float whatsapp-btn" title="Contact WhatsApp"><i class="fab fa-whatsapp"></i></a>
     </div>
 
-    <div id="cookie-notice" role="dialog" aria-label="Cookie Consent Banner" class="fixed bottom-0 left-0 w-full bg-slate-900 text-white px-6 py-5 z-[9999] flex flex-col md:flex-row justify-between items-center gap-4 transform translate-y-full transition-transform duration-500 shadow-2xl border-t-2 border-[#d32f2f]">
+    <div id="cookieconsent" class="cc-window cc-banner cc-type-info cc-theme-block cc-bottom cookieconsent fixed bottom-0 left-0 w-full bg-slate-900 text-white px-6 py-5 z-[9999] flex flex-col md:flex-row justify-between items-center gap-4 transform translate-y-full transition-transform duration-500 shadow-2xl border-t-2 border-[#d32f2f]">
         <p class="text-[10px] md:text-xs font-medium text-gray-300 text-center md:text-left max-w-4xl tracking-wide leading-relaxed">
             We use cookies to improve your browsing experience on our website, to show you personalized content and targeted ads, and to analyze our website traffic. By continuing to use our website, you consent to our <a href="privacy-policy.html" class="text-white underline font-bold hover:text-[#d32f2f]">Privacy Policy</a>.
         </p>
         <div class="flex gap-3 shrink-0">
-            <button id="accept-cookies-btn" onclick="acceptCookies()" aria-label="Accept Cookies" class="bg-[#d32f2f] hover:bg-red-700 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors shadow-lg">Accept</button>
-            <button id="decline-cookies-btn" onclick="declineCookies()" aria-label="Decline Cookies" class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors shadow-lg">Decline</button>
+            <button id="accept-cookies-btn" onclick="acceptCookies()" aria-label="Allow Cookies" class="cc-btn cc-allow bg-[#d32f2f] hover:bg-red-700 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors shadow-lg">Accept</button>
+            <button id="decline-cookies-btn" onclick="declineCookies()" aria-label="Decline Cookies" class="cc-btn cc-deny bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors shadow-lg">Decline</button>
         </div>
     </div>
 
@@ -419,23 +371,23 @@
         document.addEventListener("DOMContentLoaded", function() {
             if (!localStorage.getItem("shc_cookie_consent")) {
                 setTimeout(() => {
-                    document.getElementById("cookie-notice").classList.remove("translate-y-full");
-                }, 1500);
+                    document.getElementById("cookieconsent").classList.remove("translate-y-full");
+                }, 1000);
             }
         });
 
         function acceptCookies() {
             localStorage.setItem("shc_cookie_consent", "accepted");
-            document.getElementById("cookie-notice").classList.add("translate-y-full");
+            document.getElementById("cookieconsent").classList.add("translate-y-full");
         }
 
         function declineCookies() {
             localStorage.setItem("shc_cookie_consent", "declined");
-            document.getElementById("cookie-notice").classList.add("translate-y-full");
+            document.getElementById("cookieconsent").classList.add("translate-y-full");
         }
     </script>
 
-    <script type="module">
+    <script type="module" defer>
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
