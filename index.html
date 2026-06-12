@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="hi" itemscope itemtype="https://schema.org/WebPage">
 <head>
+    <!-- ✅ 1. CSP Protection (Strict format for bots) -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:; font-src 'self' data: https:;">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
     <meta name="author" content="Vishal Kumar - Student Help Club">
     
+    <!-- ✅ 2. Speed Optimization -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://firestore.googleapis.com">
     <link rel="preconnect" href="https://pagead2.googlesyndication.com">
     <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 
+    <!-- ✅ 3. Canonical Tag -->
     <link rel="canonical" href="https://studenthelpclub.in/" />
 
     <title itemprop="name">Student Help Club | Official IGNOU Solved Assignments Portal</title>
-    <meta name="description" itemprop="description" content="Download verified IGNOU Solved Assignments for the current academic session. Premium PDF solutions delivered instantly on WhatsApp.">
+    <meta name="description" itemprop="description" content="Download verified IGNOU Solved Assignments for the current academic session. Premium PDF solutions for BAG, BCOMG, BSCG, BCA delivered instantly on WhatsApp.">
+    <meta name="keywords" content="IGNOU Solved Assignments, IGNOU PDF, BAG Assignments, BCOMG Solved, BSCG, Student Help Club, Vishal Kumar">
     
+    <!-- ✅ 4. Open Graph & Twitter -->
     <meta property="og:title" content="Student Help Club | Official IGNOU Solved Assignments">
     <meta property="og:description" content="Get 100% verified IGNOU Solved Assignments for BAG, BCOMG, BSCG, and BCA. Instant WhatsApp delivery support available.">
     <meta property="og:image" content="https://studenthelpclub.in/shc-logo.jpg">
@@ -32,15 +36,39 @@
     <meta name="twitter:description" content="Get 100% verified IGNOU Solved Assignments for the current academic session. Instant WhatsApp delivery.">
     <meta name="twitter:image" content="https://studenthelpclub.in/shc-logo.jpg">
 
+    <!-- ✅ 5. Comprehensive JSON-LD Schema -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Student Help Club",
-      "url": "https://studenthelpclub.in/",
-      "logo": "https://studenthelpclub.in/shc-logo.jpg",
-      "description": "India's Official Support Hub for IGNOU Solved Assignments and Academic Guidance.",
-      "sameAs": ["https://www.youtube.com/@vishalhelpclub", "https://t.me/studenthelpclub"]
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://studenthelpclub.in/#organization",
+          "name": "Student Help Club",
+          "url": "https://studenthelpclub.in/",
+          "logo": "https://studenthelpclub.in/shc-logo.jpg",
+          "description": "India's Official Support Hub for IGNOU Solved Assignments and Academic Guidance.",
+          "founder": {
+            "@type": "Person",
+            "name": "Vishal Kumar"
+          },
+          "sameAs": [
+            "https://www.youtube.com/@vishalhelpclub",
+            "https://t.me/studenthelpclub"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://studenthelpclub.in/#website",
+          "url": "https://studenthelpclub.in/",
+          "name": "Student Help Club",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://studenthelpclub.in/course.html?type={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
     }
     </script>
 
@@ -62,9 +90,8 @@
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332493779076670" crossorigin="anonymous"></script>
     
-    <script defer src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -146,7 +173,7 @@
     <nav class="bg-white/80 backdrop-blur-md border-b px-6 py-5 sticky top-0 z-[1000]">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <img src="shc-logo.jpg" class="w-10 h-10 rounded-xl border shadow-sm" alt="SHC Logo" itemprop="image">
+                <img src="shc-logo.jpg" class="w-10 h-10 rounded-xl border shadow-sm" alt="Student Help Club Logo" itemprop="image">
                 <div>
                     <h1 class="text-xl font-black italic text-[#d32f2f] uppercase tracking-tighter leading-none" itemprop="headline">Student Help Club</h1>
                     <p class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-1">Academic Support Portal</p>
@@ -162,8 +189,9 @@
             </div>
         </div>
         <div id="searchBar">
+            <!-- ✅ 6. Search Function (Strict Form role for SEO bots) -->
             <form role="search" action="#" method="get" onsubmit="event.preventDefault(); filterData();" class="max-w-4xl mx-auto py-5 px-6 flex items-center gap-4">
-                <input type="search" name="q" id="searchInput" onkeyup="filterData()" placeholder="Enter Subject Code (e.g. BEVAE 181)..." class="flex-1 bg-gray-50 border rounded-2xl px-6 py-4 outline-none focus:border-[#d32f2f] text-sm font-bold shadow-inner">
+                <input type="search" name="q" id="searchInput" onkeyup="filterData()" placeholder="Enter Subject Code (e.g. BEVAE 181)..." class="flex-1 bg-gray-50 border rounded-2xl px-6 py-4 outline-none focus:border-[#d32f2f] text-sm font-bold shadow-inner" aria-label="Search Assignments">
                 <button type="submit" class="hidden" aria-label="Submit Search">Search</button>
                 <button type="button" onclick="toggleSearch()" aria-label="Close Search" class="text-gray-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
             </form>
@@ -190,6 +218,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                 <div class="space-y-10">
                     <div>
+                        <!-- ✅ 7. Original Hindi/English Text Fully Restored -->
                         <h2 class="text-3xl font-black italic uppercase tracking-tighter text-slate-800 leading-none mb-6">Important <span class="text-[#d32f2f]">Resources</span></h2>
                         <p class="text-gray-600 text-sm leading-loose font-medium mb-4">
                             Student Help Club (SHC) देश का एकमात्र portal hai जहाँ आपको <b>एडमिशन से लेकर ग्रेजुएशन</b> तक की हर जानकारी मिलती है। हमारी टीम लगातार यूनिवर्सिटी के नोटिस का विश्लेषण करती है ताकि आपका समय बच सके।
@@ -219,31 +248,62 @@
             </div>
         </section>
 
+        <!-- ✅ 8. Massive Word Count SEO Section (800+ words guarantee) -->
         <section class="max-w-7xl mx-auto px-6 py-16 border-t border-gray-100 mt-20 bg-white rounded-[3rem] shadow-sm">
-            <h2 class="text-3xl font-black italic uppercase text-slate-800 mb-6">Complete Guide to IGNOU Solved Assignments</h2>
-            <div class="text-gray-600 text-sm leading-relaxed space-y-6">
-                <p>Welcome to Student Help Club, your ultimate destination for highly accurate and professionally prepared IGNOU Solved Assignments. Whether you are enrolled in a Bachelor's Degree program like BAG, BCOMG, BSCG, BCA, or a Master's program, submitting your assignments on time is a mandatory requirement to appear for the Term-End Examinations (TEE). Our portal is meticulously designed to help students save time and secure excellent grades by providing top-quality, professor-verified study materials.</p>
+            <div class="space-y-8">
+                <div>
+                    <h2 class="text-3xl font-black italic uppercase text-slate-800 mb-6">Complete Guide to IGNOU Solved Assignments (2025-2026)</h2>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        Welcome to Student Help Club, your ultimate and most reliable destination for highly accurate, professionally prepared <strong>IGNOU Solved Assignments</strong>. Whether you are currently enrolled in a Bachelor's Degree program like BAG, BCOMG, BSCG, BCA, or pursuing an advanced Master's program, submitting your assignments on time is a mandatory requirement to appear for your Term-End Examinations (TEE). Our portal is meticulously designed to help students save valuable time and secure excellent grades by providing top-quality, professor-verified study materials directly to your devices. We understand the struggles of distance education, which is why our platform ensures that finding the right answers is no longer a stressful task.
+                    </p>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        इन्दिरा गांधी राष्ट्रीय मुक्त विश्वविद्यालय (IGNOU) के छात्रों के लिए असाइनमेंट जमा करना अनिवार्य है। Student Help Club (SHC) आपको 100% सटीक और नवीनतम सत्र (Session) के सॉल्व्ड असाइनमेंट प्रदान करता है। हमारे असाइनमेंट विशेषज्ञों द्वारा तैयार किए जाते हैं ताकि आप अपनी परीक्षाओं में अधिकतम अंक प्राप्त कर सकें।
+                    </p>
+                </div>
 
-                <h3 class="text-xl font-black italic uppercase text-slate-800 mt-8 mb-3">Why Are IGNOU Assignments Important?</h3>
-                <p>In the Indira Gandhi National Open University (IGNOU) evaluation system, assignments carry a massive 30% weightage in your final mark sheet. Failing to submit them, or submitting poor-quality copied content, can directly affect your overall percentage. That is why at Student Help Club, we do not just provide generic answers. We ensure that every solution adheres strictly to the official IGNOU word limits, formatting guidelines, and syllabus parameters for the current academic session.</p>
+                <div>
+                    <h3 class="text-xl font-black italic uppercase text-slate-800 mb-3">Why Are IGNOU Assignments Extremely Important?</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        In the Indira Gandhi National Open University (IGNOU) evaluation system, assignments carry a massive 30% weightage in your final mark sheet. Failing to submit them, or submitting poor-quality copied content, can directly affect your overall percentage and might even delay your degree completion. That is why at Student Help Club, we do not just provide generic answers from the internet. We ensure that every solution adheres strictly to the official IGNOU word limits, formatting guidelines, and syllabus parameters for the current academic session. Quality is our primary focus, and our high-scoring PDFs reflect the meticulous research done by our academic experts.
+                    </p>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        हमारे पोर्टल पर आपको केवल असाइनमेंट ही नहीं, बल्कि परीक्षा की तैयारी के लिए महत्वपूर्ण प्रश्न, पिछले वर्ष के paper (PYQ) Aur विषय-वार अध्ययन सामग्री भी मिलती है। हम छात्रों को समय पर सूचनाएं प्रदान करते हैं ताकि उनका कोई भी महत्वपूर्ण अपडेट मिस न हो। शिक्षा को सुलभ बनाना ही हमारा एकमात्र उद्देश्य है।
+                    </p>
+                </div>
 
-                <h3 class="text-xl font-black italic uppercase text-slate-800 mt-8 mb-3">Handwritten vs. Typed PDFs</h3>
-                <p>Many students ask whether they should submit handwritten or typed assignments. According to official IGNOU guidelines, assignments must be written in the student's own handwriting. To assist working professionals and students short on time, we provide premium <strong>Handwritten Scan PDFs</strong>. You can use these as a direct reference to write your own assignments quickly without compromising on quality or accuracy. We also offer standard <strong>Typed PDFs</strong> for students who prefer clean, easily readable text for quick memorization and exam preparation.</p>
+                <div>
+                    <h3 class="text-xl font-black italic uppercase text-slate-800 mb-3">Handwritten vs. Typed PDFs: Which is Better?</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                        Many students frequently ask whether they should submit handwritten or typed assignments. According to official IGNOU guidelines, all final assignments must strictly be written in the student's own handwriting. To assist working professionals, homemakers, and students short on time, we provide premium <strong>Handwritten Scan PDFs</strong>. You can use these scanned documents as a direct visual reference to write your own assignments quickly, ensuring proper formatting without compromising on quality or accuracy. On the other hand, we also offer standard <strong>Typed PDFs</strong>. These are perfect for students who prefer clean, easily readable text that can also serve as fantastic study material for quick memorization before the final term-end exams.
+                    </p>
+                </div>
 
-                <h3 class="text-xl font-black italic uppercase text-slate-800 mt-8 mb-3">Frequently Asked Questions (FAQs)</h3>
-                <p><strong>1. When is the last date to submit IGNOU Assignments?</strong><br>
-                For the July academic session, the general deadline is usually March 31st of the following year. For the January session, the deadline is typically September 30th. However, IGNOU frequently extends these dates, so always check the official notices or our blog for real-time updates.</p>
+                <div>
+                    <h3 class="text-xl font-black italic uppercase text-slate-800 mb-4">Frequently Asked Questions (FAQs)</h3>
+                    <div class="space-y-4">
+                        <p class="text-gray-600 text-sm leading-relaxed"><strong>1. When is the last date to submit my IGNOU Assignments?</strong><br>
+                        For the July academic session, the general deadline is usually March 31st of the following year. For the January session, the deadline is typically September 30th. However, IGNOU frequently extends these dates due to various administrative reasons, so always check the official university notices or visit our blog section for real-time, verified updates.</p>
 
-                <p><strong>2. How do I compile my assignment file?</strong><br>
-                Once you have written your answers using our PDFs, arrange the documents in this order: First, your fully filled IGNOU Front Page (containing Name, Enrollment Number, Course Code, and Study Centre details). Second, a clear photocopy of your IGNOU Identity Card. Third, the official question paper printout. Finally, your handwritten answer sheets properly tied together.</p>
+                        <p class="text-gray-600 text-sm leading-relaxed"><strong>2. How do I correctly compile and format my assignment file?</strong><br>
+                        Once you have written your answers using our verified PDFs, arrange the documents in this specific order: First, attach your fully filled official IGNOU Front Page (containing your Name, Enrollment Number, Course Code, Program Code, and Study Centre details). Second, attach a clear photocopy of your valid IGNOU Identity Card. Third, attach the official assignment question paper printout. Finally, attach your handwritten answer sheets, properly tied together with a strong thread or placed inside a standard file cover.</p>
 
-                <p><strong>3. Can I submit assignments online?</strong><br>
-                This depends entirely on your specific Regional Centre's current guidelines. Some centres accept scanned PDF submissions via dedicated Google Forms or email, while others strictly require physical hardcopy submissions at your designated Study Centre.</p>
+                        <p class="text-gray-600 text-sm leading-relaxed"><strong>3. Can I submit my assignments online instead of offline?</strong><br>
+                        This depends entirely on your specific Regional Centre's current guidelines. Since the pandemic, some centres continue to accept scanned PDF submissions via dedicated Google Forms or email addresses. However, a majority of regional centres still strictly require physical hardcopy submissions at your designated Study Centre. Please confirm with your local coordinator.</p>
 
-                <p><strong>4. What are the passing marks for assignments?</strong><br>
-                Generally, students need to secure a minimum of 35% in Bachelor's degree programs and 40% in Master's degree programs to pass the assignment component successfully.</p>
+                        <p class="text-gray-600 text-sm leading-relaxed"><strong>4. What are the passing marks for IGNOU assignments?</strong><br>
+                        Generally, students are required to secure a minimum of 35% in Bachelor's degree programs (like BAG, BCOMG, BSCG) and a minimum of 40% in Master's degree programs to pass the assignment component successfully. Earning high marks here significantly boosts your overall aggregate.</p>
+                    </div>
+                </div>
                 
-                <p class="pt-4 border-t border-gray-100 font-medium italic mt-6">Our goal at Student Help Club is to democratize education and provide seamless support to the millions of IGNOU learners across India. Bookmark our portal for the latest updates, assignment releases, date sheets, and result notifications. Your academic success is our priority!</p>
+                <div class="bg-red-50 p-8 rounded-[3rem] border border-red-100 shadow-inner mt-8">
+                    <h3 class="text-lg font-black italic uppercase text-[#d32f2f] mb-4">Why Choose Student Help Club?</h3>
+                    <ul class="space-y-4 text-xs font-bold text-slate-700 uppercase tracking-tight">
+                        <li class="flex items-center gap-3 text-red-800"><i class="fas fa-check-circle"></i> 100% Verified Solutions Prepared by Subject Experts</li>
+                        <li class="flex items-center gap-3 text-red-800"><i class="fas fa-check-circle"></i> Guaranteed Latest Academic Session Content</li>
+                        <li class="flex items-center gap-3 text-red-800"><i class="fas fa-check-circle"></i> Instant WhatsApp Delivery and Support System</li>
+                        <li class="flex items-center gap-3 text-red-800"><i class="fas fa-check-circle"></i> Comprehensive Exam Preparation Guides & Previous Year Questions</li>
+                    </ul>
+                </div>
             </div>
         </section>
 
@@ -255,10 +315,8 @@
                 </div>
                 <button onclick="window.openReviewModal()" class="bg-slate-900 text-white px-6 py-3.5 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-[#d32f2f] transition shadow-md">Write A Review</button>
             </div>
-
             <div id="reviewsGridContainer" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
         </section>
-
     </main>
 
     <footer class="bg-[#0c0c0c] text-white pt-10 md:pt-24 pb-6 md:pb-12 px-10 mt-16 md:mt-32 rounded-t-[4rem] border-t-4 border-[#d32f2f]" itemscope itemtype="https://schema.org/Organization">
@@ -357,6 +415,7 @@
         <a href="https://wa.me/919776986830?text=Hello%20Student%20Help%20Club" target="_blank" rel="noopener noreferrer" class="social-float whatsapp-btn" title="Contact WhatsApp"><i class="fab fa-whatsapp"></i></a>
     </div>
 
+    <!-- ✅ 9. Cookie Consent Strict Format -->
     <div id="cookieconsent" class="cc-window cc-banner cc-type-info cc-theme-block cc-bottom cookieconsent fixed bottom-0 left-0 w-full bg-slate-900 text-white px-6 py-5 z-[9999] flex flex-col md:flex-row justify-between items-center gap-4 transform translate-y-full transition-transform duration-500 shadow-2xl border-t-2 border-[#d32f2f]">
         <p class="text-[10px] md:text-xs font-medium text-gray-300 text-center md:text-left max-w-4xl tracking-wide leading-relaxed">
             We use cookies to improve your browsing experience on our website, to show you personalized content and targeted ads, and to analyze our website traffic. By continuing to use our website, you consent to our <a href="privacy-policy.html" class="text-white underline font-bold hover:text-[#d32f2f]">Privacy Policy</a>.
@@ -387,6 +446,7 @@
         }
     </script>
 
+    <!-- ✅ 10. Original Logic Kept 100% Intact -->
     <script type="module" defer>
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
