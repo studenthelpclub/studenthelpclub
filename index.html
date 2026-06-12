@@ -1,29 +1,26 @@
 <!DOCTYPE html>
 <html lang="hi" itemscope itemtype="https://schema.org/WebPage">
 <head>
-    <!-- ✅ 1. CSP Protection (Strict format for bots) -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:; font-src 'self' data: https:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval';">
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
     <meta name="author" content="Vishal Kumar - Student Help Club">
     
-    <!-- ✅ 2. Speed Optimization -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://firestore.googleapis.com">
     <link rel="preconnect" href="https://pagead2.googlesyndication.com">
     <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
-
-    <!-- ✅ 3. Canonical Tag -->
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
     <link rel="canonical" href="https://studenthelpclub.in/" />
 
     <title itemprop="name">Student Help Club | Official IGNOU Solved Assignments Portal</title>
     <meta name="description" itemprop="description" content="Download verified IGNOU Solved Assignments for the current academic session. Premium PDF solutions for BAG, BCOMG, BSCG, BCA delivered instantly on WhatsApp.">
     <meta name="keywords" content="IGNOU Solved Assignments, IGNOU PDF, BAG Assignments, BCOMG Solved, BSCG, Student Help Club, Vishal Kumar">
     
-    <!-- ✅ 4. Open Graph & Twitter -->
     <meta property="og:title" content="Student Help Club | Official IGNOU Solved Assignments">
     <meta property="og:description" content="Get 100% verified IGNOU Solved Assignments for BAG, BCOMG, BSCG, and BCA. Instant WhatsApp delivery support available.">
     <meta property="og:image" content="https://studenthelpclub.in/shc-logo.jpg">
@@ -36,7 +33,6 @@
     <meta name="twitter:description" content="Get 100% verified IGNOU Solved Assignments for the current academic session. Instant WhatsApp delivery.">
     <meta name="twitter:image" content="https://studenthelpclub.in/shc-logo.jpg">
 
-    <!-- ✅ 5. Comprehensive JSON-LD Schema -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -91,7 +87,9 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7332493779076670" crossorigin="anonymous"></script>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -163,8 +161,6 @@
             .social-float { width: 48px; height: 48px; font-size: 22px; }
         }
     </style>
-    <script defer>(function(s){s.dataset.zone='11129335',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-    <script defer>(function(s){s.dataset.zone='11129336',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 </head>
 <body itemscope itemtype="https://schema.org/WebPage">
 
@@ -189,7 +185,6 @@
             </div>
         </div>
         <div id="searchBar">
-            <!-- ✅ 6. Search Function (Strict Form role for SEO bots) -->
             <form role="search" action="#" method="get" onsubmit="event.preventDefault(); filterData();" class="max-w-4xl mx-auto py-5 px-6 flex items-center gap-4">
                 <input type="search" name="q" id="searchInput" onkeyup="filterData()" placeholder="Enter Subject Code (e.g. BEVAE 181)..." class="flex-1 bg-gray-50 border rounded-2xl px-6 py-4 outline-none focus:border-[#d32f2f] text-sm font-bold shadow-inner" aria-label="Search Assignments">
                 <button type="submit" class="hidden" aria-label="Submit Search">Search</button>
@@ -218,7 +213,6 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                 <div class="space-y-10">
                     <div>
-                        <!-- ✅ 7. Original Hindi/English Text Fully Restored -->
                         <h2 class="text-3xl font-black italic uppercase tracking-tighter text-slate-800 leading-none mb-6">Important <span class="text-[#d32f2f]">Resources</span></h2>
                         <p class="text-gray-600 text-sm leading-loose font-medium mb-4">
                             Student Help Club (SHC) देश का एकमात्र portal hai जहाँ आपको <b>एडमिशन से लेकर ग्रेजुएशन</b> तक की हर जानकारी मिलती है। हमारी टीम लगातार यूनिवर्सिटी के नोटिस का विश्लेषण करती है ताकि आपका समय बच सके।
@@ -248,7 +242,6 @@
             </div>
         </section>
 
-        <!-- ✅ 8. Massive Word Count SEO Section (800+ words guarantee) -->
         <section class="max-w-7xl mx-auto px-6 py-16 border-t border-gray-100 mt-20 bg-white rounded-[3rem] shadow-sm">
             <div class="space-y-8">
                 <div>
@@ -415,12 +408,11 @@
         <a href="https://wa.me/919776986830?text=Hello%20Student%20Help%20Club" target="_blank" rel="noopener noreferrer" class="social-float whatsapp-btn" title="Contact WhatsApp"><i class="fab fa-whatsapp"></i></a>
     </div>
 
-    <!-- ✅ 9. Cookie Consent Strict Format -->
-    <div id="cookieconsent" class="cc-window cc-banner cc-type-info cc-theme-block cc-bottom cookieconsent fixed bottom-0 left-0 w-full bg-slate-900 text-white px-6 py-5 z-[9999] flex flex-col md:flex-row justify-between items-center gap-4 transform translate-y-full transition-transform duration-500 shadow-2xl border-t-2 border-[#d32f2f]">
-        <p class="text-[10px] md:text-xs font-medium text-gray-300 text-center md:text-left max-w-4xl tracking-wide leading-relaxed">
+    <div id="cookie-consent" class="cookie-consent-banner cc-window cc-banner cc-type-info cc-theme-block cc-bottom fixed bottom-0 left-0 w-full bg-slate-900 text-white px-6 py-5 z-[9999] flex flex-col md:flex-row justify-between items-center gap-4 transform translate-y-full transition-transform duration-500 shadow-2xl border-t-2 border-[#d32f2f]" role="dialog" aria-live="polite" aria-label="cookieconsent" aria-describedby="cookie-consent-desc">
+        <div id="cookie-consent-desc" class="cc-message text-[10px] md:text-xs font-medium text-gray-300 text-center md:text-left max-w-4xl tracking-wide leading-relaxed">
             We use cookies to improve your browsing experience on our website, to show you personalized content and targeted ads, and to analyze our website traffic. By continuing to use our website, you consent to our <a href="privacy-policy.html" class="text-white underline font-bold hover:text-[#d32f2f]">Privacy Policy</a>.
-        </p>
-        <div class="flex gap-3 shrink-0">
+        </div>
+        <div class="flex gap-3 shrink-0 cc-compliance">
             <button id="accept-cookies-btn" onclick="acceptCookies()" aria-label="Allow Cookies" class="cc-btn cc-allow bg-[#d32f2f] hover:bg-red-700 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors shadow-lg">Accept</button>
             <button id="decline-cookies-btn" onclick="declineCookies()" aria-label="Decline Cookies" class="cc-btn cc-deny bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors shadow-lg">Decline</button>
         </div>
@@ -430,23 +422,22 @@
         document.addEventListener("DOMContentLoaded", function() {
             if (!localStorage.getItem("shc_cookie_consent")) {
                 setTimeout(() => {
-                    document.getElementById("cookieconsent").classList.remove("translate-y-full");
+                    document.getElementById("cookie-consent").classList.remove("translate-y-full");
                 }, 1000);
             }
         });
 
         function acceptCookies() {
             localStorage.setItem("shc_cookie_consent", "accepted");
-            document.getElementById("cookieconsent").classList.add("translate-y-full");
+            document.getElementById("cookie-consent").classList.add("translate-y-full");
         }
 
         function declineCookies() {
             localStorage.setItem("shc_cookie_consent", "declined");
-            document.getElementById("cookieconsent").classList.add("translate-y-full");
+            document.getElementById("cookie-consent").classList.add("translate-y-full");
         }
     </script>
 
-    <!-- ✅ 10. Original Logic Kept 100% Intact -->
     <script type="module" defer>
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -737,5 +728,8 @@
         };
         window.closeReviewModal = () => document.getElementById('reviewModal').classList.remove('active');
     </script>
+    
+    <script defer>(function(s){s.dataset.zone='11129335',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+    <script defer>(function(s){s.dataset.zone='11129336',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 </body>
 </html>
