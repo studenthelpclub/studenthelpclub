@@ -7,7 +7,6 @@
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
     <meta name="author" content="Vishal Kumar - Student Help Club">
 
-    <!-- ✅ DNS Preconnects -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://firestore.googleapis.com">
@@ -20,7 +19,6 @@
     <meta name="description" itemprop="description" content="Download verified IGNOU Solved Assignments for the current academic session. Premium PDF solutions for BAG, BCOMG, BSCG, BCA delivered instantly on WhatsApp.">
     <meta name="keywords" content="IGNOU Solved Assignments, IGNOU PDF, BAG Assignments, BCOMG Solved, BSCG, Student Help Club, Vishal Kumar">
     
-    <!-- Open Graph & Twitter -->
     <meta property="og:title" content="Student Help Club | Official IGNOU Solved Assignments">
     <meta property="og:description" content="Get 100% verified IGNOU Solved Assignments for BAG, BCOMG, BSCG, and BCA. Instant WhatsApp delivery support available.">
     <meta property="og:image" content="https://studenthelpclub.in/shc-logo.jpg">
@@ -33,7 +31,6 @@
     <meta name="twitter:description" content="Get 100% verified IGNOU Solved Assignments for the current academic session. Instant WhatsApp delivery.">
     <meta name="twitter:image" content="https://studenthelpclub.in/shc-logo.jpg">
 
-    <!-- Schema Markup -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -73,7 +70,6 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     
-    <!-- Core Tag Manager setup (Lightweight, main script lazy loaded below) -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -81,10 +77,8 @@
       gtag('config', 'G-WKEZF1XEMF');
     </script>
     
-    <!-- Tailwind CDN (Deferred) -->
     <script defer src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Fix FontAwesome Render Blocking -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
     
@@ -130,7 +124,6 @@
 </head>
 <body itemscope itemtype="https://schema.org/WebPage">
 
-    <!-- Independent CSS Loader -->
     <div id="loader"><i class="fas fa-circle-notch fa-spin loader-icon"></i></div>
 
     <nav class="bg-white/80 backdrop-blur-md border-b px-6 py-5 sticky top-0 z-[1000]">
@@ -209,7 +202,6 @@
             </div>
         </section>
 
-        <!-- SEO Word Count & FAQ Section -->
         <section class="max-w-7xl mx-auto px-6 py-16 border-t border-gray-100 mt-20 bg-white rounded-[3rem] shadow-sm">
             <div class="space-y-8">
                 <div>
@@ -228,7 +220,7 @@
                         In the Indira Gandhi National Open University (IGNOU) evaluation system, assignments carry a massive 30% weightage in your final mark sheet. Failing to submit them, or submitting poor-quality copied content, can directly affect your overall percentage and might even delay your degree completion. That is why at Student Help Club, we do not just provide generic answers from the internet. We ensure that every solution adheres strictly to the official IGNOU word limits, formatting guidelines, and syllabus parameters for the current academic session. Quality is our primary focus, and our high-scoring PDFs reflect the meticulous research done by our academic experts.
                     </p>
                     <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                        हमारे पोर्टल पर आपको केवल असाइनमेंट ही नहीं, बल्कि परीक्षा की तैयारी के लिए महत्वपूर्ण प्रश्न, पिछले वर्ष के paper (PYQ) Aur विषय-वार अध्ययन सामग्री भी मिलती है। हम छात्रों को समय पर सूचनाएं प्रदान करते हैं ताकि उनका कोई भी महत्वपूर्ण अपडेट मिस न हो। शिक्षा को सुलभ बनाना ही हमारा एकमात्र उद्देश्य है।
+                        हमारे पोर्टल पर आपको केवल असाइनमेंट ही नहीं, बल्कि परीक्षा की तैयारी के लिए महत्वपूर्ण प्रश्न, पिछले वर्ष के paper (PYQ) Aur विषय-वार अध्ययन सामग्री भी मिलती है। हम छात्रों को समय पर सूचनाएं प्रदान करते हैं ताकि उनका कोई भी महत्वपूर्ण अपडेट मिस नোহর। शिक्षा को सुलभ बनाना ही हमारा एकमात्र उद्देश्य है।
                     </p>
                 </div>
 
@@ -404,7 +396,6 @@
         }
     </script>
 
-    <!-- ✅ Your Logic (No Changes Here) -->
     <script type="module" defer>
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -560,7 +551,6 @@
         window.closeReviewModal = () => document.getElementById('reviewModal').classList.remove('active');
     </script>
     
-    <!-- ✅ Advanced Lazy Load for Heavy Ad Scripts (Loads ONLY on user interaction) -->
     <script>
         let heavyScriptsLoaded = false;
         function loadHeavyScripts() {
@@ -579,17 +569,6 @@
             adsense.async = true;
             adsense.crossOrigin = 'anonymous';
             document.body.appendChild(adsense);
-
-            // Load Custom Ads
-            let ad1 = document.createElement('script');
-            ad1.dataset.zone = '11129335';
-            ad1.src = 'https://nap5k.com/tag.min.js';
-            document.body.appendChild(ad1);
-
-            let ad2 = document.createElement('script');
-            ad2.dataset.zone = '11129336';
-            ad2.src = 'https://n6wxm.com/vignette.min.js';
-            document.body.appendChild(ad2);
         }
 
         // Trigger loading scripts on first scroll, mouse move, or touch
