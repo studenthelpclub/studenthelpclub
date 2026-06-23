@@ -4,9 +4,7 @@
       "source": "/blog/:slug",
       "destination": "/blog.html"
     }
-  ]
-}
-{
+  ],
   "headers": [
     {
       "source": "/(.*)",
