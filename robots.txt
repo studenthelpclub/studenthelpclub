@@ -1,4 +1,6 @@
 User-agent: *
+Disallow: /vishal.html
+Disallow: /login.html
 Allow: /
 
 Sitemap: https://studenthelpclub.in/sitemap.xml
