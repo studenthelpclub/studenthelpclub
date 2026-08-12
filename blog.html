@@ -9,7 +9,7 @@
     <meta name="author" content="Vishal Kumar">
     <meta name="robots" content="index, follow">
 
-    <!-- FIX: Added Canonical Tag -->
+    <!-- Canonical Tag -->
     <link rel="canonical" href="https://studenthelpclub.in/blog.html" />
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,7 +24,7 @@
         #loader { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
     </style>
-    </head>
+</head>
 <body>
 
     <div id="loader"><i class="fas fa-circle-notch fa-spin text-3xl text-[#d32f2f]"></i></div>
@@ -32,7 +32,6 @@
     <nav class="bg-white/90 backdrop-blur-md border-b px-4 py-4 sticky top-0 z-[1000]">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
             <a href="/" class="text-[#d32f2f] font-bold text-[10px] uppercase"><i class="fas fa-arrow-left"></i> Store</a>
-            <!-- FIX: Changed h1 to span to prevent multiple H1 errors -->
             <span class="text-md font-black italic text-slate-800 uppercase tracking-tighter">Important Updates</span>
         </div>
     </nav>
@@ -40,7 +39,6 @@
     <main class="max-w-4xl mx-auto px-4 py-8 min-h-[70vh]">
         <div id="blogListView">
             <div class="mb-10 text-center md:text-left">
-                <!-- FIX: Promoted this h2 to h1 as it is the main heading of this view -->
                 <h1 class="text-3xl md:text-4xl font-black italic uppercase text-slate-800 mb-2">IGNOU <span class="text-[#d32f2f]">Updates</span></h1>
             </div>
             <section id="articleGrid" class="grid grid-cols-1 gap-4"></section>
@@ -81,6 +79,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        // Restored Original Lite SDK 
         import { getFirestore, collection, getDocs, addDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-lite.js";
 
         const firebaseConfig = {
@@ -97,22 +96,23 @@
         let allArticles = [];
         let activeId = null;
 
-        // Title se automatic Clean URL Friendly Slug banane ka function
-       function generateSlug(title) {
-    return title
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, '-')          // Spaces ko hyphen mein badlein
-        .replace(/[^\w\-]+/g, '')        // Special characters hatayein
-        .replace(/\-\-+/g, '-')         // Double hyphen hatayein
-        .replace(/^-+|-+$/g, '');       // 🔥 SEEDHE FIX: Aakhiri aur shuruat ke saare extra hyphens (-) ko automatic hatao
-    }
+        function generateSlug(title) {
+            // Safety check: Agar Firestore me title missing hoga toh page crash nahi karega
+            if (!title) return "article-" + Math.floor(Math.random() * 1000); 
+            
+            return title
+                .toString()
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, '-')          
+                .replace(/[^\w\-]+/g, '')        
+                .replace(/\-\-+/g, '-')         
+                .replace(/^-+|-+$/g, '');       
+        }
 
         async function fetchArticles() {
             try {
                 const snap = await getDocs(collection(db, "articles"));
-                // database ke data me automatic slug add kar rahe hain title ke basis par
                 allArticles = snap.docs.map(doc => {
                     const data = doc.data();
                     const slug = data.slug || generateSlug(data.title);
@@ -120,7 +120,9 @@
                 });
                 renderList();
                 checkURL();
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error("Firebase Error:", e); 
+            }
             document.getElementById('loader').classList.add('hidden');
         }
 
@@ -130,7 +132,7 @@
                 <div class="article-card p-5 flex gap-4 items-center" onclick="openArticleBySlug('${art.slug}')">
                     <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center text-[#d32f2f] shrink-0"><i class="fas fa-file-alt"></i></div>
                     <div class="text-left">
-                        <h3 class="text-sm font-bold text-slate-800 uppercase italic">${art.title}</h3>
+                        <h3 class="text-sm font-bold text-slate-800 uppercase italic">${art.title || 'Untitled Article'}</h3>
                     </div>
                 </div>
             `).join('');
@@ -139,10 +141,9 @@
         window.openArticleBySlug = async (slug) => {
             const art = allArticles.find(a => a.slug === slug);
             if(!art) return;
-            activeId = art.id; // Comments ke liye real unique ID save rakhenge
+            activeId = art.id; 
             
-            // --- SEO DYNAMIC UPDATES ---
-            document.title = `${art.title} | Student Help Club`;
+            document.title = `${art.title || 'Update'} | Student Help Club`;
             const metaDesc = document.getElementById('meta-desc');
             if(art.shortDesc) metaDesc.setAttribute("content", art.shortDesc);
 
@@ -154,7 +155,7 @@
             document.getElementById('blogListView').classList.add('hidden');
             document.getElementById('fullArticleView').classList.remove('hidden');
             
-            // YAHAN BADLAV KIYA: URL me ab ID nahi, Title wala Slug dikhega
+            // Restored your original clean URL push state
             window.history.pushState({slug: slug}, art.title, `/blog/${slug}`);
             loadComments(activeId);
             window.scrollTo(0,0);
@@ -164,11 +165,11 @@
             document.title = "Important Updates | Student Help Club";
             document.getElementById('blogListView').classList.remove('hidden');
             document.getElementById('fullArticleView').classList.add('hidden');
+            // Restored your original URL fallback
             window.history.pushState({}, '', '/blog.html');
             window.scrollTo(0,0);
         };
 
-        // Comments loading...
         async function loadComments(id) {
             const list = document.getElementById('commentList');
             list.innerHTML = "<p class='text-xs italic text-gray-400'>Loading...</p>";
@@ -200,14 +201,13 @@
             } catch(e) { alert("Error!"); }
         };
 
-        // URL check logic updated for slug string instead of direct firestore ID
+        // Restored your original URL checking logic exactly as it was
         function checkURL() {
             const pathArray = window.location.pathname.split('/');
             if (pathArray.includes('blog') && pathArray[pathArray.length - 1] !== 'blog' && pathArray[pathArray.length - 1] !== 'blog.html') {
                 const currentSlug = pathArray[pathArray.length - 1];
                 if(currentSlug) openArticleBySlug(currentSlug);
             } else {
-                // Purani query structure (?id=) ka fallback backup
                 const fallbackId = new URLSearchParams(window.location.search).get('id');
                 if(fallbackId) {
                     const art = allArticles.find(a => a.id === fallbackId);
