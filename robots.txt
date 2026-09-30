@@ -3,4 +3,4 @@ Disallow: /vishal.html
 Disallow: /login.html
 Allow: /
 
-Sitemap: https://studenthelpclub.in/sitemap.xml
+Sitemap: https://www.studenthelpclub.in/sitemap.xml
