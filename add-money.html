@@ -80,7 +80,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, collection, query, where, orderBy, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // import line me updateDoc aur increment add kiya gaya hai
+        import { getFirestore, doc, getDoc, collection, query, where, orderBy, getDocs, addDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = { apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8", authDomain: "ignou-web.firebaseapp.com", projectId: "ignou-web", storageBucket: "ignou-web.firebasestorage.app", messagingSenderId: "854950506403", appId: "1:854950506403:web:941a56126a36fd3f9d7416" };
@@ -232,6 +233,7 @@
                             
                             const verifyResult = await verifyRes.json();
                             if(verifyResult.success) {
+                                // 1. Save History
                                 await addDoc(collection(db, "wallet_history"), {
                                     uid: currentUser.uid,
                                     paidAmount: selectedAmount,
@@ -240,12 +242,11 @@
                                     rzp_id: paymentResponse.razorpay_payment_id,
                                     date: new Date().getTime()
                                 });
-                                // Wallet history save hone ke baad ye line chalegi
-                                import { updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Isko script ke sabse upar imports me daal dena
 
+                                // 2. Update User's Main Wallet Balance
                                 const userRef = doc(db, "users", currentUser.uid);
                                 await updateDoc(userRef, {
-                                walletBalance: increment(totalToWallet)
+                                    walletBalance: increment(totalToWallet)
                                 });
 
                                 btn.innerHTML = '<i class="fas fa-check mr-2"></i> Success!';
@@ -259,7 +260,7 @@
                                 btn.disabled = false;
                             }
                         } catch (err) {
-                             console.error(err);
+                             console.error("Verification error:", err);
                              alert("Error verifying payment.");
                              btn.innerText = originalText;
                              btn.disabled = false;
@@ -278,7 +279,7 @@
                 rzp.open();
 
             } catch (error) {
-                console.error(error);
+                console.error("Order creation error:", error);
                 alert("Error connecting to payment server.");
                 btn.innerText = originalText;
                 btn.disabled = false;
