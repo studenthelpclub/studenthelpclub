@@ -148,12 +148,18 @@
 </div>
 </div>
 <nav class="flex items-center gap-5">
-<a class="text-[10px] font-black uppercase text-slate-500 hover:text-[#d32f2f] tracking-widest transition" href="blog.html">Important Update</a>
-<button aria-controls="searchBar" aria-expanded="false" aria-label="Open Search" class="p-2 text-gray-500 hover:text-[#d32f2f] transition" onclick="toggleSearch()"><i aria-hidden="true" class="fas fa-search text-xl"></i></button>
-<button aria-controls="cartSheet" aria-expanded="false" aria-label="View Cart" class="relative cursor-pointer bg-gray-100 p-3 rounded-2xl border hover:bg-gray-200 transition" onclick="toggleCart()" type="button">
-<i aria-hidden="true" class="fas fa-shopping-bag text-[#d32f2f]"></i>
-<span class="absolute -top-1 -right-1 bg-[#d32f2f] text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-md" id="cartCount">0</span>
-</button>
+    <a class="text-[10px] font-black uppercase text-slate-500 hover:text-[#d32f2f] tracking-widest transition" href="blog.html">Important Update</a>
+    <button aria-controls="searchBar" aria-expanded="false" aria-label="Open Search" class="p-2 text-gray-500 hover:text-[#d32f2f] transition" onclick="toggleSearch()"><i aria-hidden="true" class="fas fa-search text-xl"></i></button>
+    
+    <!-- Login Icon -->
+    <button aria-label="Open Login" class="p-2 text-gray-500 hover:text-[#d32f2f] transition" onclick="toggleLoginModal()">
+        <i aria-hidden="true" class="fas fa-user text-xl"></i>
+    </button>
+
+    <button aria-controls="cartSheet" aria-expanded="false" aria-label="View Cart" class="relative cursor-pointer bg-gray-100 p-3 rounded-2xl border hover:bg-gray-200 transition" onclick="toggleCart()" type="button">
+        <i aria-hidden="true" class="fas fa-shopping-bag text-[#d32f2f]"></i>
+        <span class="absolute -top-1 -right-1 bg-[#d32f2f] text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-md" id="cartCount">0</span>
+    </button>
 </nav>
 </div>
 <!-- FIXED SEARCH FORM -->
