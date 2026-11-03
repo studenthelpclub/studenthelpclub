@@ -75,8 +75,9 @@
         let finalBonus = 0;
 
         // VERCEL API URL YAHAN UPDATE KAREIN
-        const VERCEL_URL = "https://studenthelpclub.in"; // Ya jo bhi Vercel domain ho
-
+// Pehle ye tha: const VERCEL_URL = "https://studenthelpclub.in";
+// Ab isko change karke sirf khali quotes kar dein:
+const VERCEL_URL = "";
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
