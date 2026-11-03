@@ -240,6 +240,13 @@
                                     rzp_id: paymentResponse.razorpay_payment_id,
                                     date: new Date().getTime()
                                 });
+                                // Wallet history save hone ke baad ye line chalegi
+                                import { updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Isko script ke sabse upar imports me daal dena
+
+                                const userRef = doc(db, "users", currentUser.uid);
+                                await updateDoc(userRef, {
+                                walletBalance: increment(totalToWallet)
+                                });
 
                                 btn.innerHTML = '<i class="fas fa-check mr-2"></i> Success!';
                                 btn.classList.replace('bg-slate-900', 'bg-green-600');
