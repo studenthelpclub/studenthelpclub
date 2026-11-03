@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <title>Add Money | Student Help Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; }
+        .amount-btn.selected { background-color: #d32f2f; color: white; border-color: #d32f2f; }
+    </style>
+</head>
+<body>
+    <header class="bg-white/80 backdrop-blur-md border-b px-6 py-5 sticky top-0 z-[1000]">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="dashboard.html" class="flex items-center gap-3 text-slate-700 hover:text-[#d32f2f] transition font-bold text-sm">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            <div class="flex items-center gap-2 bg-yellow-50 px-3 py-1.5 rounded-full border border-yellow-200">
+                <i class="fas fa-wallet text-yellow-600"></i>
+                <span class="text-xs font-black text-yellow-700">₹<span id="currentWallet">0</span></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-6 py-10">
+        <h1 class="text-2xl font-black italic uppercase text-slate-800 mb-2">Recharge Wallet</h1>
+        <p class="text-xs font-bold text-gray-500 mb-8">Select amount to add. Extra bonus applied automatically!</p>
+
+        <div class="grid grid-cols-3 gap-3 mb-6" id="amountOptions">
+            <button onclick="selectAmount(20)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹20</button>
+            <button onclick="selectAmount(40)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹40</button>
+            <button onclick="selectAmount(60)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹60</button>
+            <button onclick="selectAmount(80)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹80</button>
+            <button onclick="selectAmount(100)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹100</button>
+            <button onclick="selectAmount(120)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹120</button>
+            <button onclick="selectAmount(140)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹140</button>
+            <button onclick="selectAmount(160)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹160</button>
+            <button onclick="selectAmount(200)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹200</button>
+        </div>
+
+        <div class="bg-gray-50 rounded-2xl p-6 border mb-8">
+            <div class="flex justify-between text-sm font-bold text-gray-500 mb-2">
+                <span>You Pay:</span>
+                <span>₹<span id="payAmountDisplay">0</span></span>
+            </div>
+            <div class="flex justify-between text-sm font-bold text-green-600 mb-4">
+                <span>Extra Bonus:</span>
+                <span>+ ₹<span id="bonusDisplay">0</span></span>
+            </div>
+            <div class="flex justify-between text-lg font-black text-slate-800 border-t pt-4">
+                <span>Wallet gets:</span>
+                <span>₹<span id="totalReceiveDisplay">0</span></span>
+            </div>
+        </div>
+
+        <button id="payBtn" onclick="processPayment()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg hover:bg-[#d32f2f] transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>Proceed to Pay</button>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8", authDomain: "ignou-web.firebaseapp.com", projectId: "ignou-web", storageBucket: "ignou-web.firebasestorage.app", messagingSenderId: "854950506403", appId: "1:854950506403:web:941a56126a36fd3f9d7416" };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let selectedAmount = 0;
+        let finalBonus = 0;
+
+        // VERCEL API URL YAHAN UPDATE KAREIN
+        const VERCEL_URL = "https://shctools.in"; // Ya jo bhi Vercel domain ho
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if(userDoc.exists()) {
+                    document.getElementById('currentWallet').innerText = userDoc.data().walletBalance || 0;
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        window.selectAmount = (amount) => {
+            selectedAmount = amount;
+            
+            // Bonus Logic
+            if(amount >= 200) {
+                finalBonus = amount * 0.10; // 10%
+            } else if (amount >= 100) {
+                finalBonus = amount * 0.05; // 5%
+            } else {
+                finalBonus = 0;
+            }
+
+            // Update UI
+            document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+            
+            document.getElementById('payAmountDisplay').innerText = amount;
+            document.getElementById('bonusDisplay').innerText = finalBonus;
+            document.getElementById('totalReceiveDisplay').innerText = amount + finalBonus;
+            
+            document.getElementById('payBtn').disabled = false;
+        };
+
+        window.processPayment = async () => {
+            if(!selectedAmount || !currentUser) return;
+            const btn = document.getElementById('payBtn');
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            const totalToWallet = selectedAmount + finalBonus;
+
+            try {
+                // 1. Create Order Backend
+                const response = await fetch(`${VERCEL_URL}/api/create-order`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount: selectedAmount }) 
+                });
+                const orderData = await response.json();
+
+                // 2. Razorpay UI
+                const options = {
+                    key: "YOUR_RAZORPAY_KEY_ID", // Yahan apna key zaroor daalein
+                    amount: orderData.amount,
+                    currency: "INR",
+                    name: "Student Help Club",
+                    description: `Add ₹${totalToWallet} to Wallet`,
+                    order_id: orderData.id,
+                    handler: async function (paymentResponse) {
+                        btn.innerText = "Verifying...";
+                        // 3. Verify Payment Backend
+                        const verifyRes = await fetch(`${VERCEL_URL}/api/verify-payment`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                                razorpay_order_id: paymentResponse.razorpay_order_id,
+                                razorpay_signature: paymentResponse.razorpay_signature,
+                                uid: currentUser.uid,
+                                amountAdded: totalToWallet // Backend me increment karne ke liye
+                            })
+                        });
+                        
+                        const verifyResult = await verifyRes.json();
+                        if(verifyResult.success) {
+                            alert("Payment Successful! Wallet Updated.");
+                            window.location.href = "dashboard.html";
+                        } else {
+                            alert("Verification Failed.");
+                            btn.innerText = "Proceed to Pay";
+                            btn.disabled = false;
+                        }
+                    },
+                    prefill: { email: currentUser.email },
+                    theme: { color: "#d32f2f" }
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.on('payment.failed', function () {
+                    btn.innerText = "Proceed to Pay";
+                    btn.disabled = false;
+                });
+                rzp.open();
+
+            } catch (error) {
+                alert("Error connecting to payment server.");
+                btn.innerText = "Proceed to Pay";
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>
