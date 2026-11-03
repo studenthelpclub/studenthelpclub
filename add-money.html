@@ -10,90 +10,76 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; }
-        .amount-btn.selected { background-color: #d32f2f; color: white; border-color: #d32f2f; }
+        .amount-btn { transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
+        .amount-btn:hover { transform: translateY(-2px); }
+        .amount-btn.selected { background-color: #d32f2f; color: white; border-color: #d32f2f; transform: scale(1.05); box-shadow: 0 4px 6px -1px rgba(211, 47, 47, 0.2); }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <header class="bg-white/80 backdrop-blur-md border-b px-6 py-5 sticky top-0 z-[1000]">
+    <header class="bg-white/80 backdrop-blur-md border-b px-6 py-5 sticky top-0 z-[1000] fade-in">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="dashboard.html" class="flex items-center gap-3 text-slate-700 hover:text-[#d32f2f] transition font-bold text-sm">
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
             </a>
-            <div class="flex items-center gap-2 bg-yellow-50 px-3 py-1.5 rounded-full border border-yellow-200">
+            <div class="flex items-center gap-2 bg-yellow-50 px-3 py-1.5 rounded-full border border-yellow-200 shadow-sm transition hover:shadow-md">
                 <i class="fas fa-wallet text-yellow-600"></i>
                 <span class="text-xs font-black text-yellow-700">₹<span id="currentWallet">0</span></span>
             </div>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-6 py-10">
+    <main class="max-w-md mx-auto px-6 py-10 fade-in">
         <h1 class="text-2xl font-black italic uppercase text-slate-800 mb-2">Recharge Wallet</h1>
         <p class="text-xs font-bold text-gray-500 mb-8">Select amount to add. Extra bonus applied automatically!</p>
 
         <div class="grid grid-cols-3 gap-3 mb-6" id="amountOptions">
-            <button onclick="selectAmount(20)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹20</button>
-            <button onclick="selectAmount(40)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹40</button>
-            <button onclick="selectAmount(60)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹60</button>
-            <button onclick="selectAmount(80)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹80</button>
-            <button onclick="selectAmount(100)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹100</button>
-            <button onclick="selectAmount(120)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹120</button>
-            <button onclick="selectAmount(140)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹140</button>
-            <button onclick="selectAmount(160)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹160</button>
-            <button onclick="selectAmount(200)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹200</button>
+            <button onclick="selectAmount(20)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700">₹20</button>
+            <button onclick="selectAmount(40)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700">₹40</button>
+            <button onclick="selectAmount(60)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700">₹60</button>
+            <button onclick="selectAmount(80)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700">₹80</button>
+            <button onclick="selectAmount(100)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700">₹100</button>
+            <button onclick="selectAmount(120)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700">₹120</button>
+            <button onclick="selectAmount(140)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700">₹140</button>
+            <button onclick="selectAmount(160)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700">₹160</button>
+            <button onclick="selectAmount(200)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700">₹200</button>
         </div>
+        
         <!-- Custom Amount Box -->
         <div class="mb-8">
-            <label class="text-[10px] font-black uppercase text-gray-400 block mb-2">Or enter custom amount</label>
-            <input type="number" id="customAmountInput" placeholder="Enter amount (e.g. 500)" class="w-full bg-white border-2 border-gray-100 rounded-2xl px-5 py-4 outline-none font-black text-slate-700 focus:border-[#d32f2f] transition" oninput="handleCustomAmount()">
+            <label class="text-[10px] font-black uppercase text-gray-400 block mb-2 transition">Or enter custom amount</label>
+            <input type="number" id="customAmountInput" placeholder="Enter amount (e.g. 500)" class="w-full bg-white border-2 border-gray-100 rounded-2xl px-5 py-4 outline-none font-black text-slate-700 focus:border-[#d32f2f] transition shadow-sm hover:shadow" oninput="handleCustomAmount()">
         </div>
 
-        <div class="bg-gray-50 rounded-2xl p-6 border mb-8">
-            <!-- (Ye section wahi rahega jo pehle se hai) -->
+        <div class="bg-gray-50 rounded-2xl p-6 border mb-8 shadow-sm transition hover:shadow-md">
             <div class="flex justify-between text-sm font-bold text-gray-500 mb-2">
                 <span>You Pay:</span>
-                <span>₹<span id="payAmountDisplay">0</span></span>
+                <span>₹<span id="payAmountDisplay" class="transition-all">0</span></span>
             </div>
             <div class="flex justify-between text-sm font-bold text-green-600 mb-4">
                 <span>Extra Bonus:</span>
-                <span>+ ₹<span id="bonusDisplay">0</span></span>
+                <span>+ ₹<span id="bonusDisplay" class="transition-all">0</span></span>
             </div>
             <div class="flex justify-between text-lg font-black text-slate-800 border-t pt-4">
                 <span>Wallet gets:</span>
-                <span>₹<span id="totalReceiveDisplay">0</span></span>
+                <span class="text-[#d32f2f]">₹<span id="totalReceiveDisplay" class="transition-all">0</span></span>
             </div>
         </div>
 
-        <button id="payBtn" onclick="processPayment()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg hover:bg-[#d32f2f] transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-12" disabled>Proceed to Pay</button>
+        <button id="payBtn" onclick="processPayment()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg hover:bg-[#d32f2f] hover:shadow-xl hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-lg mb-12" disabled>Proceed to Pay</button>
         
         <!-- Add Money History Section -->
-        <div class="border-t pt-8 mb-10">
-            <h2 class="text-lg font-black italic uppercase text-slate-800 mb-4">Recharge History</h2>
+        <div class="border-t pt-8 mb-10 fade-in" style="animation-delay: 0.1s;">
+            <h2 class="text-lg font-black italic uppercase text-slate-800 mb-4 flex items-center gap-2"><i class="fas fa-history text-gray-400"></i> Recharge History</h2>
             <div id="historyContainer" class="space-y-3">
                 <p class="text-xs text-gray-400 font-bold text-center py-4">Loading history...</p>
             </div>
         </div>
-
-        <div class="bg-gray-50 rounded-2xl p-6 border mb-8">
-            <div class="flex justify-between text-sm font-bold text-gray-500 mb-2">
-                <span>You Pay:</span>
-                <span>₹<span id="payAmountDisplay">0</span></span>
-            </div>
-            <div class="flex justify-between text-sm font-bold text-green-600 mb-4">
-                <span>Extra Bonus:</span>
-                <span>+ ₹<span id="bonusDisplay">0</span></span>
-            </div>
-            <div class="flex justify-between text-lg font-black text-slate-800 border-t pt-4">
-                <span>Wallet gets:</span>
-                <span>₹<span id="totalReceiveDisplay">0</span></span>
-            </div>
-        </div>
-
-        <button id="payBtn" onclick="processPayment()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg hover:bg-[#d32f2f] transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>Proceed to Pay</button>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        // Firestore imports me naye functions add kiye
         import { getFirestore, doc, getDoc, collection, query, where, orderBy, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
@@ -105,7 +91,7 @@
         let currentUser = null;
         let selectedAmount = 0;
         let finalBonus = 0;
-        const VERCEL_URL = "";
+        const VERCEL_URL = ""; 
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -114,13 +100,12 @@
                 if(userDoc.exists()) {
                     document.getElementById('currentWallet').innerText = userDoc.data().walletBalance || 0;
                 }
-                loadHistory(); // User aate hi history load hogi
+                loadHistory(); 
             } else {
                 window.location.href = "index.html";
             }
         });
 
-        // Naya function: History Load karna
         async function loadHistory() {
             const container = document.getElementById('historyContainer');
             try {
@@ -128,21 +113,21 @@
                 const snap = await getDocs(q);
                 
                 if (snap.empty) {
-                    container.innerHTML = '<p class="text-xs text-gray-400 font-bold text-center py-4 bg-gray-50 rounded-xl">No recharges yet.</p>';
+                    container.innerHTML = '<p class="text-xs text-gray-400 font-bold text-center py-6 bg-gray-50 rounded-2xl border border-dashed border-gray-200">No recharges yet.</p>';
                     return;
                 }
                 
                 let html = '';
-                snap.forEach(doc => {
+                snap.forEach((doc, index) => {
                     const data = doc.data();
-                    const d = new Date(data.date).toLocaleDateString('en-IN');
-                    html += `<div class="bg-white border rounded-xl p-4 flex justify-between items-center shadow-sm">
+                    const d = new Date(data.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    html += `<div class="bg-white border border-gray-100 rounded-2xl p-5 flex justify-between items-center shadow-sm hover:shadow transition-shadow fade-in" style="animation-delay: ${index * 0.05}s">
                         <div>
-                            <p class="text-[10px] text-gray-400 font-bold mb-1">${d}</p>
+                            <p class="text-[10px] text-gray-400 font-bold mb-1"><i class="far fa-calendar-alt mr-1"></i> ${d}</p>
                             <p class="text-xs font-black text-slate-700 uppercase">Paid: ₹${data.paidAmount}</p>
                         </div>
                         <div class="text-right">
-                            <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-[9px] font-black uppercase block mb-1">Success</span>
+                            <span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider block mb-1.5"><i class="fas fa-check-circle mr-1"></i> Success</span>
                             <p class="text-sm font-black text-[#d32f2f]">+₹${data.totalAdded}</p>
                         </div>
                     </div>`;
@@ -150,10 +135,10 @@
                 container.innerHTML = html;
             } catch (e) {
                 container.innerHTML = '<p class="text-xs text-red-400 font-bold text-center py-4">Could not load history.</p>';
+                console.error("History Load Error:", e);
             }
         }
 
-        // Calculation Logic
         const calculateBonus = (amount) => {
             if(amount >= 200) return amount * 0.10;
             if(amount >= 100) return amount * 0.05;
@@ -164,23 +149,42 @@
             selectedAmount = amount;
             finalBonus = calculateBonus(amount);
             
-            document.getElementById('payAmountDisplay').innerText = amount;
-            document.getElementById('bonusDisplay').innerText = finalBonus;
-            document.getElementById('totalReceiveDisplay').innerText = amount + finalBonus;
+            // Animate number change
+            const animateValue = (id, start, end, duration) => {
+                const obj = document.getElementById(id);
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    obj.innerText = Math.floor(progress * (end - start) + start);
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    } else {
+                        obj.innerText = end;
+                    }
+                };
+                window.requestAnimationFrame(step);
+            };
+
+            const currentPay = parseInt(document.getElementById('payAmountDisplay').innerText) || 0;
+            const currentBonus = parseInt(document.getElementById('bonusDisplay').innerText) || 0;
+            const currentTotal = parseInt(document.getElementById('totalReceiveDisplay').innerText) || 0;
+
+            animateValue('payAmountDisplay', currentPay, amount, 200);
+            animateValue('bonusDisplay', currentBonus, finalBonus, 200);
+            animateValue('totalReceiveDisplay', currentTotal, amount + finalBonus, 200);
+            
             document.getElementById('payBtn').disabled = amount <= 0;
         };
 
         window.selectAmount = (amount) => {
-            // Agar box wala button dabaya, toh custom input khali kar do
             document.getElementById('customAmountInput').value = '';
             document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('selected'));
             event.target.classList.add('selected');
             updateDisplay(amount);
         };
 
-        // Naya function: Custom Input Handle karna
         window.handleCustomAmount = () => {
-            // Agar custom me type kiya, toh box wale buttons deselect kar do
             document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('selected'));
             const val = parseInt(document.getElementById('customAmountInput').value);
             updateDisplay(val || 0);
@@ -189,7 +193,8 @@
         window.processPayment = async () => {
             if(!selectedAmount || !currentUser) return;
             const btn = document.getElementById('payBtn');
-            btn.innerText = "Processing...";
+            const originalText = btn.innerText;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Processing...';
             btn.disabled = true;
 
             const totalToWallet = selectedAmount + finalBonus;
@@ -203,45 +208,54 @@
                 const orderData = await response.json();
 
                 const options = {
-                    key: "rzp_live_TvhdwRfYGlhiva", // Aapki key
+                    key: "rzp_live_TvhdwRfYGlhiva", 
                     amount: orderData.amount,
                     currency: "INR",
                     name: "Student Help Club",
                     description: `Add ₹${totalToWallet} to Wallet`,
                     order_id: orderData.id,
                     handler: async function (paymentResponse) {
-                        btn.innerText = "Verifying...";
+                        btn.innerHTML = '<i class="fas fa-shield-alt mr-2"></i> Verifying...';
                         
-                        const verifyRes = await fetch(`${VERCEL_URL}/api/verify-payment`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                razorpay_payment_id: paymentResponse.razorpay_payment_id,
-                                razorpay_order_id: paymentResponse.razorpay_order_id,
-                                razorpay_signature: paymentResponse.razorpay_signature,
-                                uid: currentUser.uid,
-                                amountAdded: totalToWallet
-                            })
-                        });
-                        
-                        const verifyResult = await verifyRes.json();
-                        if(verifyResult.success) {
-                            // Payment success hone par Firestore me History Entry save karna
-                            await addDoc(collection(db, "wallet_history"), {
-                                uid: currentUser.uid,
-                                paidAmount: selectedAmount,
-                                bonusAmount: finalBonus,
-                                totalAdded: totalToWallet,
-                                rzp_id: paymentResponse.razorpay_payment_id,
-                                date: new Date().getTime()
+                        try {
+                            const verifyRes = await fetch(`${VERCEL_URL}/api/verify-payment`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                                    razorpay_order_id: paymentResponse.razorpay_order_id,
+                                    razorpay_signature: paymentResponse.razorpay_signature,
+                                    uid: currentUser.uid,
+                                    amountAdded: totalToWallet
+                                })
                             });
+                            
+                            const verifyResult = await verifyRes.json();
+                            if(verifyResult.success) {
+                                await addDoc(collection(db, "wallet_history"), {
+                                    uid: currentUser.uid,
+                                    paidAmount: selectedAmount,
+                                    bonusAmount: finalBonus,
+                                    totalAdded: totalToWallet,
+                                    rzp_id: paymentResponse.razorpay_payment_id,
+                                    date: new Date().getTime()
+                                });
 
-                            alert("Payment Successful! Wallet Updated.");
-                            window.location.href = "dashboard.html";
-                        } else {
-                            alert("Verification Failed.");
-                            btn.innerText = "Proceed to Pay";
-                            btn.disabled = false;
+                                btn.innerHTML = '<i class="fas fa-check mr-2"></i> Success!';
+                                btn.classList.replace('bg-slate-900', 'bg-green-600');
+                                setTimeout(() => {
+                                    window.location.href = "dashboard.html";
+                                }, 1000);
+                            } else {
+                                alert("Verification Failed. Please contact support.");
+                                btn.innerText = originalText;
+                                btn.disabled = false;
+                            }
+                        } catch (err) {
+                             console.error(err);
+                             alert("Error verifying payment.");
+                             btn.innerText = originalText;
+                             btn.disabled = false;
                         }
                     },
                     prefill: { email: currentUser.email },
@@ -249,122 +263,17 @@
                 };
 
                 const rzp = new window.Razorpay(options);
-                rzp.on('payment.failed', function () {
-                    btn.innerText = "Proceed to Pay";
+                rzp.on('payment.failed', function (response) {
+                    console.error("Payment Failed", response.error);
+                    btn.innerText = originalText;
                     btn.disabled = false;
                 });
                 rzp.open();
 
             } catch (error) {
+                console.error(error);
                 alert("Error connecting to payment server.");
-                btn.innerText = "Proceed to Pay";
-                btn.disabled = false;
-            }
-        };
-
-        // VERCEL API URL YAHAN UPDATE KAREIN
-// Pehle ye tha: const VERCEL_URL = "https://studenthelpclub.in";
-// Ab isko change karke sirf khali quotes kar dein:
-const VERCEL_URL = "";
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if(userDoc.exists()) {
-                    document.getElementById('currentWallet').innerText = userDoc.data().walletBalance || 0;
-                }
-            } else {
-                window.location.href = "index.html";
-            }
-        });
-
-        window.selectAmount = (amount) => {
-            selectedAmount = amount;
-            
-            // Bonus Logic
-            if(amount >= 200) {
-                finalBonus = amount * 0.10; // 10%
-            } else if (amount >= 100) {
-                finalBonus = amount * 0.05; // 5%
-            } else {
-                finalBonus = 0;
-            }
-
-            // Update UI
-            document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('selected'));
-            event.target.classList.add('selected');
-            
-            document.getElementById('payAmountDisplay').innerText = amount;
-            document.getElementById('bonusDisplay').innerText = finalBonus;
-            document.getElementById('totalReceiveDisplay').innerText = amount + finalBonus;
-            
-            document.getElementById('payBtn').disabled = false;
-        };
-
-        window.processPayment = async () => {
-            if(!selectedAmount || !currentUser) return;
-            const btn = document.getElementById('payBtn');
-            btn.innerText = "Processing...";
-            btn.disabled = true;
-
-            const totalToWallet = selectedAmount + finalBonus;
-
-            try {
-                // 1. Create Order Backend
-                const response = await fetch(`${VERCEL_URL}/api/create-order`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ amount: selectedAmount }) 
-                });
-                const orderData = await response.json();
-
-                // 2. Razorpay UI
-                const options = {
-                    key: "rzp_live_TvhdwRfYGlhiva", // Yahan apna key zaroor daalein
-                    amount: orderData.amount,
-                    currency: "INR",
-                    name: "Student Help Club",
-                    description: `Add ₹${totalToWallet} to Wallet`,
-                    order_id: orderData.id,
-                    handler: async function (paymentResponse) {
-                        btn.innerText = "Verifying...";
-                        // 3. Verify Payment Backend
-                        const verifyRes = await fetch(`${VERCEL_URL}/api/verify-payment`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                razorpay_payment_id: paymentResponse.razorpay_payment_id,
-                                razorpay_order_id: paymentResponse.razorpay_order_id,
-                                razorpay_signature: paymentResponse.razorpay_signature,
-                                uid: currentUser.uid,
-                                amountAdded: totalToWallet // Backend me increment karne ke liye
-                            })
-                        });
-                        
-                        const verifyResult = await verifyRes.json();
-                        if(verifyResult.success) {
-                            alert("Payment Successful! Wallet Updated.");
-                            window.location.href = "dashboard.html";
-                        } else {
-                            alert("Verification Failed.");
-                            btn.innerText = "Proceed to Pay";
-                            btn.disabled = false;
-                        }
-                    },
-                    prefill: { email: currentUser.email },
-                    theme: { color: "#d32f2f" }
-                };
-
-                const rzp = new window.Razorpay(options);
-                rzp.on('payment.failed', function () {
-                    btn.innerText = "Proceed to Pay";
-                    btn.disabled = false;
-                });
-                rzp.open();
-
-            } catch (error) {
-                alert("Error connecting to payment server.");
-                btn.innerText = "Proceed to Pay";
+                btn.innerText = originalText;
                 btn.disabled = false;
             }
         };
