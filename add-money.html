@@ -41,6 +41,37 @@
             <button onclick="selectAmount(160)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹160</button>
             <button onclick="selectAmount(200)" class="amount-btn bg-white border-2 border-gray-100 rounded-2xl py-4 font-black text-slate-700 transition">₹200</button>
         </div>
+        <!-- Custom Amount Box -->
+        <div class="mb-8">
+            <label class="text-[10px] font-black uppercase text-gray-400 block mb-2">Or enter custom amount</label>
+            <input type="number" id="customAmountInput" placeholder="Enter amount (e.g. 500)" class="w-full bg-white border-2 border-gray-100 rounded-2xl px-5 py-4 outline-none font-black text-slate-700 focus:border-[#d32f2f] transition" oninput="handleCustomAmount()">
+        </div>
+
+        <div class="bg-gray-50 rounded-2xl p-6 border mb-8">
+            <!-- (Ye section wahi rahega jo pehle se hai) -->
+            <div class="flex justify-between text-sm font-bold text-gray-500 mb-2">
+                <span>You Pay:</span>
+                <span>₹<span id="payAmountDisplay">0</span></span>
+            </div>
+            <div class="flex justify-between text-sm font-bold text-green-600 mb-4">
+                <span>Extra Bonus:</span>
+                <span>+ ₹<span id="bonusDisplay">0</span></span>
+            </div>
+            <div class="flex justify-between text-lg font-black text-slate-800 border-t pt-4">
+                <span>Wallet gets:</span>
+                <span>₹<span id="totalReceiveDisplay">0</span></span>
+            </div>
+        </div>
+
+        <button id="payBtn" onclick="processPayment()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg hover:bg-[#d32f2f] transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-12" disabled>Proceed to Pay</button>
+        
+        <!-- Add Money History Section -->
+        <div class="border-t pt-8 mb-10">
+            <h2 class="text-lg font-black italic uppercase text-slate-800 mb-4">Recharge History</h2>
+            <div id="historyContainer" class="space-y-3">
+                <p class="text-xs text-gray-400 font-bold text-center py-4">Loading history...</p>
+            </div>
+        </div>
 
         <div class="bg-gray-50 rounded-2xl p-6 border mb-8">
             <div class="flex justify-between text-sm font-bold text-gray-500 mb-2">
