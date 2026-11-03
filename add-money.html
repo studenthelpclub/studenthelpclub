@@ -93,7 +93,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // Firestore imports me naye functions add kiye
+        import { getFirestore, doc, getDoc, collection, query, where, orderBy, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = { apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8", authDomain: "ignou-web.firebaseapp.com", projectId: "ignou-web", storageBucket: "ignou-web.firebasestorage.app", messagingSenderId: "854950506403", appId: "1:854950506403:web:941a56126a36fd3f9d7416" };
@@ -104,6 +105,162 @@
         let currentUser = null;
         let selectedAmount = 0;
         let finalBonus = 0;
+        const VERCEL_URL = "";
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if(userDoc.exists()) {
+                    document.getElementById('currentWallet').innerText = userDoc.data().walletBalance || 0;
+                }
+                loadHistory(); // User aate hi history load hogi
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        // Naya function: History Load karna
+        async function loadHistory() {
+            const container = document.getElementById('historyContainer');
+            try {
+                const q = query(collection(db, "wallet_history"), where("uid", "==", currentUser.uid), orderBy("date", "desc"));
+                const snap = await getDocs(q);
+                
+                if (snap.empty) {
+                    container.innerHTML = '<p class="text-xs text-gray-400 font-bold text-center py-4 bg-gray-50 rounded-xl">No recharges yet.</p>';
+                    return;
+                }
+                
+                let html = '';
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    const d = new Date(data.date).toLocaleDateString('en-IN');
+                    html += `<div class="bg-white border rounded-xl p-4 flex justify-between items-center shadow-sm">
+                        <div>
+                            <p class="text-[10px] text-gray-400 font-bold mb-1">${d}</p>
+                            <p class="text-xs font-black text-slate-700 uppercase">Paid: ₹${data.paidAmount}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-[9px] font-black uppercase block mb-1">Success</span>
+                            <p class="text-sm font-black text-[#d32f2f]">+₹${data.totalAdded}</p>
+                        </div>
+                    </div>`;
+                });
+                container.innerHTML = html;
+            } catch (e) {
+                container.innerHTML = '<p class="text-xs text-red-400 font-bold text-center py-4">Could not load history.</p>';
+            }
+        }
+
+        // Calculation Logic
+        const calculateBonus = (amount) => {
+            if(amount >= 200) return amount * 0.10;
+            if(amount >= 100) return amount * 0.05;
+            return 0;
+        };
+
+        const updateDisplay = (amount) => {
+            selectedAmount = amount;
+            finalBonus = calculateBonus(amount);
+            
+            document.getElementById('payAmountDisplay').innerText = amount;
+            document.getElementById('bonusDisplay').innerText = finalBonus;
+            document.getElementById('totalReceiveDisplay').innerText = amount + finalBonus;
+            document.getElementById('payBtn').disabled = amount <= 0;
+        };
+
+        window.selectAmount = (amount) => {
+            // Agar box wala button dabaya, toh custom input khali kar do
+            document.getElementById('customAmountInput').value = '';
+            document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+            updateDisplay(amount);
+        };
+
+        // Naya function: Custom Input Handle karna
+        window.handleCustomAmount = () => {
+            // Agar custom me type kiya, toh box wale buttons deselect kar do
+            document.querySelectorAll('.amount-btn').forEach(btn => btn.classList.remove('selected'));
+            const val = parseInt(document.getElementById('customAmountInput').value);
+            updateDisplay(val || 0);
+        };
+
+        window.processPayment = async () => {
+            if(!selectedAmount || !currentUser) return;
+            const btn = document.getElementById('payBtn');
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            const totalToWallet = selectedAmount + finalBonus;
+
+            try {
+                const response = await fetch(`${VERCEL_URL}/api/create-order`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount: selectedAmount }) 
+                });
+                const orderData = await response.json();
+
+                const options = {
+                    key: "rzp_live_TvhdwRfYGlhiva", // Aapki key
+                    amount: orderData.amount,
+                    currency: "INR",
+                    name: "Student Help Club",
+                    description: `Add ₹${totalToWallet} to Wallet`,
+                    order_id: orderData.id,
+                    handler: async function (paymentResponse) {
+                        btn.innerText = "Verifying...";
+                        
+                        const verifyRes = await fetch(`${VERCEL_URL}/api/verify-payment`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                                razorpay_order_id: paymentResponse.razorpay_order_id,
+                                razorpay_signature: paymentResponse.razorpay_signature,
+                                uid: currentUser.uid,
+                                amountAdded: totalToWallet
+                            })
+                        });
+                        
+                        const verifyResult = await verifyRes.json();
+                        if(verifyResult.success) {
+                            // Payment success hone par Firestore me History Entry save karna
+                            await addDoc(collection(db, "wallet_history"), {
+                                uid: currentUser.uid,
+                                paidAmount: selectedAmount,
+                                bonusAmount: finalBonus,
+                                totalAdded: totalToWallet,
+                                rzp_id: paymentResponse.razorpay_payment_id,
+                                date: new Date().getTime()
+                            });
+
+                            alert("Payment Successful! Wallet Updated.");
+                            window.location.href = "dashboard.html";
+                        } else {
+                            alert("Verification Failed.");
+                            btn.innerText = "Proceed to Pay";
+                            btn.disabled = false;
+                        }
+                    },
+                    prefill: { email: currentUser.email },
+                    theme: { color: "#d32f2f" }
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.on('payment.failed', function () {
+                    btn.innerText = "Proceed to Pay";
+                    btn.disabled = false;
+                });
+                rzp.open();
+
+            } catch (error) {
+                alert("Error connecting to payment server.");
+                btn.innerText = "Proceed to Pay";
+                btn.disabled = false;
+            }
+        };
 
         // VERCEL API URL YAHAN UPDATE KAREIN
 // Pehle ye tha: const VERCEL_URL = "https://studenthelpclub.in";
