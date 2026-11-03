@@ -300,14 +300,14 @@
 </footer>
 <!-- LOGIN MODAL -->
 <div aria-hidden="true" class="fixed inset-0 bg-black/50 z-[6000] hidden items-center justify-center p-4 backdrop-blur-sm" id="loginModal">
-    <div class="bg-white p-8 rounded-[2.5rem] w-full max-w-sm relative shadow-2xl">
+    <div class="bg-white p-8 rounded-[2.5rem] w-full max-w-sm relative shadow-2xl text-center">
         <button aria-label="Close Login" class="absolute top-4 right-6 text-3xl text-gray-300 hover:text-red-500 transition" onclick="toggleLoginModal()">×</button>
-        <h4 class="text-xl font-black italic text-slate-800 uppercase mb-6" id="authTitle">Login</h4>
+        <h4 class="text-xl font-black italic text-slate-800 uppercase mb-6">Welcome</h4>
         <div class="space-y-4">
-            <input id="authEmail" type="email" placeholder="Email Address" class="w-full bg-gray-50 border rounded-2xl px-5 py-4 outline-none text-xs font-bold focus:border-[#d32f2f]">
-            <input id="authPass" type="password" placeholder="Password" class="w-full bg-gray-50 border rounded-2xl px-5 py-4 outline-none text-xs font-bold focus:border-[#d32f2f]">
-            <button id="authSubmitBtn" class="w-full bg-[#d32f2f] text-white py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-lg">Login</button>
-            <p class="text-center text-xs font-bold text-gray-500 cursor-pointer hover:text-[#d32f2f] mt-4" id="authToggleBtn">Naya account banayein?</p>
+            <button id="googleSignInBtn" class="w-full bg-white border border-gray-200 text-gray-700 flex items-center justify-center gap-3 py-4 rounded-2xl font-black uppercase text-[11px] tracking-widest shadow-sm hover:bg-gray-50 transition-all">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google Logo">
+                Continue with Google
+            </button>
         </div>
     </div>
 </div>
@@ -398,15 +398,18 @@
         });
     </script>
 <script defer="" type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        // Google auth imports add kiye
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = { apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8", authDomain: "ignou-web.firebaseapp.com", projectId: "ignou-web", storageBucket: "ignou-web.firebasestorage.app", messagingSenderId: "854950506403", appId: "1:854950506403:web:941a56126a36fd3f9d7416" };
         const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        
         const auth = getAuth(app);
+        const provider = new GoogleAuthProvider(); // Google Provider setup
         let cart = [];
         try { const stored = JSON.parse(localStorage.getItem('shc_final_v17_live')); if (Array.isArray(stored)) cart = stored.filter(c => c && Number.isFinite(Number(c.price))).map(c => ({...c, price:Number(c.price)})); } catch (e) { console.warn('Could not restore cart'); }
         let cacheData = [];
@@ -610,46 +613,36 @@
         window.checkoutWA = () => { if(!cart.length) return; let msg = `*BULK ORDER REQUEST*\n`; cart.forEach((c, i) => { msg += `${i + 1}. ${c.subjectCode} (${c.medium}) | ₹${c.price}\n`; }); msg += `\nTotal: ₹${document.getElementById('subtotal').innerText}`; handoffCartToWhatsApp(`https://wa.me/919776986830?text=${encodeURIComponent(msg)}`); };
         
         finishWhatsAppReturn();
-  // Login Modal aur Auth Logic
-window.toggleLoginModal = () => {
-    const modal = document.getElementById('loginModal');
-    modal.classList.toggle('hidden');
-    modal.classList.toggle('flex');
-};
+ // Login Modal UI Function
+        window.toggleLoginModal = () => {
+            const modal = document.getElementById('loginModal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        };
 
-let isLoginMode = true;
-document.getElementById('authToggleBtn').addEventListener('click', () => {
-    isLoginMode = !isLoginMode;
-    document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Sign Up";
-    document.getElementById('authSubmitBtn').innerText = isLoginMode ? "Login" : "Create Account";
-    document.getElementById('authToggleBtn').innerText = isLoginMode ? "Naya account banayein?" : "Pahle se account hai? Login karein";
-});
+        // Google Sign-In Logic
+        document.getElementById('googleSignInBtn').addEventListener('click', async () => {
+            try {
+                const btn = document.getElementById('googleSignInBtn');
+                btn.innerHTML = "Wait..."; // Loading state
+                
+                // Google se login popup
+                await signInWithPopup(auth, provider);
+                
+                // Login successful hone par dashboard par bhejein
+                window.location.href = "dashboard.html"; 
+            } catch(error) {
+                alert("Login Error: " + error.message);
+                document.getElementById('googleSignInBtn').innerHTML = `<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google Logo"> Continue with Google`;
+            }
+        });
 
-document.getElementById('authSubmitBtn').addEventListener('click', async () => {
-    const email = document.getElementById('authEmail').value.trim();
-    const pass = document.getElementById('authPass').value.trim();
-    if(!email || !pass) { alert("Email aur Password enter karein."); return; }
-    
-    try {
-        document.getElementById('authSubmitBtn').innerText = "Processing...";
-        if(isLoginMode) {
-            await signInWithEmailAndPassword(auth, email, pass);
-        } else {
-            await createUserWithEmailAndPassword(auth, email, pass);
-        }
-        window.location.href = "dashboard.html"; 
-    } catch(error) {
-        alert("Error: " + error.message);
-        document.getElementById('authSubmitBtn').innerText = isLoginMode ? "Login" : "Create Account";
-    }
-});
-
-// Check karein agar user pehle se login hai
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        window.toggleLoginModal = () => { window.location.href = "dashboard.html"; };
-    }
-});
+        // Check karein agar user pehle se login hai (session zinda hai)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.toggleLoginModal = () => { window.location.href = "dashboard.html"; };
+            }
+        });
         init();
     </script>
 <script>
