@@ -153,15 +153,85 @@
         function showDashboard(userData) {
             document.getElementById('dashboardContent').classList.remove('hidden');
             document.getElementById('userNameDisplay').innerText = userData.name;
-            document.getElementById('walletBalance').innerText = userData.walletBalance || 0;
+            
+            // Dono jagah wallet balance update hoga
+            const balance = userData.walletBalance || 0;
+            document.getElementById('walletBalance').innerText = balance;
+            document.getElementById('headerWalletBalance').innerText = balance;
         }
 
         document.getElementById('logoutBtn').addEventListener('click', () => {
             signOut(auth).then(() => { window.location.href = "index.html"; });
         });
 
-        window.addMoney = () => {
-            alert("Razorpay integration is pending. Yaha Razorpay API popup code aayega.");
+        window.addMoney = async () => {
+            const amountStr = prompt("Wallet mein kitna paisa add karna chahte hain? (₹)");
+            const amount = parseInt(amountStr);
+            
+            if (!amount || amount <= 0) {
+                return alert("Sahi amount enter karein.");
+            }
+
+            try {
+                // 1. Aapke Vercel API se Order ID create karega
+                // "https://aapka-vercel-app.vercel.app/api/create-order" ko apne Vercel URL se replace karein
+                const response = await fetch("YOUR_VERCEL_API_URL/api/create-order", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount: amount }) 
+                });
+                
+                const orderData = await response.json();
+
+                // 2. Razorpay Checkout Popup Options
+                const options = {
+                    key: "YOUR_RAZORPAY_KEY_ID", // Apna Razorpay public key dalein
+                    amount: orderData.amount, // Paise mein (₹1 = 100 paise)
+                    currency: "INR",
+                    name: "Student Help Club",
+                    description: "Wallet Recharge",
+                    order_id: orderData.id,
+                    handler: async function (paymentResponse) {
+                        
+                        alert("Payment successful! Wallet update ho raha hai, kripya wait karein...");
+                        
+                        // 3. Vercel backend pe payment verify karein aur Firestore wallet update karein
+                        const verifyRes = await fetch("YOUR_VERCEL_API_URL/api/verify-payment", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                                razorpay_order_id: paymentResponse.razorpay_order_id,
+                                razorpay_signature: paymentResponse.razorpay_signature,
+                                uid: currentUser.uid // User ID bhejna zaroori hai wallet update ke liye
+                            })
+                        });
+                        
+                        const verifyResult = await verifyRes.json();
+                        
+                        if(verifyResult.success) {
+                            // Payment verify hone ke baad dono wallet UI update karein
+                            document.getElementById('walletBalance').innerText = verifyResult.newBalance;
+                            document.getElementById('headerWalletBalance').innerText = verifyResult.newBalance;
+                            alert("Wallet mein paise add ho gaye!");
+                        } else {
+                            alert("Payment verification fail ho gaya. Support se contact karein.");
+                        }
+                    },
+                    prefill: {
+                        name: document.getElementById('userNameDisplay').innerText,
+                        email: currentUser.email
+                    },
+                    theme: { color: "#d32f2f" } // Website ka red theme color
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.open();
+
+            } catch (error) {
+                console.error(error);
+                alert("Payment initiate karne mein error aaya. Kripya baad mein try karein.");
+            }
         };
     </script>
 </body>
