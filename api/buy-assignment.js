@@ -1,69 +1,108 @@
 const { google } = require('googleapis');
 const admin = require('firebase-admin');
 
+// Private Key Format Fixer
+const formatKey = (key) => {
+    if (!key) return "";
+    return key.replace(/\\n/g, '\n');
+};
+
 // Firebase Admin Setup
 if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert({
-            projectId: process.env.FIREBASE_PROJECT_ID,
-            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-        })
-    });
+    try {
+        admin.initializeApp({
+            credential: admin.credential.cert({
+                projectId: process.env.FIREBASE_PROJECT_ID,
+                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                privateKey: formatKey(process.env.FIREBASE_PRIVATE_KEY)
+            })
+        });
+    } catch (error) {
+        console.error("Firebase Init Error:", error);
+    }
 }
 const db = admin.firestore();
 
 module.exports = async (req, res) => {
-    if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
+    // CORS Setup (Taaki frontend block na ho)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    if (req.method !== "POST") return res.status(405).json({ success: false, message: "Method Not Allowed" });
 
     const { uid, subjectCode, courseName, price } = req.body;
+    
+    if (!uid || !subjectCode) {
+         return res.status(400).json({ success: false, message: "User ID ya Subject Code missing hai." });
+    }
+
     const searchCode = subjectCode.trim();
 
     try {
         // 1. Check User Wallet Balance
         const userRef = db.collection('users').doc(uid);
         const userDoc = await userRef.get();
-        if (!userDoc.exists || (userDoc.data().walletBalance || 0) < price) {
-            return res.status(400).json({ success: false, message: "Insufficient Balance in Wallet" });
+        
+        if (!userDoc.exists) {
+            return res.status(404).json({ success: false, message: "User database me nahi mila." });
         }
 
-        // 2. Google Sheets API se Link Nikalna
+        const currentBalance = userDoc.data().walletBalance || 0;
+        if (currentBalance < price) {
+            return res.status(400).json({ success: false, message: `Insufficient Balance! Aapke paas ₹${currentBalance} hain, par chahiye ₹${price}.` });
+        }
+
+        // 2. Google Sheets API setup
+        if (!process.env.SHEETS_CLIENT_EMAIL || !process.env.SHEETS_PRIVATE_KEY) {
+            return res.status(500).json({ success: false, message: "Vercel me SHEETS_CLIENT_EMAIL ya SHEETS_PRIVATE_KEY missing hai." });
+        }
+
         const auth = new google.auth.GoogleAuth({
             credentials: {
-                client_email: process.env.SHEETS_CLIENT_EMAIL, // Vercel Variable me aapka telegram-bot wala email aayega
-                private_key: process.env.SHEETS_PRIVATE_KEY.replace(/\\n/g, '\n'), // Vercel Variable se aayegi
+                client_email: process.env.SHEETS_CLIENT_EMAIL,
+                private_key: formatKey(process.env.SHEETS_PRIVATE_KEY),
             },
             scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
         });
         const sheets = google.sheets({ version: 'v4', auth });
 
-        // Sheet ID aur Range (A:D columns lenge kyunki screenshot me D me link hai)
+        // Sheet ID Check
         const sheetId = process.env.SPREADSHEET_ID; 
+        if (!sheetId) {
+            return res.status(500).json({ success: false, message: "Vercel me SPREADSHEET_ID missing hai." });
+        }
+
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: sheetId,
-            range: 'Sheet1!A:D', // Agar aapki sheet ka tab name alag hai (jaise Sheet2) toh yahan badal dein
+            range: 'Sheet1!A:D', 
         });
 
         const rows = response.data.values;
         if (!rows || rows.length === 0) {
-            return res.status(404).json({ success: false, message: "Assignment list is empty." });
+            return res.status(404).json({ success: false, message: "Google Sheet khali hai ya read nahi ho pa rahi." });
         }
 
-        // Row by row search karna
+        // Search Logic
         let fileLink = null;
         for (let i = 0; i < rows.length; i++) {
-            const rowCode = rows[i][0] ? rows[i][0].trim() : "";
-            if (rowCode.toUpperCase().includes(searchCode.toUpperCase())) {
-                fileLink = rows[i][3]; // D column (index 3) ka link
+            const rowCode = rows[i][0] ? rows[i][0].toString().trim().toUpperCase() : "";
+            if (rowCode.includes(searchCode.toUpperCase())) {
+                fileLink = rows[i][3]; // D column (index 3) me link hona chahiye
                 break;
             }
         }
 
         if (!fileLink) {
-            return res.status(404).json({ success: false, message: `Link not found in sheet for ${subjectCode}.` });
+            return res.status(404).json({ success: false, message: `${subjectCode} ka link Google Sheet me nahi mila.` });
         }
 
-        // 3. Wallet se Paise Katna aur Order Save Karna
+        // 3. Deduct Wallet & Save Order
         await userRef.update({ walletBalance: admin.firestore.FieldValue.increment(-price) });
 
         const orderId = "ORD" + Math.floor(100000 + Math.random() * 900000);
@@ -72,15 +111,17 @@ module.exports = async (req, res) => {
             orderId: orderId,
             uid: uid,
             subjectCode: subjectCode,
-            courseName: courseName,
+            courseName: courseName || "N/A",
             price: price,
             driveLink: fileLink,
             purchasedAt: Date.now()
         });
 
-        res.status(200).json({ success: true, orderId: orderId });
+        return res.status(200).json({ success: true, orderId: orderId });
+        
     } catch (error) {
-        console.error("Sheets API Error:", error);
-        res.status(500).json({ success: false, message: "Server error, could not fetch link." });
+        console.error("API Error Details:", error);
+        // Ab exact error screen par dikhega
+        return res.status(500).json({ success: false, message: "Server error: " + error.message });
     }
 };
