@@ -1,13 +1,11 @@
 const { google } = require('googleapis');
 const admin = require('firebase-admin');
 
-// Private Key Format Fixer
 const formatKey = (key) => {
     if (!key) return "";
     return key.replace(/\\n/g, '\n');
 };
 
-// Firebase Admin Setup
 if (!admin.apps.length) {
     try {
         admin.initializeApp({
@@ -38,15 +36,16 @@ module.exports = async (req, res) => {
         return res.status(405).json({ success: false, message: "Method Not Allowed" });
     }
 
-    const { uid, subjectCode, courseName, price } = req.body;
-    
-    if (!uid || !subjectCode) {
-         return res.status(400).json({ success: false, message: "User ID ya Subject Code missing hai." });
-    }
-
-    const searchCode = subjectCode.trim();
-
     try {
+        const body = req.body || {};
+        const { uid, subjectCode, courseName, price } = body;
+        
+        if (!uid || !subjectCode) {
+             return res.status(400).json({ success: false, message: "User ID ya Subject Code missing hai." });
+        }
+
+        const searchCode = subjectCode.trim();
+
         // 1. Check User Wallet Balance
         const userRef = db.collection('users').doc(uid);
         const userDoc = await userRef.get();
@@ -56,13 +55,15 @@ module.exports = async (req, res) => {
         }
 
         const currentBalance = userDoc.data().walletBalance || 0;
-        if (currentBalance < price) {
-            return res.status(400).json({ success: false, message: `Insufficient Balance! Aapke paas ₹${currentBalance} hain, par chahiye ₹${price}.` });
+        const itemPrice = Number(price) || 50;
+
+        if (currentBalance < itemPrice) {
+            return res.status(400).json({ success: false, message: `Insufficient Balance! Aapke paas ₹${currentBalance} hain, par chahiye ₹${itemPrice}.` });
         }
 
         // 2. Google Sheets API setup
         if (!process.env.SHEETS_CLIENT_EMAIL || !process.env.SHEETS_PRIVATE_KEY) {
-            return res.status(500).json({ success: false, message: "Vercel Variables missing: SHEETS_CLIENT_EMAIL ya SHEETS_PRIVATE_KEY." });
+            return res.status(500).json({ success: false, message: "Vercel Error: SHEETS_CLIENT_EMAIL ya SHEETS_PRIVATE_KEY missing hai." });
         }
 
         const auth = new google.auth.GoogleAuth({
@@ -76,7 +77,7 @@ module.exports = async (req, res) => {
 
         const sheetId = process.env.SPREADSHEET_ID; 
         if (!sheetId) {
-            return res.status(500).json({ success: false, message: "Vercel Variable missing: SPREADSHEET_ID." });
+            return res.status(500).json({ success: false, message: "Vercel Error: SPREADSHEET_ID missing hai." });
         }
 
         const response = await sheets.spreadsheets.values.get({
@@ -94,7 +95,7 @@ module.exports = async (req, res) => {
         for (let i = 0; i < rows.length; i++) {
             const rowCode = rows[i][0] ? rows[i][0].toString().trim().toUpperCase() : "";
             if (rowCode.includes(searchCode.toUpperCase())) {
-                fileLink = rows[i][3]; // D column
+                fileLink = rows[i][3]; // D column (Link)
                 break;
             }
         }
@@ -104,7 +105,7 @@ module.exports = async (req, res) => {
         }
 
         // 3. Deduct Wallet & Save Order
-        await userRef.update({ walletBalance: admin.firestore.FieldValue.increment(-price) });
+        await userRef.update({ walletBalance: admin.firestore.FieldValue.increment(-itemPrice) });
 
         const orderId = "ORD" + Math.floor(100000 + Math.random() * 900000);
         
@@ -113,7 +114,7 @@ module.exports = async (req, res) => {
             uid: uid,
             subjectCode: subjectCode,
             courseName: courseName || "N/A",
-            price: price,
+            price: itemPrice,
             driveLink: fileLink,
             purchasedAt: Date.now()
         });
@@ -121,8 +122,7 @@ module.exports = async (req, res) => {
         return res.status(200).json({ success: true, orderId: orderId });
         
     } catch (error) {
-        console.error("API Error Details:", error);
-        // Ab error direct alert me JSON format me show hoga
-        return res.status(500).json({ success: false, message: "Server API error: " + error.message });
+        console.error("API Catch Error:", error);
+        return res.status(500).json({ success: false, message: "Server Error: " + error.message });
     }
 };
