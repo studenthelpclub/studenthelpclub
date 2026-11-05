@@ -261,7 +261,6 @@
                 btn.disabled = true;
 
                 try {
-                    // Yahan /api lagana zaroori hai
                     const response = await fetch(`/api/buy-assignment`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -273,33 +272,32 @@
                         })
                     });
                     
-                    const result = await response.json();
+                    const responseText = await response.text();
+                    let result;
+                    try {
+                        result = JSON.parse(responseText);
+                    } catch (parseErr) {
+                        throw new Error("Server returned non-JSON response: " + responseText.substring(0, 100));
+                    }
                     
                     if(result.success) {
                         alert(`Purchase successful! Order ID: ${result.orderId}. PDF link added to history.`);
-                        
-                        // Update UI Wallet Balance directly
                         const newBalance = currentBalance - currentPrice;
                         document.getElementById('walletBalance').innerText = newBalance;
                         document.getElementById('headerWalletBalance').innerText = newBalance;
-                        
-                        // Refresh Order History
                         loadOrderHistory(); 
                     } else {
-                        // Ab jo bhi exact error Vercel se aayega, wahi screen par dikhega
-                        alert("Error: " + result.message);
+                        alert("Purchase Failed: " + result.message);
                     }
                 } catch (e) {
                     console.error("Purchase error: ", e);
-                    // Agar network ka issue hai to ye dikhega
-                    alert("Network error: Server se connect nahi ho paya. URL check karein.");
+                    alert("Error: " + e.message);
                 } finally {
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                 }
             }
         };
-
         // Order History fetch karke show karne ka function
         async function loadOrderHistory() {
             const container = document.getElementById('orderHistoryContainer');
