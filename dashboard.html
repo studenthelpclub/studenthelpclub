@@ -9,15 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; }
-        .course-card { scroll-snap-align: start; background: white; border: 1px solid #f1f5f9; border-radius: 20px; padding: 18px; text-align: center; font-weight: 800; transition: 0.3s; cursor: pointer; color: #d32f2f; font-size: 11px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .course-card:hover { border-color: #d32f2f; transform: translateY(-5px); background: #fffafa; }
         .subject-card { background: white; border-radius: 28px; border: 1px solid #f1f5f9; padding: 20px; transition: 0.4s; height: 100%; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02); }
         .subject-card:hover { transform: translateY(-12px); border-color: #d32f2f; box-shadow: 0 25px 40px rgba(0,0,0,0.07); }
         select { font-size: 10px !important; font-weight: 700 !important; border-radius: 10px !important; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-   <header class="bg-white/80 backdrop-blur-md border-b px-6 py-5 sticky top-0 z-[1000]">
+   <header class="bg-white/80 backdrop-blur-md border-b px-6 py-5 sticky top-0 z-[1000] fade-in">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html" class="flex items-center gap-3">
                 <img alt="Student Help Club Logo" class="w-10 h-10 rounded-xl border shadow-sm" src="shc-logo.jpg"/>
@@ -37,24 +37,24 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 py-10 hidden" id="dashboardContent">
+    <main class="max-w-7xl mx-auto px-6 py-10 hidden fade-in" id="dashboardContent">
         <h1 class="text-3xl font-black italic uppercase text-slate-800 mb-8">Welcome, <span id="userNameDisplay" class="text-[#d32f2f]"></span></h1>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden">
+            <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden transition hover:shadow-2xl">
                 <h3 class="text-sm font-bold uppercase text-gray-400 tracking-wider mb-2">My Wallet</h3>
                 <div class="text-4xl font-black italic text-yellow-400 mb-6">₹<span id="walletBalance">0</span></div>
                 <a href="add-money.html" class="block text-center w-full bg-white text-slate-900 py-3.5 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-yellow-400 transition-all shadow-md">Add Money</a>
             </div>
             
-            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm">
+            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm transition hover:shadow-md">
                 <div class="w-10 h-10 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4"><i class="fas fa-share-nodes"></i></div>
                 <h3 class="text-sm font-black uppercase text-slate-800 mb-2">Refer & Earn</h3>
                 <p class="text-[11px] font-bold text-gray-500 mb-6 leading-relaxed">Share your link and earn wallet balance for every new user.</p>
                 <button class="w-full bg-gray-100 text-slate-800 py-3.5 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-gray-200 transition-all">Copy Link</button>
             </div>
 
-            <div class="bg-red-50 border border-red-100 rounded-[2.5rem] p-8 shadow-inner">
+            <div class="bg-red-50 border border-red-100 rounded-[2.5rem] p-8 shadow-inner transition hover:shadow-md">
                 <div class="w-10 h-10 bg-white text-[#d32f2f] rounded-full flex items-center justify-center shadow-sm mb-4"><i class="fas fa-file-circle-question"></i></div>
                 <h3 class="text-sm font-black uppercase text-[#d32f2f] mb-2">Not Found?</h3>
                 <p class="text-[11px] font-bold text-red-800/60 mb-6 leading-relaxed">Request assignments that are not available in the store.</p>
@@ -62,23 +62,25 @@
             </div>
         </div>
 
-        <div class="border-t pt-10 mb-12">
+        <div class="border-t pt-10 mb-12 fade-in" style="animation-delay: 0.1s;">
             <h2 class="text-xl font-black italic uppercase text-slate-800 mb-6">Search Assignments</h2>
             <div class="max-w-3xl mb-8 flex items-center gap-4">
-                <input type="text" id="searchInput" placeholder="Enter Subject Code (e.g. BEVAE 181)..." class="flex-1 bg-white border rounded-2xl px-6 py-4 outline-none focus:border-[#d32f2f] text-sm font-bold shadow-sm">
-                <button onclick="filterData()" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-[#d32f2f] transition shadow-md"><i class="fas fa-search"></i> Search</button>
+                <input type="text" id="searchInput" placeholder="Enter Subject Code (e.g. BEVAE 181)..." class="flex-1 bg-white border rounded-2xl px-6 py-4 outline-none focus:border-[#d32f2f] text-sm font-bold shadow-sm transition">
+                <button onclick="filterData()" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-[#d32f2f] transition shadow-md hover:shadow-lg hover:-translate-y-1"><i class="fas fa-search"></i> Search</button>
             </div>
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-5" id="storeGrid">
-                <p class="col-span-full text-sm text-gray-600">Loading study PDFs...</p>
+                <p class="col-span-full text-sm text-gray-600 font-bold bg-gray-50 py-10 text-center rounded-3xl border border-dashed"><i class="fas fa-circle-notch fa-spin mr-2"></i> Loading study PDFs...</p>
             </div>
         </div>
 
-        <div class="border-t pt-10">
-            <h2 class="text-xl font-black italic uppercase text-slate-800 mb-6">Order History</h2>
-            <div class="bg-white border rounded-[2.5rem] p-12 text-center text-gray-400 text-sm font-bold shadow-sm flex flex-col items-center">
-                <i class="fas fa-box-open text-4xl mb-4 opacity-50"></i>
-                You haven't purchased any assignments yet.
+        <div class="border-t pt-10 fade-in" style="animation-delay: 0.2s;">
+            <h2 class="text-xl font-black italic uppercase text-slate-800 mb-6">Order History & Downloads</h2>
+            <div id="orderHistoryContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="col-span-full bg-white border rounded-[2.5rem] p-12 text-center text-gray-400 text-sm font-bold shadow-sm flex flex-col items-center">
+                    <i class="fas fa-box-open text-4xl mb-4 opacity-50"></i>
+                    You haven't purchased any assignments yet.
+                </div>
             </div>
         </div>
     </main>
@@ -103,7 +105,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = { apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8", authDomain: "ignou-web.firebaseapp.com", projectId: "ignou-web", storageBucket: "ignou-web.firebasestorage.app", messagingSenderId: "854950506403", appId: "1:854950506403:web:941a56126a36fd3f9d7416" };
@@ -115,6 +117,9 @@
 
         let currentUser = null;
         let cacheData = [];
+        
+        // Agar local API use kar rahe hain to URL empty rakhein
+        const VERCEL_API_URL = ""; 
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -124,7 +129,8 @@
                 
                 if (docSnap.exists() && docSnap.data().whatsapp) {
                     showDashboard(docSnap.data());
-                    initStore(); // Load assignments when dashboard shows
+                    initStore(); 
+                    loadOrderHistory(); 
                 } else {
                     document.getElementById('profileSetupModal').classList.remove('hidden');
                     document.getElementById('profileSetupModal').classList.add('flex');
@@ -155,6 +161,7 @@
             document.getElementById('profileSetupModal').classList.add('hidden');
             showDashboard(userData);
             initStore();
+            loadOrderHistory();
         });
 
         function showDashboard(userData) {
@@ -189,7 +196,7 @@
                 
                 let modeSelectHTML = (p.typedPDF || p.handwrittenPDF) ? `<label for="mode-${p.id}" class="text-[8px] font-black uppercase text-gray-400 ml-1">Mode</label><select id="mode-${p.id}" onchange="updateCardPrice('${p.id}', '${adminPrice}')" class="w-full bg-gray-50 border p-2.5 rounded-xl text-[10px] font-bold outline-none mb-2 shadow-sm">${p.typedPDF ? '<option value="Typed PDF">Typed</option>' : ''}${p.handwrittenPDF ? '<option value="Handwritten Scan">Handwritten</option>' : ''}</select>` : '';
 
-                html += `<div class="subject-card">
+                html += `<div class="subject-card fade-in">
                     <div>
                         <div class="flex justify-between items-start mb-3">
                             <span class="text-[7px] font-black bg-gray-100 px-2 py-1 rounded text-gray-500 uppercase">${escapeHTML(p.courseName || 'SUBJECT')}</span>
@@ -208,10 +215,10 @@
                             </select>
                         </div>
                     </div>
-                    <button onclick="buyFromWallet('${p.id}')" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-[9px] uppercase shadow-lg active:scale-95 hover:bg-[#d32f2f] transition">Buy via Wallet</button>
+                    <button onclick="buyFromWallet('${p.id}')" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-[9px] uppercase shadow-lg active:scale-95 hover:bg-[#d32f2f] transition"><i class="fas fa-shopping-cart mr-1"></i> Buy via Wallet</button>
                 </div>`;
             });
-            grid.innerHTML = html || '<p class="col-span-full text-sm text-gray-600">No matching study PDFs found.</p>';
+            grid.innerHTML = html || '<p class="col-span-full text-sm text-gray-600 font-bold bg-gray-50 py-10 text-center rounded-3xl border border-dashed">No matching study PDFs found.</p>';
         }
 
         window.filterData = () => {
@@ -235,11 +242,11 @@
         window.buyFromWallet = async (id) => {
             if(!currentUser) return alert("Please login first");
             
+            const item = cacheData.find(x => x.id === id);
+            if(!item) return;
+
             const currentPrice = parseInt(document.getElementById(`price-display-${id}`).innerText);
-            const userRef = doc(db, "users", currentUser.uid);
-            const userDoc = await getDoc(userRef);
-            
-            const currentBalance = userDoc.data().walletBalance || 0;
+            const currentBalance = parseInt(document.getElementById('walletBalance').innerText);
             
             if(currentBalance < currentPrice) {
                 alert(`Insufficient Balance! You need ₹${currentPrice} but have ₹${currentBalance}. Please add money.`);
@@ -247,21 +254,87 @@
                 return;
             }
 
-            if(confirm(`Are you sure you want to buy this for ₹${currentPrice}? Amount will be deducted from your wallet.`)) {
-                // Deduct money logic here (in real app, this should be done via Cloud Functions for security)
-                await updateDoc(userRef, {
-                    walletBalance: increment(-currentPrice)
-                });
-                
-                // Show success and update UI
-                alert("Purchase successful! You can now download the assignment from Order History.");
-                const newBalance = currentBalance - currentPrice;
-                document.getElementById('walletBalance').innerText = newBalance;
-                document.getElementById('headerWalletBalance').innerText = newBalance;
-                
-                // Trigger Order History update logic here
+            if(confirm(`Are you sure you want to buy ${item.subjectCode} for ₹${currentPrice}? Amount will be deducted from your wallet.`)) {
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Processing...';
+                btn.disabled = true;
+
+                try {
+                    // Call the Vercel API which checks Google Sheet, deducts wallet, and creates order
+                    const response = await fetch(`${VERCEL_API_URL}/api/buy-assignment`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            uid: currentUser.uid,
+                            subjectCode: item.subjectCode,
+                            courseName: item.courseName,
+                            price: currentPrice
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if(result.success) {
+                        alert(`Purchase successful! Order ID: ${result.orderId}. PDF link added to history.`);
+                        
+                        // Update UI Wallet Balance directly
+                        const newBalance = currentBalance - currentPrice;
+                        document.getElementById('walletBalance').innerText = newBalance;
+                        document.getElementById('headerWalletBalance').innerText = newBalance;
+                        
+                        // Refresh Order History to show download link
+                        loadOrderHistory(); 
+                    } else {
+                        alert(result.message || "Failed to process order.");
+                    }
+                } catch (e) {
+                    console.error("Purchase error: ", e);
+                    alert("Server error. Please try again later.");
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
             }
         };
+
+        // Order History fetch karke show karne ka function
+        async function loadOrderHistory() {
+            const container = document.getElementById('orderHistoryContainer');
+            if(!container) return; 
+
+            try {
+                const q = query(collection(db, "orders"), where("uid", "==", currentUser.uid), orderBy("purchasedAt", "desc"));
+                const snap = await getDocs(q);
+                
+                if (snap.empty) {
+                    container.innerHTML = `<div class="col-span-full bg-white border rounded-[2.5rem] p-12 text-center text-gray-400 text-sm font-bold shadow-sm w-full"><i class="fas fa-box-open text-4xl mb-4 opacity-50"></i> You haven't purchased any assignments yet.</div>`;
+                    return;
+                }
+
+                let html = '';
+                snap.forEach((doc, index) => {
+                    const data = doc.data();
+                    const d = new Date(data.purchasedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    
+                    html += `<div class="bg-white border rounded-2xl p-6 shadow-sm flex justify-between items-center hover:shadow transition fade-in" style="animation-delay: ${index * 0.05}s">
+                        <div>
+                            <span class="text-[9px] font-black bg-gray-100 px-2 py-1 rounded text-gray-500 uppercase"><i class="fas fa-hashtag text-gray-300"></i> ${data.orderId || 'ORDER'}</span>
+                            <h4 class="text-sm font-black text-slate-800 uppercase mt-2">${escapeHTML(data.subjectCode)} - <span class="text-[#d32f2f]">₹${data.price}</span></h4>
+                            <p class="text-[10px] text-gray-400 font-bold mt-1"><i class="far fa-calendar-alt"></i> ${d}</p>
+                        </div>
+                        <a href="${data.driveLink}" target="_blank" class="bg-green-600 text-white px-5 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md hover:bg-green-700 hover:shadow-lg transition hover:-translate-y-1">
+                            <i class="fas fa-cloud-download-alt mr-1"></i> Download
+                        </a>
+                    </div>`;
+                });
+                
+                container.innerHTML = html;
+            } catch (e) {
+                console.error("Order load error: ", e);
+                container.innerHTML = '<p class="text-xs text-red-500 font-bold text-center col-span-full py-4 border border-red-100 rounded-xl bg-red-50">Error loading history. (Ensure composite index exists for uid + purchasedAt)</p>';
+            }
+        }
     </script>
 </body>
 </html>
