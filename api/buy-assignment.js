@@ -12,7 +12,7 @@ if (!admin.apps.length) {
     try {
         admin.initializeApp({
             credential: admin.credential.cert({
-                projectId: process.env.FIREBASE_PROJECT_ID,
+                projectId: process.env.FIREBASE_PROJECT_ID || "ignou-web",
                 clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
                 privateKey: formatKey(process.env.FIREBASE_PRIVATE_KEY)
             })
@@ -24,18 +24,15 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 module.exports = async (req, res) => {
-    // CORS Setup
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Content-Type', 'application/json');
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
-
-    // Always ensure JSON response
-    res.setHeader('Content-Type', 'application/json');
 
     if (req.method !== "POST") {
         return res.status(405).json({ success: false, message: "Method Not Allowed" });
@@ -77,7 +74,6 @@ module.exports = async (req, res) => {
         });
         const sheets = google.sheets({ version: 'v4', auth });
 
-        // Sheet ID Check
         const sheetId = process.env.SPREADSHEET_ID; 
         if (!sheetId) {
             return res.status(500).json({ success: false, message: "Vercel Variable missing: SPREADSHEET_ID." });
@@ -126,6 +122,7 @@ module.exports = async (req, res) => {
         
     } catch (error) {
         console.error("API Error Details:", error);
+        // Ab error direct alert me JSON format me show hoga
         return res.status(500).json({ success: false, message: "Server API error: " + error.message });
     }
 };
