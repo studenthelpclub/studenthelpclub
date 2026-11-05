@@ -3,7 +3,6 @@ const admin = require('firebase-admin');
 
 const formatKey = (key) => {
     if (!key) return "";
-    // Yeh line naye lines aur quotes ko perfectly set kar degi
     return key.replace(/\\n/g, '\n').replace(/"/g, '').trim();
 };
 
@@ -23,17 +22,17 @@ module.exports = async (req, res) => {
     }
 
     try {
-        // Sabhi possible environment variable names check karega taaki key miss na ho
+        // Yeh line Vercel ke kisi bhi naam wale variable (SHEETS ya FIREBASE) ko utha legi
         const privateKey = formatKey(process.env.SHEETS_PRIVATE_KEY || process.env.FIREBASE_PRIVATE_KEY);
         const clientEmail = process.env.SHEETS_CLIENT_EMAIL || process.env.FIREBASE_CLIENT_EMAIL;
         const projectId = process.env.FIREBASE_PROJECT_ID || "ignou-web";
         const sheetId = process.env.SPREADSHEET_ID;
 
         if (!privateKey) {
-            return res.status(500).json({ success: false, message: "Error: Vercel me PRIVATE_KEY missing hai ya khali hai." });
+            return res.status(500).json({ success: false, message: "Error: Vercel me SHEETS_PRIVATE_KEY missing hai." });
         }
         if (!clientEmail) {
-            return res.status(500).json({ success: false, message: "Error: Vercel me CLIENT_EMAIL missing hai." });
+            return res.status(500).json({ success: false, message: "Error: Vercel me SHEETS_CLIENT_EMAIL missing hai." });
         }
         if (!sheetId) {
             return res.status(500).json({ success: false, message: "Error: Vercel me SPREADSHEET_ID missing hai." });
