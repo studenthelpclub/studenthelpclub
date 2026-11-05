@@ -4,7 +4,8 @@
   "description": "Backend for Student Help Club",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "echo 'No build needed'"
   },
   "dependencies": {
     "firebase-admin": "^12.0.0",
@@ -15,4 +16,3 @@
     "node": "18.x"
   }
 }
-
