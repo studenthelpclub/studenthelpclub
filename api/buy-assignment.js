@@ -24,7 +24,7 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 module.exports = async (req, res) => {
-    // CORS Setup (Taaki frontend block na ho)
+    // CORS Setup
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
@@ -34,7 +34,12 @@ module.exports = async (req, res) => {
         return res.status(200).end();
     }
 
-    if (req.method !== "POST") return res.status(405).json({ success: false, message: "Method Not Allowed" });
+    // Always ensure JSON response
+    res.setHeader('Content-Type', 'application/json');
+
+    if (req.method !== "POST") {
+        return res.status(405).json({ success: false, message: "Method Not Allowed" });
+    }
 
     const { uid, subjectCode, courseName, price } = req.body;
     
@@ -60,7 +65,7 @@ module.exports = async (req, res) => {
 
         // 2. Google Sheets API setup
         if (!process.env.SHEETS_CLIENT_EMAIL || !process.env.SHEETS_PRIVATE_KEY) {
-            return res.status(500).json({ success: false, message: "Vercel me SHEETS_CLIENT_EMAIL ya SHEETS_PRIVATE_KEY missing hai." });
+            return res.status(500).json({ success: false, message: "Vercel Variables missing: SHEETS_CLIENT_EMAIL ya SHEETS_PRIVATE_KEY." });
         }
 
         const auth = new google.auth.GoogleAuth({
@@ -75,7 +80,7 @@ module.exports = async (req, res) => {
         // Sheet ID Check
         const sheetId = process.env.SPREADSHEET_ID; 
         if (!sheetId) {
-            return res.status(500).json({ success: false, message: "Vercel me SPREADSHEET_ID missing hai." });
+            return res.status(500).json({ success: false, message: "Vercel Variable missing: SPREADSHEET_ID." });
         }
 
         const response = await sheets.spreadsheets.values.get({
@@ -93,7 +98,7 @@ module.exports = async (req, res) => {
         for (let i = 0; i < rows.length; i++) {
             const rowCode = rows[i][0] ? rows[i][0].toString().trim().toUpperCase() : "";
             if (rowCode.includes(searchCode.toUpperCase())) {
-                fileLink = rows[i][3]; // D column (index 3) me link hona chahiye
+                fileLink = rows[i][3]; // D column
                 break;
             }
         }
@@ -121,7 +126,6 @@ module.exports = async (req, res) => {
         
     } catch (error) {
         console.error("API Error Details:", error);
-        // Ab exact error screen par dikhega
-        return res.status(500).json({ success: false, message: "Server error: " + error.message });
+        return res.status(500).json({ success: false, message: "Server API error: " + error.message });
     }
 };
