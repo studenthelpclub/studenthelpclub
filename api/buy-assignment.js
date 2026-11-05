@@ -3,23 +3,9 @@ const admin = require('firebase-admin');
 
 const formatKey = (key) => {
     if (!key) return "";
-    return key.replace(/\\n/g, '\n');
+    // Remove extra quotes if accidentally added and fix newlines
+    return key.replace(/\\n/g, '\n').replace(/"/g, '');
 };
-
-if (!admin.apps.length) {
-    try {
-        admin.initializeApp({
-            credential: admin.credential.cert({
-                projectId: process.env.FIREBASE_PROJECT_ID || "ignou-web",
-                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                privateKey: formatKey(process.env.FIREBASE_PRIVATE_KEY)
-            })
-        });
-    } catch (error) {
-        console.error("Firebase Init Error:", error);
-    }
-}
-const db = admin.firestore();
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -37,6 +23,18 @@ module.exports = async (req, res) => {
     }
 
     try {
+        // Safe Firebase Initialization inside handler
+        if (!admin.apps.length) {
+            admin.initializeApp({
+                credential: admin.credential.cert({
+                    projectId: process.env.FIREBASE_PROJECT_ID || "ignou-web",
+                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                    privateKey: formatKey(process.env.FIREBASE_PRIVATE_KEY)
+                })
+            });
+        }
+        const db = admin.firestore();
+
         const body = req.body || {};
         const { uid, subjectCode, courseName, price } = body;
         
@@ -77,7 +75,7 @@ module.exports = async (req, res) => {
 
         const sheetId = process.env.SPREADSHEET_ID; 
         if (!sheetId) {
-            return res.status(500).json({ success: false, message: "Vercel Error: SPREADSHEET_ID missing hai." });
+            return res.status(500).json({ success: false, message: "Vercel Variable missing: SPREADSHEET_ID." });
         }
 
         const response = await sheets.spreadsheets.values.get({
@@ -122,7 +120,8 @@ module.exports = async (req, res) => {
         return res.status(200).json({ success: true, orderId: orderId });
         
     } catch (error) {
-        console.error("API Catch Error:", error);
-        return res.status(500).json({ success: false, message: "Server Error: " + error.message });
+        console.error("API Execution Error:", error);
+        // Ab jo bhi real error hoga, wo seedha JSON format me frontend par alert me dikhega
+        return res.status(500).json({ success: false, message: "Server Exception: " + error.message });
     }
 };
