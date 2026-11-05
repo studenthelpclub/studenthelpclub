@@ -1,27 +1,8 @@
 {
-  "version": 2,
-  "buildCommand": "node build.js",
-  "outputDirectory": ".",
-  "builds": [
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "**",
-      "use": "@vercel/static"
-    }
-  ],
   "rewrites": [
     {
       "source": "/blog/:slug",
       "destination": "/blog.html"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
     }
   ],
   "headers": [
