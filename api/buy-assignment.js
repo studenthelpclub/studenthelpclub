@@ -3,8 +3,8 @@ const admin = require('firebase-admin');
 
 const formatKey = (key) => {
     if (!key) return "";
-    // Remove extra quotes if accidentally added and fix newlines
-    return key.replace(/\\n/g, '\n').replace(/"/g, '');
+    // Yeh line naye lines aur quotes ko perfectly set kar degi
+    return key.replace(/\\n/g, '\n').replace(/"/g, '').trim();
 };
 
 module.exports = async (req, res) => {
@@ -23,13 +23,29 @@ module.exports = async (req, res) => {
     }
 
     try {
-        // Safe Firebase Initialization inside handler
+        // Sabhi possible environment variable names check karega taaki key miss na ho
+        const privateKey = formatKey(process.env.SHEETS_PRIVATE_KEY || process.env.FIREBASE_PRIVATE_KEY);
+        const clientEmail = process.env.SHEETS_CLIENT_EMAIL || process.env.FIREBASE_CLIENT_EMAIL;
+        const projectId = process.env.FIREBASE_PROJECT_ID || "ignou-web";
+        const sheetId = process.env.SPREADSHEET_ID;
+
+        if (!privateKey) {
+            return res.status(500).json({ success: false, message: "Error: Vercel me PRIVATE_KEY missing hai ya khali hai." });
+        }
+        if (!clientEmail) {
+            return res.status(500).json({ success: false, message: "Error: Vercel me CLIENT_EMAIL missing hai." });
+        }
+        if (!sheetId) {
+            return res.status(500).json({ success: false, message: "Error: Vercel me SPREADSHEET_ID missing hai." });
+        }
+
+        // Firebase Initialization
         if (!admin.apps.length) {
             admin.initializeApp({
                 credential: admin.credential.cert({
-                    projectId: process.env.FIREBASE_PROJECT_ID || "ignou-web",
-                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                    privateKey: formatKey(process.env.FIREBASE_PRIVATE_KEY)
+                    projectId: projectId,
+                    clientEmail: clientEmail,
+                    privateKey: privateKey
                 })
             });
         }
@@ -60,23 +76,14 @@ module.exports = async (req, res) => {
         }
 
         // 2. Google Sheets API setup
-        if (!process.env.SHEETS_CLIENT_EMAIL || !process.env.SHEETS_PRIVATE_KEY) {
-            return res.status(500).json({ success: false, message: "Vercel Error: SHEETS_CLIENT_EMAIL ya SHEETS_PRIVATE_KEY missing hai." });
-        }
-
         const auth = new google.auth.GoogleAuth({
             credentials: {
-                client_email: process.env.SHEETS_CLIENT_EMAIL,
-                private_key: formatKey(process.env.SHEETS_PRIVATE_KEY),
+                client_email: clientEmail,
+                private_key: privateKey,
             },
             scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
         });
         const sheets = google.sheets({ version: 'v4', auth });
-
-        const sheetId = process.env.SPREADSHEET_ID; 
-        if (!sheetId) {
-            return res.status(500).json({ success: false, message: "Vercel Variable missing: SPREADSHEET_ID." });
-        }
 
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: sheetId,
@@ -121,7 +128,6 @@ module.exports = async (req, res) => {
         
     } catch (error) {
         console.error("API Execution Error:", error);
-        // Ab jo bhi real error hoga, wo seedha JSON format me frontend par alert me dikhega
-        return res.status(500).json({ success: false, message: "Server Exception: " + error.message });
+        return res.status(500).json({ success: false, message: "Server Error: " + error.message });
     }
 };
