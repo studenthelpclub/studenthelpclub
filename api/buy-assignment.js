@@ -1,4 +1,3 @@
-const { google } = require('googleapis');
 const admin = require('firebase-admin');
 
 const formatKey = (key) => {
@@ -22,20 +21,12 @@ module.exports = async (req, res) => {
     }
 
     try {
-        // Yeh line Vercel ke kisi bhi naam wale variable (SHEETS ya FIREBASE) ko utha legi
         const privateKey = formatKey(process.env.SHEETS_PRIVATE_KEY || process.env.FIREBASE_PRIVATE_KEY);
         const clientEmail = process.env.SHEETS_CLIENT_EMAIL || process.env.FIREBASE_CLIENT_EMAIL;
         const projectId = process.env.FIREBASE_PROJECT_ID || "ignou-web";
-        const sheetId = process.env.SPREADSHEET_ID;
 
-        if (!privateKey) {
-            return res.status(500).json({ success: false, message: "Error: Vercel me SHEETS_PRIVATE_KEY missing hai." });
-        }
-        if (!clientEmail) {
-            return res.status(500).json({ success: false, message: "Error: Vercel me SHEETS_CLIENT_EMAIL missing hai." });
-        }
-        if (!sheetId) {
-            return res.status(500).json({ success: false, message: "Error: Vercel me SPREADSHEET_ID missing hai." });
+        if (!privateKey || !clientEmail) {
+            return res.status(500).json({ success: false, message: "Error: Firebase Credentials missing in Vercel." });
         }
 
         // Firebase Initialization
@@ -51,13 +42,11 @@ module.exports = async (req, res) => {
         const db = admin.firestore();
 
         const body = req.body || {};
-        const { uid, subjectCode, courseName, price } = body;
+        const { uid, subjectCode, courseName, price, driveLink } = body;
         
         if (!uid || !subjectCode) {
              return res.status(400).json({ success: false, message: "User ID ya Subject Code missing hai." });
         }
-
-        const searchCode = subjectCode.trim();
 
         // 1. Check User Wallet Balance
         const userRef = db.collection('users').doc(uid);
@@ -74,38 +63,18 @@ module.exports = async (req, res) => {
             return res.status(400).json({ success: false, message: `Insufficient Balance! Aapke paas ₹${currentBalance} hain, par chahiye ₹${itemPrice}.` });
         }
 
-        // 2. Google Sheets API setup
-        const auth = new google.auth.GoogleAuth({
-            credentials: {
-                client_email: clientEmail,
-                private_key: privateKey,
-            },
-            scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
-        });
-        const sheets = google.sheets({ version: 'v4', auth });
-
-        const response = await sheets.spreadsheets.values.get({
-            spreadsheetId: sheetId,
-            range: 'Sheet1!A:D', 
-        });
-
-        const rows = response.data.values;
-        if (!rows || rows.length === 0) {
-            return res.status(404).json({ success: false, message: "Google Sheet khali hai ya read nahi ho pa rahi." });
-        }
-
-        // Search Logic
-        let fileLink = null;
-        for (let i = 0; i < rows.length; i++) {
-            const rowCode = rows[i][0] ? rows[i][0].toString().trim().toUpperCase() : "";
-            if (rowCode.includes(searchCode.toUpperCase())) {
-                fileLink = rows[i][3]; // D column (Link)
-                break;
+        // 2. Get Drive Link directly from Firestore store or fallback
+        let fileLink = driveLink;
+        if (!fileLink) {
+            // Firestore ke pdf_store se dhoondh lenge agar body me nahi aaya
+            const storeSnap = await db.collection('pdf_store').where("subjectCode", "==", subjectCode).get();
+            if (!storeSnap.empty) {
+                fileLink = storeSnap.docs[0].data().driveLink || storeSnap.docs[0].data().link;
             }
         }
 
         if (!fileLink) {
-            return res.status(404).json({ success: false, message: `${subjectCode} ka link Google Sheet me nahi mila.` });
+            fileLink = "https://wa.me/919776986830?text=Hello,%20mainey%20" + subjectCode + "%20buy%20kiya%20hai%20lekin%20link%20nahi%20mila.";
         }
 
         // 3. Deduct Wallet & Save Order
