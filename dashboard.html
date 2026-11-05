@@ -261,8 +261,8 @@
                 btn.disabled = true;
 
                 try {
-                    // Call the Vercel API which checks Google Sheet, deducts wallet, and creates order
-                    const response = await fetch(`${VERCEL_API_URL}/api/buy-assignment`, {
+                    // Yahan /api lagana zaroori hai
+                    const response = await fetch(`/api/buy-assignment`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -283,14 +283,16 @@
                         document.getElementById('walletBalance').innerText = newBalance;
                         document.getElementById('headerWalletBalance').innerText = newBalance;
                         
-                        // Refresh Order History to show download link
+                        // Refresh Order History
                         loadOrderHistory(); 
                     } else {
-                        alert(result.message || "Failed to process order.");
+                        // Ab jo bhi exact error Vercel se aayega, wahi screen par dikhega
+                        alert("Error: " + result.message);
                     }
                 } catch (e) {
                     console.error("Purchase error: ", e);
-                    alert("Server error. Please try again later.");
+                    // Agar network ka issue hai to ye dikhega
+                    alert("Network error: Server se connect nahi ho paya. URL check karein.");
                 } finally {
                     btn.innerHTML = originalText;
                     btn.disabled = false;
