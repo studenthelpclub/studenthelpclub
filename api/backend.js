@@ -47,7 +47,6 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'No items received from Google Sheet' });
       }
 
-      // 1. Group Sheet items by Subject Code (e.g. BAPC-103 -> { hindi, english })
       const grouped = {};
       for (const item of items) {
         const cleanCode = String(item.subjectCode || '').trim().toUpperCase();
@@ -88,7 +87,6 @@ module.exports = async (req, res) => {
         }
       }
 
-      // 2. Load all existing docs in pdf_store to merge & remove _Hindi / _English duplicates
       const snap = await db.collection('pdf_store').get();
       const existingByCode = {};
       snap.forEach(doc => {
@@ -109,7 +107,6 @@ module.exports = async (req, res) => {
         const existingList = existingByCode[code] || [];
         const letters = code.replace(/[^A-Z]/g, '') || 'IGNOU';
 
-        // Prefer original admin doc (that doesn't end in _Hindi or _English) if present
         let primaryDoc = existingList.find(d => !d.id.endsWith('_Hindi') && !d.id.endsWith('_English')) || existingList[0];
         const targetDocId = primaryDoc ? primaryDoc.id : code.replace(/[^A-Za-z0-9_-]/g, '');
         const docRef = db.collection('pdf_store').doc(targetDocId);
@@ -141,7 +138,6 @@ module.exports = async (req, res) => {
         opCount++;
         mergedSubjects++;
 
-        // Delete any extra duplicate cards for the same Subject Code (e.g. BAPC-103_Hindi, BAPC-103_English)
         for (const oldDoc of existingList) {
           if (oldDoc.id !== targetDocId) {
             batch.delete(db.collection('pdf_store').doc(oldDoc.id));
@@ -167,34 +163,47 @@ module.exports = async (req, res) => {
       });
     }
 
+    // 0.1 COMPLETE PROFILE (Saves Name, Mobile, Shop Owner status)
+    if (action === 'complete-profile' && req.method === 'POST') {
+      const { uid, email, name, mobile, isShopOwner, fingerprint, refCode } = req.body;
+      const userRef = db.collection('users').doc(uid);
+      const generatedRefCode = 'SHGC' + uid.substring(0, 5).toUpperCase();
+
+      await userRef.set({
+        email: email || '',
+        name: name || '',
+        mobile: mobile || '',
+        isShopOwner: Boolean(isShopOwner),
+        walletBalance: 0,
+        myRefCode: generatedRefCode,
+        referredBy: refCode || null,
+        totalPdfsBought: 0,
+        referralRewardClaimed: false,
+        devices: [fingerprint || 'default'],
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+      return res.status(200).json({ success: true });
+    }
+
     // 1. DEVICE FOOTPRINT CHECK & AUTO-CREATE USER ON LOGIN
     if (action === 'verify-device' && req.method === 'POST') {
-      const { uid, fingerprint, refCode } = req.body;
+      const { uid, fingerprint } = req.body;
       if (!uid || !fingerprint) return res.status(400).json({ error: 'Invalid data' });
 
       const userRef = db.collection('users').doc(uid);
       const userDoc = await userRef.get();
-      const generatedRefCode = 'SHGC' + uid.substring(0, 5).toUpperCase();
 
       if (!userDoc.exists) {
-        await userRef.set({
-          walletBalance: 0,
-          myRefCode: generatedRefCode,
-          referredBy: refCode || null,
-          totalPdfsBought: 0,
-          referralRewardClaimed: false,
-          devices: [fingerprint],
-          createdAt: admin.firestore.FieldValue.serverTimestamp()
-        });
-        return res.status(200).json({ status: 'OK', walletBalance: 0, myRefCode: generatedRefCode });
+        return res.status(200).json({ isNewUser: true, hasProfile: false });
       }
 
       const userData = userDoc.data();
+      if (!userData.name || !userData.mobile) {
+        return res.status(200).json({ isNewUser: false, hasProfile: false });
+      }
+
       let devices = userData.devices || [];
-      let myRefCode = userData.myRefCode || generatedRefCode;
-
-      if (!userData.myRefCode) await userRef.update({ myRefCode });
-
       if (!devices.includes(fingerprint)) {
         if (devices.length >= 2) {
           return res.status(403).json({ error: 'Account Sharing Blocked! Max 2 devices allowed.' });
@@ -205,8 +214,9 @@ module.exports = async (req, res) => {
 
       return res.status(200).json({
         status: 'OK',
+        hasProfile: true,
         walletBalance: userData.walletBalance || 0,
-        myRefCode: myRefCode
+        myRefCode: userData.myRefCode
       });
     }
 
@@ -337,32 +347,14 @@ module.exports = async (req, res) => {
       const wantedMedium = String(medium || order.medium || 'Hindi').toLowerCase();
       let fileId = "";
 
-      const pickFileId = (d) => {
-        if (!d) return "";
-        if (wantedMedium.includes('eng') && d.englishFileId) return d.englishFileId;
-        if (wantedMedium.includes('hin') && d.hindiFileId) return d.hindiFileId;
-        return d.hindiFileId || d.englishFileId || d.fileId || d.driveId || "";
-      };
-
       const storeDoc = await db.collection('pdf_store').doc(docId).get();
       if (storeDoc.exists) {
-        fileId = pickFileId(storeDoc.data());
+        const d = storeDoc.data();
+        if (wantedMedium.includes('eng')) fileId = d.englishFileId || d.fileId || d.driveId;
+        else fileId = d.hindiFileId || d.fileId || d.driveId;
       }
 
-      if (!fileId && order.subjectCode) {
-        const querySnap = await db.collection('pdf_store').where('subjectCode', '==', order.subjectCode).get();
-        for (const doc of querySnap.docs) {
-          const candidate = pickFileId(doc.data());
-          if (candidate) {
-            fileId = candidate;
-            break;
-          }
-        }
-      }
-
-      if (!fileId) {
-        return res.status(404).json({ error: `Drive File ID not found for ${order.subjectCode}!` });
-      }
+      if (!fileId) return res.status(404).json({ error: 'Drive File ID not found!' });
 
       const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
       return res.status(200).json({ downloadUrl: directDownloadUrl });
