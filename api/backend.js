@@ -2,17 +2,14 @@ const admin = require('firebase-admin');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 
-// CRASH-PROOF FIREBASE INITIALIZATION
 function initFirebase() {
   if (!admin.apps.length) {
     let rawEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
     if (!rawEnv) throw new Error('FIREBASE_SERVICE_ACCOUNT env variable is missing in Vercel!');
-    
     let serviceAccount;
     try {
       serviceAccount = JSON.parse(rawEnv);
     } catch (e) {
-      // Fix multi-line paste issue in Vercel Env Variables
       const cleaned = rawEnv.replace(/\n/g, '\\n').replace(/\\n\s*"/g, '\n"').replace(/{\\n/g, '{\n').replace(/\\n}/g, '\n}');
       serviceAccount = JSON.parse(cleaned);
     }
@@ -27,7 +24,6 @@ function initFirebase() {
 }
 
 module.exports = async (req, res) => {
-  // Allow Google Sheet & Frontend Calls
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -43,7 +39,7 @@ module.exports = async (req, res) => {
     });
 
     // ====================================================
-    // 0. GOOGLE SHEET -> FIREBASE BULK SYNC (Replaces whatsapp with fileId)
+    // 0. SMART SHEET SYNC: 1 CARD PER SUBJECT + MERGE HINDI/ENGLISH + DELETE DUPLICATES
     // ====================================================
     if (action === 'sync-from-sheet' && req.method === 'POST') {
       const { items } = req.body;
@@ -51,81 +47,109 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'No items received from Google Sheet' });
       }
 
-      // Ek baar mein saare existing pdf_store documents load karo
-      const snap = await db.collection('pdf_store').get();
-      const existingDocs = [];
-      snap.forEach(doc => existingDocs.push({ id: doc.id, ...doc.data() }));
-
-      let batch = db.batch();
-      let opCount = 0;
-      let updatedCount = 0;
-      let createdCount = 0;
-
+      // 1. Group Sheet items by Subject Code (e.g. BAPC-103 -> { hindi, english })
+      const grouped = {};
       for (const item of items) {
         const cleanCode = String(item.subjectCode || '').trim().toUpperCase();
-        const mediumShort = String(item.medium || 'Hindi').trim(); // "Hindi" or "English"
-        const mediumFull = mediumShort.toLowerCase().includes('eng') ? 'English Medium' : 'Hindi Medium';
+        const mediumShort = String(item.medium || 'Hindi').trim().toLowerCase();
         const fileId = String(item.fileId || '').trim();
         const ytLink = String(item.ytLink || '').trim();
 
         if (!cleanCode || !fileId) continue;
 
-        // Check karo ki pdf_store mein ye Subject Code pehle se hai ya nahi
-        const matches = existingDocs.filter(
-          d => String(d.subjectCode || '').trim().toUpperCase() === cleanCode
-        );
-
-        // Match medium if exists, OR pick doc that has no medium yet
-        let targetDoc = matches.find(d => {
-          const m = String(d.medium || '').toLowerCase();
-          return m.includes(mediumShort.toLowerCase());
-        });
-
-        if (!targetDoc && matches.length > 0) {
-          // Agar purane document mein medium set nahi hai, toh pehla match update karo
-          targetDoc = matches.find(d => !d.medium || d._usedForSync !== true);
-        }
-
-        if (targetDoc) {
-          targetDoc._usedForSync = true;
-          const docRef = db.collection('pdf_store').doc(targetDoc.id);
-          const updateData = {
-            fileId: fileId,
-            driveId: fileId,
-            medium: mediumFull,
-            whatsapp: admin.firestore.FieldValue.delete() // WhatsApp link hataya
-          };
-          if (ytLink) updateData.ytLink = ytLink;
-
-          batch.update(docRef, updateData);
-          updatedCount++;
-          opCount++;
-        } else {
-          // Agar ye Subject Code + Medium naya hai toh naya document banao
-          const letters = cleanCode.replace(/[^A-Z]/g, '') || 'IGNOU';
-          const customDocId = `${cleanCode}_${mediumShort}`.replace(/[^A-Za-z0-9_-]/g, '');
-          const newDocRef = db.collection('pdf_store').doc(customDocId);
-          batch.set(newDocRef, {
+        if (!grouped[cleanCode]) {
+          grouped[cleanCode] = {
             subjectCode: cleanCode,
-            subjectName: `${cleanCode} Solved Assignment (${mediumShort})`,
-            courseName: letters,
-            courses: [letters],
-            medium: mediumFull,
-            price: 25,
-            session: '2026-27',
-            sessions: ['June', 'January'],
-            typedPDF: true,
-            handwrittenPDF: false,
-            fileId: fileId,
-            driveId: fileId,
-            ytLink: ytLink,
-            timestamp: admin.firestore.FieldValue.serverTimestamp()
-          }, { merge: true });
-          createdCount++;
-          opCount++;
+            mediums: [],
+            hindiFileId: '',
+            englishFileId: '',
+            ytLink: '',
+            hindiYtLink: '',
+            englishYtLink: ''
+          };
         }
 
-        // Firestore Batch limit is 500
+        if (mediumShort.includes('eng')) {
+          if (!grouped[cleanCode].mediums.includes('English Medium')) {
+            grouped[cleanCode].mediums.push('English Medium');
+          }
+          grouped[cleanCode].englishFileId = fileId;
+          if (ytLink) grouped[cleanCode].englishYtLink = ytLink;
+        } else {
+          if (!grouped[cleanCode].mediums.includes('Hindi Medium')) {
+            grouped[cleanCode].mediums.push('Hindi Medium');
+          }
+          grouped[cleanCode].hindiFileId = fileId;
+          if (ytLink) grouped[cleanCode].hindiYtLink = ytLink;
+        }
+
+        if (ytLink && !grouped[cleanCode].ytLink) {
+          grouped[cleanCode].ytLink = ytLink;
+        }
+      }
+
+      // 2. Load all existing docs in pdf_store to merge & remove _Hindi / _English duplicates
+      const snap = await db.collection('pdf_store').get();
+      const existingByCode = {};
+      snap.forEach(doc => {
+        const d = doc.data();
+        const code = String(d.subjectCode || '').trim().toUpperCase();
+        if (!code) return;
+        if (!existingByCode[code]) existingByCode[code] = [];
+        existingByCode[code].push({ id: doc.id, ...d });
+      });
+
+      let batch = db.batch();
+      let opCount = 0;
+      let mergedSubjects = 0;
+      let deletedDuplicates = 0;
+
+      for (const code of Object.keys(grouped)) {
+        const g = grouped[code];
+        const existingList = existingByCode[code] || [];
+        const letters = code.replace(/[^A-Z]/g, '') || 'IGNOU';
+
+        // Prefer original admin doc (that doesn't end in _Hindi or _English) if present
+        let primaryDoc = existingList.find(d => !d.id.endsWith('_Hindi') && !d.id.endsWith('_English')) || existingList[0];
+        const targetDocId = primaryDoc ? primaryDoc.id : code.replace(/[^A-Za-z0-9_-]/g, '');
+        const docRef = db.collection('pdf_store').doc(targetDocId);
+
+        const payload = {
+          subjectCode: code,
+          subjectName: (primaryDoc && primaryDoc.subjectName && !primaryDoc.subjectName.includes('Solved Assignment ('))
+            ? primaryDoc.subjectName
+            : `${code} Solved Assignment`,
+          courseName: (primaryDoc && primaryDoc.courseName) ? primaryDoc.courseName : letters,
+          courses: (primaryDoc && Array.isArray(primaryDoc.courses) && primaryDoc.courses.length) ? primaryDoc.courses : [letters],
+          price: (primaryDoc && primaryDoc.price) ? Number(primaryDoc.price) : 25,
+          mediums: g.mediums,
+          medium: g.mediums[0] || 'Hindi Medium',
+          sessions: ['June', 'December'],
+          session: 'June',
+          typedPDF: true,
+          hindiFileId: g.hindiFileId || (primaryDoc && primaryDoc.hindiFileId) || '',
+          englishFileId: g.englishFileId || (primaryDoc && primaryDoc.englishFileId) || '',
+          fileId: g.hindiFileId || g.englishFileId || '',
+          driveId: g.hindiFileId || g.englishFileId || '',
+          ytLink: g.ytLink || (primaryDoc && primaryDoc.ytLink) || '',
+          hindiYtLink: g.hindiYtLink || '',
+          englishYtLink: g.englishYtLink || '',
+          whatsapp: admin.firestore.FieldValue.delete()
+        };
+
+        batch.set(docRef, payload, { merge: true });
+        opCount++;
+        mergedSubjects++;
+
+        // Delete any extra duplicate cards for the same Subject Code (e.g. BAPC-103_Hindi, BAPC-103_English)
+        for (const oldDoc of existingList) {
+          if (oldDoc.id !== targetDocId) {
+            batch.delete(db.collection('pdf_store').doc(oldDoc.id));
+            opCount++;
+            deletedDuplicates++;
+          }
+        }
+
         if (opCount >= 400) {
           await batch.commit();
           batch = db.batch();
@@ -137,9 +161,9 @@ module.exports = async (req, res) => {
 
       return res.status(200).json({
         success: true,
-        updated: updatedCount,
-        created: createdCount,
-        message: `Updated ${updatedCount} existing PDFs (replaced whatsapp with fileId) & Added ${createdCount} new PDFs!`
+        mergedSubjects,
+        deletedDuplicates,
+        message: `Synced ${mergedSubjects} unique subjects & removed ${deletedDuplicates} duplicate cards!`
       });
     }
 
@@ -169,9 +193,7 @@ module.exports = async (req, res) => {
       let devices = userData.devices || [];
       let myRefCode = userData.myRefCode || generatedRefCode;
 
-      if (!userData.myRefCode) {
-        await userRef.update({ myRefCode });
-      }
+      if (!userData.myRefCode) await userRef.update({ myRefCode });
 
       if (!devices.includes(fingerprint)) {
         if (devices.length >= 2) {
@@ -204,10 +226,14 @@ module.exports = async (req, res) => {
       return res.status(200).json({ discount: Number(promo.discount), code: code.toUpperCase() });
     }
 
-    // 3. CHECKOUT USING WALLET
+    // 3. CHECKOUT USING WALLET (Saves exact selected Medium & Session)
     if (action === 'wallet-checkout' && req.method === 'POST') {
-      const { uid, fingerprint, itemIds, promoCode } = req.body;
-      if (!uid || !itemIds || !itemIds.length) return res.status(400).json({ error: 'Cart is empty' });
+      const { uid, itemIds, items, promoCode } = req.body;
+      const cartList = Array.isArray(items) && items.length
+        ? items
+        : (Array.isArray(itemIds) ? itemIds.map(id => ({ id })) : []);
+
+      if (!uid || !cartList.length) return res.status(400).json({ error: 'Cart is empty' });
 
       const userRef = db.collection('users').doc(uid);
       const userDoc = await userRef.get();
@@ -216,16 +242,17 @@ module.exports = async (req, res) => {
 
       let total = 0;
       const purchasedItems = [];
-      for (const id of itemIds) {
-        const pdfDoc = await db.collection('pdf_store').doc(id).get();
+      for (const cItem of cartList) {
+        const pdfDoc = await db.collection('pdf_store').doc(cItem.id).get();
         if (pdfDoc.exists) {
           const d = pdfDoc.data();
           total += Number(d.price || 25);
           purchasedItems.push({
-            docId: id,
+            docId: cItem.id,
             subjectCode: d.subjectCode || 'IGNOU',
             subjectName: d.subjectName || 'Assignment PDF',
-            medium: d.medium || 'Hindi Medium'
+            medium: cItem.medium || d.medium || 'Hindi Medium',
+            session: cItem.session || 'June'
           });
         }
       }
@@ -265,19 +292,17 @@ module.exports = async (req, res) => {
           subjectCode: item.subjectCode,
           subjectName: item.subjectName,
           medium: item.medium,
+          session: item.session,
           expiresAt: expiresAt.toISOString(),
           timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
       }
 
-      // 8-PDF REFERRAL MILESTONE BONUS (₹10)
       if (user.referredBy && !user.referralRewardClaimed && newCount >= 8) {
         const refQuery = await db.collection('users').where('myRefCode', '==', user.referredBy).limit(1).get();
         if (!refQuery.empty) {
           const referrerDoc = refQuery.docs[0];
-          await referrerDoc.ref.update({
-            walletBalance: admin.firestore.FieldValue.increment(10)
-          });
+          await referrerDoc.ref.update({ walletBalance: admin.firestore.FieldValue.increment(10) });
           await db.collection('wallet_history').add({
             uid: referrerDoc.id,
             type: 'CREDIT',
@@ -292,9 +317,9 @@ module.exports = async (req, res) => {
       return res.status(200).json({ success: true });
     }
 
-    // 4. SECURE GOOGLE DRIVE DOWNLOAD PROXY (Matches by docId OR subjectCode + medium)
+    // 4. SECURE GOOGLE DRIVE DOWNLOAD PROXY (Picks Hindi or English File ID based on Order)
     if (action === 'download-pdf' && req.method === 'POST') {
-      const { uid, docId } = req.body;
+      const { uid, docId, medium } = req.body;
       const userDoc = await db.collection('users').doc(uid).get();
       if (!userDoc.exists) return res.status(403).json({ error: 'User not found' });
 
@@ -309,39 +334,34 @@ module.exports = async (req, res) => {
         return res.status(403).json({ error: '6 Months Download Validity Expired!' });
       }
 
+      const wantedMedium = String(medium || order.medium || 'Hindi').toLowerCase();
       let fileId = "";
 
-      // Attempt 1: Direct docId match in pdf_store
+      const pickFileId = (d) => {
+        if (!d) return "";
+        if (wantedMedium.includes('eng') && d.englishFileId) return d.englishFileId;
+        if (wantedMedium.includes('hin') && d.hindiFileId) return d.hindiFileId;
+        return d.hindiFileId || d.englishFileId || d.fileId || d.driveId || "";
+      };
+
       const storeDoc = await db.collection('pdf_store').doc(docId).get();
       if (storeDoc.exists) {
-        const d = storeDoc.data();
-        fileId = d.fileId || d.driveId || d.pdfId;
+        fileId = pickFileId(storeDoc.data());
       }
 
-      // Attempt 2: Match by subjectCode + medium in pdf_store
       if (!fileId && order.subjectCode) {
-        const querySnap = await db.collection('pdf_store')
-          .where('subjectCode', '==', order.subjectCode)
-          .get();
-
-        if (!querySnap.empty) {
-          for (const doc of querySnap.docs) {
-            const d = doc.data();
-            const fId = d.fileId || d.driveId;
-            if (fId) {
-              fileId = fId;
-              if (!order.medium || String(d.medium || '').toLowerCase().includes(String(order.medium).toLowerCase().split(' ')[0])) {
-                break;
-              }
-            }
+        const querySnap = await db.collection('pdf_store').where('subjectCode', '==', order.subjectCode).get();
+        for (const doc of querySnap.docs) {
+          const candidate = pickFileId(doc.data());
+          if (candidate) {
+            fileId = candidate;
+            break;
           }
         }
       }
 
       if (!fileId) {
-        return res.status(404).json({
-          error: `Is subject (${order.subjectCode}) ka Drive File ID aapki Google Sheet mein nahi mila!`
-        });
+        return res.status(404).json({ error: `Drive File ID not found for ${order.subjectCode}!` });
       }
 
       const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
@@ -372,9 +392,7 @@ module.exports = async (req, res) => {
 
       const userData = userDoc.data();
       let myRefCode = userData.myRefCode || generatedRefCode;
-      if (!userData.myRefCode) {
-        await userRef.update({ myRefCode });
-      }
+      if (!userData.myRefCode) await userRef.update({ myRefCode });
 
       const ordersSnap = await db.collection('orders').where('uid', '==', uid).get();
       const orders = [];
@@ -386,14 +404,15 @@ module.exports = async (req, res) => {
         const pdfStoreDoc = await db.collection('pdf_store').doc(ord.docId).get();
         if (pdfStoreDoc.exists) {
           const d = pdfStoreDoc.data();
-          ytLink = d.ytLink || "";
-          subName = subName || d.subjectName || d.rawTitle || "Solved Assignment PDF";
+          ytLink = (String(ord.medium || '').toLowerCase().includes('eng') ? d.englishYtLink : d.hindiYtLink) || d.ytLink || "";
+          subName = subName || d.subjectName || "Solved Assignment PDF";
         }
         orders.push({
           docId: ord.docId,
           subjectCode: ord.subjectCode || 'IGNOU',
           subjectName: subName,
-          medium: ord.medium || 'Hindi/English',
+          medium: ord.medium || 'Hindi Medium',
+          session: ord.session || 'June',
           expiresAt: ord.expiresAt || new Date().toISOString(),
           ytLink: ytLink
         });
@@ -433,7 +452,7 @@ module.exports = async (req, res) => {
 
     // 7. VERIFY RAZORPAY CART PAYMENT
     if (action === 'verify-cart-payment' && req.method === 'POST') {
-      const { razorpay_order_id, razorpay_payment_id, razorpay_signature, uid, itemIds } = req.body;
+      const { razorpay_order_id, razorpay_payment_id, razorpay_signature, uid, itemIds, items } = req.body;
 
       const body = razorpay_order_id + "|" + razorpay_payment_id;
       const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET).update(body).digest('hex');
@@ -442,6 +461,10 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Payment Signature Mismatch!' });
       }
 
+      const cartList = Array.isArray(items) && items.length
+        ? items
+        : (Array.isArray(itemIds) ? itemIds.map(id => ({ id })) : []);
+
       const userRef = db.collection('users').doc(uid);
       const userDoc = await userRef.get();
       const user = userDoc.data();
@@ -449,19 +472,20 @@ module.exports = async (req, res) => {
       const expiresAt = new Date();
       expiresAt.setMonth(expiresAt.getMonth() + 6);
 
-      const newCount = (user.totalPdfsBought || 0) + itemIds.length;
+      const newCount = (user.totalPdfsBought || 0) + cartList.length;
       await userRef.update({ totalPdfsBought: newCount });
 
-      for (const id of itemIds) {
-        const pdfDoc = await db.collection('pdf_store').doc(id).get();
+      for (const cItem of cartList) {
+        const pdfDoc = await db.collection('pdf_store').doc(cItem.id).get();
         if (pdfDoc.exists) {
           const d = pdfDoc.data();
           await db.collection('orders').add({
             uid,
-            docId: id,
+            docId: cItem.id,
             subjectCode: d.subjectCode,
-            subjectName: d.subjectName || d.rawTitle || 'Assignment PDF',
-            medium: d.medium || '',
+            subjectName: d.subjectName || 'Assignment PDF',
+            medium: cItem.medium || d.medium || 'Hindi Medium',
+            session: cItem.session || 'June',
             expiresAt: expiresAt.toISOString(),
             timestamp: admin.firestore.FieldValue.serverTimestamp()
           });
