@@ -176,10 +176,10 @@
     </div>
 
     <div class="grid grid-cols-2 gap-2 pt-2">
-      <button onclick="payWithWallet()" class="bg-emerald-600 text-white py-4 rounded-2xl font-black uppercase text-[10px] tracking-wider shadow-md hover:bg-emerald-700 transition">
+      <button id="walletBtn" onclick="payWithWallet()" class="bg-emerald-600 text-white py-4 rounded-2xl font-black uppercase text-[10px] tracking-wider shadow-md hover:bg-emerald-700 transition flex items-center justify-center gap-1">
         <i class="fas fa-wallet mr-1"></i> Pay via Wallet
       </button>
-      <button onclick="payWithRazorpay()" class="bg-[#d32f2f] text-white py-4 rounded-2xl font-black uppercase text-[10px] tracking-wider shadow-md hover:bg-slate-900 transition">
+      <button id="upiBtn" onclick="payWithRazorpay()" class="bg-[#d32f2f] text-white py-4 rounded-2xl font-black uppercase text-[10px] tracking-wider shadow-md hover:bg-slate-900 transition flex items-center justify-center gap-1">
         <i class="fas fa-bolt mr-1"></i> Instant UPI Pay
       </button>
     </div>
@@ -341,50 +341,110 @@
     setTimeout(() => { window.location.href = url; }, 1500);
   }
 
+  // PAY VIA WALLET (Login Required)
   window.payWithWallet = async () => {
-    if (!currentUser) { alert("Please Login first!"); toggleLoginModal(); return; }
+    if (!currentUser) { 
+      alert("Please Login first to use Wallet!"); 
+      toggleCart();
+      toggleLoginModal(); 
+      return; 
+    }
     if (!cart.length) return;
-    const fp = await getDeviceFootprint();
-    const res = await fetch('/api/backend?action=wallet-checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ uid: currentUser.uid, fingerprint: fp, items: cart, promoCode: appliedPromo.code })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      cart = []; localStorage.removeItem('shc_cart_v2'); updateCartUI();
-      showSuccessPopup("🎉 Order Successful! Redirecting to Dashboard...");
-    } else { alert(data.error); }
+
+    const btn = document.getElementById('walletBtn');
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-1"></i> Processing...`;
+
+    try {
+      const fp = await getDeviceFootprint();
+      const res = await fetch('/api/backend?action=wallet-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid: currentUser.uid, fingerprint: fp, items: cart, promoCode: appliedPromo.code })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        cart = []; localStorage.removeItem('shc_cart_v2'); updateCartUI();
+        showSuccessPopup("🎉 Order Successful! Redirecting to Dashboard...");
+      } else { 
+        alert(data.error); 
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fas fa-wallet mr-1"></i> Pay via Wallet`;
+      }
+    } catch(err) {
+      alert("Network error. Please try again.");
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fas fa-wallet mr-1"></i> Pay via Wallet`;
+    }
   };
 
+  // INSTANT UPI PAY (RAZORPAY - No Login Required on Index Page)
   window.payWithRazorpay = async () => {
-    if (!currentUser) { alert("Please Login with Google first!"); toggleLoginModal(); return; }
-    if (!cart.length) return;
-    const fp = await getDeviceFootprint();
-    const res = await fetch('/api/backend?action=create-cart-order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ itemIds: cart.map(c => c.id), promoCode: appliedPromo.code })
-    });
-    const order = await res.json();
-    if (!res.ok) { alert(order.error); return; }
+    if (!cart.length) { alert("Your cart is empty!"); return; }
 
-    const options = {
-      key: order.key, amount: order.amount, currency: "INR", name: "Student Help Club", description: `${cart.length} Study PDF(s)`, order_id: order.order_id,
-      handler: async function (response) {
-        const vRes = await fetch('/api/backend?action=verify-cart-payment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...response, uid: currentUser.uid, fingerprint: fp, items: cart })
-        });
-        if (vRes.ok) {
-          cart = []; localStorage.removeItem('shc_cart_v2'); updateCartUI();
-          showSuccessPopup("🚀 Payment Verified! Opening Dashboard...");
-        } else { alert("Payment verification failed."); }
-      },
-      theme: { color: "#d32f2f" }
-    };
-    new Razorpay(options).open();
+    const btn = document.getElementById('upiBtn');
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-1"></i> Preparing UPI...`;
+
+    try {
+      const res = await fetch('/api/backend?action=create-cart-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemIds: cart.map(c => c.id), promoCode: appliedPromo.code })
+      });
+      const order = await res.json();
+      if (!res.ok) { 
+        alert(order.error || "Failed to create order"); 
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fas fa-bolt mr-1"></i> Instant UPI Pay`;
+        return; 
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fas fa-bolt mr-1"></i> Instant UPI Pay`;
+
+      const options = {
+        key: order.key, 
+        amount: order.amount, 
+        currency: "INR", 
+        name: "Student Help Club", 
+        description: `${cart.length} Study PDF(s)`, 
+        order_id: order.order_id,
+        handler: async function (response) {
+          // If user is not logged in, prompt login or auto-guest link, or if logged in save to dashboard
+          if (!currentUser) {
+            alert("🎉 Payment Successful! Please Login with Google to claim and download your PDFs for 6 months.");
+            localStorage.setItem('pending_cart_payment', JSON.stringify({ response, items: cart }));
+            toggleCart();
+            toggleLoginModal();
+            return;
+          }
+
+          const fp = await getDeviceFootprint();
+          const vRes = await fetch('/api/backend?action=verify-cart-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...response, uid: currentUser.uid, fingerprint: fp, items: cart })
+          });
+          if (vRes.ok) {
+            cart = []; localStorage.removeItem('shc_cart_v2'); updateCartUI();
+            showSuccessPopup("🚀 Payment Verified! Opening Dashboard...");
+          } else { 
+            alert("Payment verification failed. Contact support."); 
+          }
+        },
+        theme: { color: "#d32f2f" }
+      };
+      
+      const rzp = new Razorpay(options);
+      rzp.open();
+
+    } catch (err) {
+      console.error(err);
+      alert("Unable to open payment gateway. Please check your internet connection.");
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fas fa-bolt mr-1"></i> Instant UPI Pay`;
+    }
   };
 
   window.toggleSearch = () => document.getElementById('searchBar').classList.toggle('active');
@@ -409,7 +469,6 @@
       const fp = await getDeviceFootprint();
       const refCode = localStorage.getItem('shgc_referred_by');
 
-      // Check if user already exists in backend
       const check = await fetch('/api/backend?action=verify-device', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -419,13 +478,12 @@
 
       if (!check.ok) { await auth.signOut(); alert(d.error); return; }
 
-      // If new user and mobile/name missing, show extra profile form
       if (d.isNewUser || !d.hasProfile) {
         document.getElementById('googleLoginSection').classList.add('hidden');
         document.getElementById('extraDetailsSection').classList.remove('hidden');
         document.getElementById('signupName').value = tempGoogleUser.displayName || '';
       } else {
-        window.location.href = "dashboard.html";
+        checkPendingPaymentAndRedirect(tempGoogleUser.uid, fp);
       }
     } catch (err) {
       console.error(err);
@@ -433,7 +491,6 @@
     }
   });
 
-  // SAVE EXTRA DETAILS (Mobile, Shop Owner Status)
   document.getElementById('saveDetailsBtn').addEventListener('click', async () => {
     const name = document.getElementById('signupName').value.trim();
     const mobile = document.getElementById('signupMobile').value.trim();
@@ -463,11 +520,28 @@
 
     const data = await res.json();
     if (res.ok) {
-      window.location.href = "dashboard.html";
+      checkPendingPaymentAndRedirect(tempGoogleUser.uid, fp);
     } else {
       alert(data.error || "Failed to save profile.");
     }
   });
+
+  async function checkPendingPaymentAndRedirect(uid, fp) {
+    const pending = localStorage.getItem('pending_cart_payment');
+    if (pending) {
+      try {
+        const { response, items } = JSON.parse(pending);
+        await fetch('/api/backend?action=verify-cart-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...response, uid, fingerprint: fp, items })
+        });
+        localStorage.removeItem('pending_cart_payment');
+        localStorage.removeItem('shc_cart_v2');
+      } catch(e) { console.error(e); }
+    }
+    window.location.href = "dashboard.html";
+  }
 
   onAuthStateChanged(auth, user => {
     currentUser = user;
