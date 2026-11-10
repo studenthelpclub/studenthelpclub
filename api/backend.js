@@ -96,7 +96,7 @@ module.exports = async (req, res) => {
         if (pdfDoc.exists) {
           const d = pdfDoc.data();
           total += Number(d.price || 25);
-          purchasedItems.push({ docId: id, subjectCode: d.subjectCode || 'IGNOU', subjectName: d.subjectName || 'Assignment PDF' });
+          purchasedItems.push({ docId: id, subjectCode: d.subjectCode || 'IGNOU', subjectName: d.subjectName || 'Assignment PDF', medium: d.medium || '' });
         }
       }
 
@@ -134,6 +134,7 @@ module.exports = async (req, res) => {
           docId: item.docId,
           subjectCode: item.subjectCode,
           subjectName: item.subjectName,
+          medium: item.medium,
           expiresAt: expiresAt.toISOString(),
           timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
@@ -142,7 +143,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ success: true });
     }
 
-    // 4. SECURE GOOGLE DRIVE DOWNLOAD PROXY
+    // 4. SECURE GOOGLE DRIVE DOWNLOAD PROXY (Smart Fallback & Auto-Match)
     if (action === 'download-pdf' && req.method === 'POST') {
       const { uid, fingerprint, docId } = req.body;
       const userDoc = await db.collection('users').doc(uid).get();
@@ -160,10 +161,27 @@ module.exports = async (req, res) => {
       }
 
       let fileId = "";
-      const storeDoc = await db.collection('pdf_store').doc(docId).get();
+      
+      // Attempt 1: Direct docId match in pdf_store
+      let storeDoc = await db.collection('pdf_store').doc(docId).get();
       if (storeDoc.exists) {
         const d = storeDoc.data();
         fileId = d.driveId || d.fileId || d.pdfId;
+      }
+
+      // Attempt 2: Match by subjectCode if exact docId fails
+      if (!fileId && order.subjectCode) {
+        const querySnap = await db.collection('pdf_store').where('subjectCode', '==', order.subjectCode).get();
+        if (!querySnap.empty) {
+          // If medium matches or take first available
+          for (const doc of querySnap.docs) {
+            const d = doc.data();
+            if (d.driveId) {
+              fileId = d.driveId;
+              break;
+            }
+          }
+        }
       }
 
       if (!fileId) return res.status(404).json({ error: 'Drive File ID not found in database! Please re-sync sheet.' });
@@ -172,7 +190,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ downloadUrl: directDownloadUrl });
     }
 
-    // 5. DASHBOARD DATA (Safe Auto-Fix for missing users)
+    // 5. DASHBOARD DATA
     if (action === 'dashboard-data' && req.method === 'POST') {
       const { uid, fingerprint } = req.body;
       if (!uid) return res.status(400).json({ error: 'UID missing' });
@@ -285,6 +303,7 @@ module.exports = async (req, res) => {
             docId: id,
             subjectCode: d.subjectCode,
             subjectName: d.subjectName || d.rawTitle || 'Assignment PDF',
+            medium: d.medium || '',
             expiresAt: expiresAt.toISOString(),
             timestamp: admin.firestore.FieldValue.serverTimestamp()
           });
