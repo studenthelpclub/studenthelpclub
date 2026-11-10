@@ -3,7 +3,6 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 
 if (!admin.apps.length) {
-  // Service Account ko code ke andar rakhne ke bajaye Environment Variable se padhenge
   admin.initializeApp({
     credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT))
   });
@@ -22,6 +21,8 @@ module.exports = async (req, res) => {
     // 1. DEVICE FOOTPRINT CHECK ON LOGIN
     if (action === 'verify-device' && req.method === 'POST') {
       const { uid, fingerprint, refCode } = req.body;
+      if (!uid || !fingerprint) return res.status(400).json({ error: 'Invalid data' });
+
       const userRef = db.collection('users').doc(uid);
       const userDoc = await userRef.get();
 
@@ -45,7 +46,7 @@ module.exports = async (req, res) => {
       if (!devices.includes(fingerprint)) {
         if (devices.length >= 2) {
           return res.status(403).json({
-            error: 'Account Sharing Detected! Aapka account maximum 2 devices par lock hai.'
+            error: 'Account Sharing Blocked! Aapka account maximum 2 devices par lock hai.'
           });
         }
         devices.push(fingerprint);
@@ -62,8 +63,9 @@ module.exports = async (req, res) => {
     // 2. VALIDATE DAILY DYNAMIC PROMO CODE
     if (action === 'verify-promo' && req.method === 'POST') {
       const { code, cartTotal } = req.body;
-      const promoDoc = await db.collection('promo_codes').doc(code.toUpperCase()).get();
+      if (!code) return res.status(400).json({ error: 'Enter promo code' });
 
+      const promoDoc = await db.collection('promo_codes').doc(code.toUpperCase()).get();
       if (!promoDoc.exists || !promoDoc.data().active) {
         return res.status(400).json({ error: 'Invalid ya Expired Promo Code!' });
       }
@@ -74,9 +76,10 @@ module.exports = async (req, res) => {
       return res.status(200).json({ discount: Number(promo.discount), code: code.toUpperCase() });
     }
 
-    // 3. CHECKOUT USING WALLET (With 8-PDF Referral Engine)
+    // 3. CHECKOUT USING WALLET (Server-Side Price Validation - Hack Proof)
     if (action === 'wallet-checkout' && req.method === 'POST') {
       const { uid, fingerprint, itemIds, promoCode } = req.body;
+      if (!uid || !itemIds || !itemIds.length) return res.status(400).json({ error: 'Cart is empty' });
 
       const userRef = db.collection('users').doc(uid);
       const userDoc = await userRef.get();
@@ -92,8 +95,8 @@ module.exports = async (req, res) => {
         const pdfDoc = await db.collection('pdf_store').doc(id).get();
         if (pdfDoc.exists) {
           const d = pdfDoc.data();
-          total += Number(d.price);
-          purchasedItems.push({ docId: id, subjectCode: d.subjectCode, subjectName: d.subjectName, price: d.price });
+          total += Number(d.price || 25);
+          purchasedItems.push({ docId: id, subjectCode: d.subjectCode || 'IGNOU', subjectName: d.subjectName || 'Assignment PDF' });
         }
       }
 
@@ -104,7 +107,8 @@ module.exports = async (req, res) => {
         }
       }
 
-      if ((user.walletBalance || 0) < total) {
+      const currentBalance = Number(user.walletBalance || 0);
+      if (currentBalance < total) {
         return res.status(400).json({ error: 'Wallet mein balance kam hai! Pehle Add Money karein.' });
       }
 
@@ -112,6 +116,7 @@ module.exports = async (req, res) => {
       const expiresAt = new Date();
       expiresAt.setMonth(expiresAt.getMonth() + 6);
 
+      // Deduct Wallet & Save Order Securely
       await userRef.update({
         walletBalance: admin.firestore.FieldValue.increment(-total),
         totalPdfsBought: newCount
@@ -136,6 +141,7 @@ module.exports = async (req, res) => {
         });
       }
 
+      // REFERRAL MILESTONE BONUS (8 PDF = ₹10 Wallet Credit)
       if (user.referredBy && !user.referralRewardClaimed && newCount >= 8) {
         const refQuery = await db.collection('users').where('myRefCode', '==', user.referredBy).limit(1).get();
         if (!refQuery.empty) {
@@ -157,7 +163,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ success: true });
     }
 
-    // 4. SECURE GOOGLE DRIVE DOWNLOAD PROXY
+    // 4. SECURE GOOGLE DRIVE DOWNLOAD PROXY (Bulletproof Link Fetcher)
     if (action === 'download-pdf' && req.method === 'POST') {
       const { uid, fingerprint, docId } = req.body;
       const userDoc = await db.collection('users').doc(uid).get();
@@ -176,12 +182,23 @@ module.exports = async (req, res) => {
         return res.status(403).json({ error: '6 Months Download Validity Expired!' });
       }
 
+      // Fallback logic: Try secret_pdf_links first, then pdf_store
+      let fileId = "";
       const linkDoc = await db.collection('secret_pdf_links').doc(docId).get();
-      if (!linkDoc.exists) return res.status(404).json({ error: 'PDF Link not found!' });
+      if (linkDoc.exists) {
+        fileId = linkDoc.data().fileId || linkDoc.data().driveFileId;
+      }
       
-      const driveFileId = linkDoc.data().fileId || linkDoc.data().driveFileId;
-      const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${driveFileId}`;
+      if (!fileId) {
+        const storeDoc = await db.collection('pdf_store').doc(docId).get();
+        if (storeDoc.exists) {
+          fileId = storeDoc.data().fileId || storeDoc.data().driveFileId;
+        }
+      }
 
+      if (!fileId) return res.status(404).json({ error: 'Drive File ID not found in database!' });
+
+      const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
       return res.status(200).json({ downloadUrl: directDownloadUrl });
     }
 
@@ -202,15 +219,18 @@ module.exports = async (req, res) => {
       for (const doc of ordersSnap.docs) {
         const ord = doc.data();
         let ytLink = "";
+        let subName = ord.subjectName || "";
         const pdfStoreDoc = await db.collection('pdf_store').doc(ord.docId).get();
         if (pdfStoreDoc.exists) {
-          ytLink = pdfStoreDoc.data().ytLink || "";
+          const d = pdfStoreDoc.data();
+          ytLink = d.ytLink || "";
+          subName = subName || d.subjectName || d.rawTitle || "Solved Assignment PDF";
         }
         orders.push({
           docId: ord.docId,
           subjectCode: ord.subjectCode,
-          subjectName: ord.subjectName,
-          medium: ord.medium,
+          subjectName: subName,
+          medium: ord.medium || 'Hindi/English',
           expiresAt: ord.expiresAt,
           ytLink: ytLink
         });
@@ -223,13 +243,13 @@ module.exports = async (req, res) => {
       });
     }
 
-    // 6. CREATE RAZORPAY CART ORDER
+    // 6. CREATE RAZORPAY CART ORDER (Server-side price verification)
     if (action === 'create-cart-order' && req.method === 'POST') {
       const { itemIds, promoCode } = req.body;
       let total = 0;
       for (const id of itemIds) {
         const pdfDoc = await db.collection('pdf_store').doc(id).get();
-        if (pdfDoc.exists) total += Number(pdfDoc.data().price);
+        if (pdfDoc.exists) total += Number(pdfDoc.data().price || 25);
       }
 
       if (promoCode) {
@@ -277,7 +297,7 @@ module.exports = async (req, res) => {
             uid,
             docId: id,
             subjectCode: d.subjectCode,
-            subjectName: d.subjectName,
+            subjectName: d.subjectName || d.rawTitle || 'Assignment PDF',
             expiresAt: expiresAt.toISOString(),
             timestamp: admin.firestore.FieldValue.serverTimestamp()
           });
@@ -290,6 +310,8 @@ module.exports = async (req, res) => {
     // 8. CREATE WALLET RECHARGE ORDER
     if (action === 'create-wallet-order' && req.method === 'POST') {
       const { amount } = req.body;
+      if (!amount || Number(amount) < 10) return res.status(400).json({ error: 'Minimum amount is ₹10' });
+
       const order = await razorpay.orders.create({
         amount: Number(amount) * 100,
         currency: 'INR',
@@ -301,6 +323,7 @@ module.exports = async (req, res) => {
     // 9. VERIFY WALLET RECHARGE
     if (action === 'verify-wallet-recharge' && req.method === 'POST') {
       const { razorpay_order_id, razorpay_payment_id, uid, amount } = req.body;
+      if (!uid || !amount) return res.status(400).json({ error: 'Invalid details' });
 
       const userRef = db.collection('users').doc(uid);
       await userRef.update({
