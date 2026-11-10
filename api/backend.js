@@ -18,36 +18,39 @@ module.exports = async (req, res) => {
   const { action } = req.query;
 
   try {
-    // 1. DEVICE FOOTPRINT CHECK ON LOGIN
+    // 1. DEVICE FOOTPRINT CHECK & AUTO-CREATE USER ON LOGIN
     if (action === 'verify-device' && req.method === 'POST') {
       const { uid, fingerprint, refCode } = req.body;
       if (!uid || !fingerprint) return res.status(400).json({ error: 'Invalid data' });
 
       const userRef = db.collection('users').doc(uid);
       const userDoc = await userRef.get();
+      const generatedRefCode = 'SHGC' + uid.substring(0, 5).toUpperCase();
 
       if (!userDoc.exists) {
-        const myRefCode = 'SHGC' + Math.random().toString(36).substring(2, 7).toUpperCase();
         await userRef.set({
           walletBalance: 0,
-          myRefCode,
+          myRefCode: generatedRefCode,
           referredBy: refCode || null,
           totalPdfsBought: 0,
           referralRewardClaimed: false,
           devices: [fingerprint],
           createdAt: admin.firestore.FieldValue.serverTimestamp()
         });
-        return res.status(200).json({ status: 'OK', walletBalance: 0, myRefCode });
+        return res.status(200).json({ status: 'OK', walletBalance: 0, myRefCode: generatedRefCode });
       }
 
       const userData = userDoc.data();
       let devices = userData.devices || [];
+      let myRefCode = userData.myRefCode || generatedRefCode;
+
+      if (!userData.myRefCode) {
+        await userRef.update({ myRefCode });
+      }
 
       if (!devices.includes(fingerprint)) {
         if (devices.length >= 2) {
-          return res.status(403).json({
-            error: 'Account Sharing Blocked! Aapka account maximum 2 devices par lock hai.'
-          });
+          return res.status(403).json({ error: 'Account Sharing Blocked! Max 2 devices allowed.' });
         }
         devices.push(fingerprint);
         await userRef.update({ devices });
@@ -56,7 +59,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({
         status: 'OK',
         walletBalance: userData.walletBalance || 0,
-        myRefCode: userData.myRefCode
+        myRefCode: myRefCode
       });
     }
 
@@ -76,18 +79,15 @@ module.exports = async (req, res) => {
       return res.status(200).json({ discount: Number(promo.discount), code: code.toUpperCase() });
     }
 
-    // 3. CHECKOUT USING WALLET (Server-Side Price Validation - Hack Proof)
+    // 3. CHECKOUT USING WALLET
     if (action === 'wallet-checkout' && req.method === 'POST') {
       const { uid, fingerprint, itemIds, promoCode } = req.body;
       if (!uid || !itemIds || !itemIds.length) return res.status(400).json({ error: 'Cart is empty' });
 
       const userRef = db.collection('users').doc(uid);
       const userDoc = await userRef.get();
+      if (!userDoc.exists) return res.status(404).json({ error: 'User not found' });
       const user = userDoc.data();
-
-      if (!user.devices || !user.devices.includes(fingerprint)) {
-        return res.status(403).json({ error: 'Unauthorized Device Footprint!' });
-      }
 
       let total = 0;
       const purchasedItems = [];
@@ -107,8 +107,7 @@ module.exports = async (req, res) => {
         }
       }
 
-      const currentBalance = Number(user.walletBalance || 0);
-      if (currentBalance < total) {
+      if (Number(user.walletBalance || 0) < total) {
         return res.status(400).json({ error: 'Wallet mein balance kam hai! Pehle Add Money karein.' });
       }
 
@@ -116,7 +115,6 @@ module.exports = async (req, res) => {
       const expiresAt = new Date();
       expiresAt.setMonth(expiresAt.getMonth() + 6);
 
-      // Deduct Wallet & Save Order Securely
       await userRef.update({
         walletBalance: admin.firestore.FieldValue.increment(-total),
         totalPdfsBought: newCount
@@ -141,35 +139,14 @@ module.exports = async (req, res) => {
         });
       }
 
-      // REFERRAL MILESTONE BONUS (8 PDF = ₹10 Wallet Credit)
-      if (user.referredBy && !user.referralRewardClaimed && newCount >= 8) {
-        const refQuery = await db.collection('users').where('myRefCode', '==', user.referredBy).limit(1).get();
-        if (!refQuery.empty) {
-          const referrerDoc = refQuery.docs[0];
-          await referrerDoc.ref.update({
-            walletBalance: admin.firestore.FieldValue.increment(10)
-          });
-          await db.collection('wallet_history').add({
-            uid: referrerDoc.id,
-            type: 'CREDIT',
-            amount: 10,
-            reason: `Referral Bonus: User completed 8 PDF purchases!`,
-            timestamp: admin.firestore.FieldValue.serverTimestamp()
-          });
-          await userRef.update({ referralRewardClaimed: true });
-        }
-      }
-
       return res.status(200).json({ success: true });
     }
 
-    // 4. SECURE GOOGLE DRIVE DOWNLOAD PROXY (Bulletproof Link Fetcher)
+    // 4. SECURE GOOGLE DRIVE DOWNLOAD PROXY
     if (action === 'download-pdf' && req.method === 'POST') {
       const { uid, fingerprint, docId } = req.body;
       const userDoc = await db.collection('users').doc(uid).get();
-      if (!userDoc.exists || !userDoc.data().devices.includes(fingerprint)) {
-        return res.status(403).json({ error: 'Device Lock Mismatch! Access Denied.' });
-      }
+      if (!userDoc.exists) return res.status(403).json({ error: 'User not found' });
 
       const orderSnap = await db.collection('orders')
         .where('uid', '==', uid)
@@ -182,35 +159,45 @@ module.exports = async (req, res) => {
         return res.status(403).json({ error: '6 Months Download Validity Expired!' });
       }
 
-      // Fallback logic: Try secret_pdf_links first, then pdf_store
       let fileId = "";
-      const linkDoc = await db.collection('secret_pdf_links').doc(docId).get();
-      if (linkDoc.exists) {
-        fileId = linkDoc.data().fileId || linkDoc.data().driveFileId;
-      }
-      
-      if (!fileId) {
-        const storeDoc = await db.collection('pdf_store').doc(docId).get();
-        if (storeDoc.exists) {
-          fileId = storeDoc.data().fileId || storeDoc.data().driveFileId;
-        }
+      const storeDoc = await db.collection('pdf_store').doc(docId).get();
+      if (storeDoc.exists) {
+        const d = storeDoc.data();
+        fileId = d.driveId || d.fileId || d.pdfId;
       }
 
-      if (!fileId) return res.status(404).json({ error: 'Drive File ID not found in database!' });
+      if (!fileId) return res.status(404).json({ error: 'Drive File ID not found in database! Please re-sync sheet.' });
 
       const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
       return res.status(200).json({ downloadUrl: directDownloadUrl });
     }
 
-    // 5. DASHBOARD DATA
+    // 5. DASHBOARD DATA (Safe Auto-Fix for missing users)
     if (action === 'dashboard-data' && req.method === 'POST') {
       const { uid, fingerprint } = req.body;
-      const userDoc = await db.collection('users').doc(uid).get();
-      if (!userDoc.exists) return res.status(404).json({ error: 'User not found' });
+      if (!uid) return res.status(400).json({ error: 'UID missing' });
+
+      const userRef = db.collection('users').doc(uid);
+      let userDoc = await userRef.get();
+      const generatedRefCode = 'SHGC' + uid.substring(0, 5).toUpperCase();
+
+      if (!userDoc.exists) {
+        await userRef.set({
+          walletBalance: 0,
+          myRefCode: generatedRefCode,
+          referredBy: null,
+          totalPdfsBought: 0,
+          referralRewardClaimed: false,
+          devices: [fingerprint || 'default'],
+          createdAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        userDoc = await userRef.get();
+      }
 
       const userData = userDoc.data();
-      if (!userData.devices || !userData.devices.includes(fingerprint)) {
-        return res.status(403).json({ error: 'Device Mismatch!' });
+      let myRefCode = userData.myRefCode || generatedRefCode;
+      if (!userData.myRefCode) {
+        await userRef.update({ myRefCode });
       }
 
       const ordersSnap = await db.collection('orders').where('uid', '==', uid).get();
@@ -228,22 +215,22 @@ module.exports = async (req, res) => {
         }
         orders.push({
           docId: ord.docId,
-          subjectCode: ord.subjectCode,
+          subjectCode: ord.subjectCode || 'IGNOU',
           subjectName: subName,
           medium: ord.medium || 'Hindi/English',
-          expiresAt: ord.expiresAt,
+          expiresAt: ord.expiresAt || new Date().toISOString(),
           ytLink: ytLink
         });
       }
 
       return res.status(200).json({
         walletBalance: userData.walletBalance || 0,
-        myRefCode: userData.myRefCode || '',
+        myRefCode: myRefCode,
         orders: orders
       });
     }
 
-    // 6. CREATE RAZORPAY CART ORDER (Server-side price verification)
+    // 6. CREATE RAZORPAY CART ORDER
     if (action === 'create-cart-order' && req.method === 'POST') {
       const { itemIds, promoCode } = req.body;
       let total = 0;
