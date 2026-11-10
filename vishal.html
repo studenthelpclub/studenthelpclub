@@ -38,7 +38,6 @@
 
         <!-- 1. ANALYTICS & REAL DATA MONITORING -->
         <div id="section-analytics" class="space-y-8 animate-fade">
-            <!-- Real Metric Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="glass-card p-6 rounded-3xl border-t-4 border-indigo-500">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Sales Revenue</p>
@@ -62,19 +61,14 @@
                 </div>
             </div>
 
-            <!-- Charts Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="glass-card p-8 rounded-[2.5rem]">
                     <h3 class="text-sm font-black uppercase text-indigo-300 tracking-wider mb-6"><i class="fas fa-chart-line mr-2"></i>Sales Overview</h3>
-                    <div class="relative h-72">
-                        <canvas id="salesChart"></canvas>
-                    </div>
+                    <div class="relative h-72"><canvas id="salesChart"></canvas></div>
                 </div>
                 <div class="glass-card p-8 rounded-[2.5rem]">
                     <h3 class="text-sm font-black uppercase text-indigo-300 tracking-wider mb-6"><i class="fas fa-users mr-2"></i>User Growth Overview</h3>
-                    <div class="relative h-72">
-                        <canvas id="usersChart"></canvas>
-                    </div>
+                    <div class="relative h-72"><canvas id="usersChart"></canvas></div>
                 </div>
             </div>
         </div>
@@ -115,9 +109,9 @@
                 <button onclick="savePromoCode()" id="promoBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition shadow-lg">Save Promo Code</button>
             </div>
 
-            <!-- Active Promocodes Table Viewer -->
+            <!-- Active Promocodes Table Viewer with Actions -->
             <div class="glass-card p-8 rounded-[3rem]">
-                <h3 class="text-lg font-black uppercase italic mb-4 text-emerald-400"><i class="fas fa-tags mr-2"></i>Active Promocodes List</h3>
+                <h3 class="text-lg font-black uppercase italic mb-4 text-emerald-400"><i class="fas fa-tags mr-2"></i>Promocodes List & Management</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -126,10 +120,11 @@
                                 <th class="p-3">Discount</th>
                                 <th class="p-3">Min Order</th>
                                 <th class="p-3">Status</th>
+                                <th class="p-3 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="promoTableBody" class="divide-y divide-slate-800 text-xs font-bold">
-                            <tr><td colspan="4" class="p-4 text-center text-slate-500">Loading active promocodes...</td></tr>
+                            <tr><td colspan="5" class="p-4 text-center text-slate-500">Loading promocodes...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -154,7 +149,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, setDoc, doc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, setDoc, deleteDoc, doc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8",
@@ -186,31 +181,25 @@
             if(tab === 'promos') loadActivePromos();
         };
 
-        // Fetch Real Data from Firebase Firestore
         async function loadRealDashboardMetrics() {
             try {
-                // Fetch Users Count
                 const usersSnap = await getDocs(collection(db, "users"));
                 document.getElementById('metric-users').innerText = usersSnap.size;
 
-                // Fetch Orders Count & Calculate Total Sales Revenue
                 const ordersSnap = await getDocs(collection(db, "orders"));
                 let totalSales = 0;
                 ordersSnap.forEach(doc => {
                     const ord = doc.data();
-                    // Assuming standard price or stored amount
                     totalSales += Number(ord.amount || 25);
                 });
                 document.getElementById('metric-sales').innerText = totalSales;
                 document.getElementById('metric-downloads').innerText = ordersSnap.size;
 
-                // Fetch Active Promos Count
                 const promosSnap = await getDocs(collection(db, "promo_codes"));
                 let activePromosCount = 0;
                 promosSnap.forEach(doc => { if(doc.data().active) activePromosCount++; });
                 document.getElementById('metric-promos').innerText = activePromosCount;
 
-                // Render Charts with Real/Dynamic data representation
                 initCharts(ordersSnap.size, usersSnap.size);
             } catch (err) {
                 console.error("Error loading metrics:", err);
@@ -252,31 +241,67 @@
             });
         }
 
-        // Load Active Promocodes from Firestore
+        // Load Promocodes List with Actions (Expire & Delete)
         async function loadActivePromos() {
             const tbody = document.getElementById('promoTableBody');
             try {
                 const snap = await getDocs(collection(db, "promo_codes"));
                 if(snap.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">No promo codes found. Create one above!</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">No promo codes found. Create one above!</td></tr>`;
                     return;
                 }
                 tbody.innerHTML = '';
                 snap.forEach(docSnap => {
                     const p = docSnap.data();
+                    const codeId = docSnap.id;
+                    const isActive = p.active !== false;
+                    
                     tbody.innerHTML += `
                         <tr class="border-b border-slate-800/60 hover:bg-slate-800/30">
                             <td class="p-3 text-indigo-400 font-mono font-black">${p.code}</td>
                             <td class="p-3 text-emerald-400">₹${p.discount} OFF</td>
                             <td class="p-3">Min. ₹${p.minAmount || 0}</td>
-                            <td class="p-3"><span class="px-2 py-1 bg-emerald-500/10 text-emerald-400 rounded-lg text-[10px] font-bold">Active</span></td>
+                            <td class="p-3">
+                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold ${isActive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}">
+                                    ${isActive ? 'Active' : 'Expired'}
+                                </span>
+                            </td>
+                            <td class="p-3 text-right space-x-2">
+                                <button onclick="togglePromoStatus('${codeId}', ${!isActive})" class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase border ${isActive ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500 hover:text-white' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500 hover:text-white'} transition">
+                                    ${isActive ? 'Expire' : 'Activate'}
+                                </button>
+                                <button onclick="deletePromoCode('${codeId}')" class="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white transition">
+                                    Delete
+                                </button>
+                            </td>
                         </tr>
                     `;
                 });
             } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-red-400">Error loading promocodes</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-red-400">Error loading promocodes</td></tr>`;
             }
         }
+
+        // Toggle Promo Active/Expired Status
+        window.togglePromoStatus = async (codeId, newStatus) => {
+            try {
+                await setDoc(doc(db, "promo_codes", codeId), { active: newStatus }, { merge: true });
+                loadActivePromos();
+            } catch(err) {
+                alert("Failed to update status: " + err.message);
+            }
+        };
+
+        // Delete Promo Code permanently
+        window.deletePromoCode = async (codeId) => {
+            if(!confirm(`Are you sure you want to delete promo code '${codeId}'?`)) return;
+            try {
+                await deleteDoc(doc(db, "promo_codes", codeId));
+                loadActivePromos();
+            } catch(err) {
+                alert("Failed to delete: " + err.message);
+            }
+        };
 
         window.savePromoCode = async () => {
             const code = document.getElementById('promo-code').value.trim().toUpperCase();
