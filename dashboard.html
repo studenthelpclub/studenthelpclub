@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Cyber Cafe & Student Dashboard | Student Help Club</title>
+<title>My Dashboard | Student Help Club</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
@@ -15,12 +15,11 @@
 <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-6 py-4">
   <div class="max-w-6xl mx-auto flex justify-between items-center">
     <a href="index.html" class="flex items-center gap-3">
-      <span class="text-xl font-black italic text-red-500 uppercase">SHGC Portal</span>
-      <span class="text-[10px] bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full font-bold uppercase">Protected Device</span>
+      <span id="headerUserName" class="text-xl font-black italic text-red-500 uppercase">Welcome, Student</span>
     </a>
     <div class="flex items-center gap-4">
-      <a href="index.html" class="text-xs font-bold bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl">Buy More PDFs</a>
-      <button id="logoutBtn" class="text-xs font-bold text-red-400 hover:text-red-300">Logout</button>
+      <a href="index.html" class="text-xs font-bold bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl transition">Buy More PDFs</a>
+      <button id="logoutBtn" class="text-xs font-bold text-red-400 hover:text-red-300 transition">Logout</button>
     </div>
   </div>
 </header>
@@ -32,7 +31,7 @@
     <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 p-6 rounded-3xl shadow-xl">
       <div class="flex justify-between items-start mb-4">
         <div>
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Cyber Cafe / Student Wallet</p>
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">My Wallet Balance</p>
           <h2 class="text-4xl font-black text-emerald-400 mt-1">₹<span id="walletBal">0</span></h2>
         </div>
         <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-black px-3 py-1 rounded-full uppercase">Instant Checkout</span>
@@ -43,7 +42,7 @@
       </div>
     </div>
 
-    <!-- Refer & Earn (8 PDF = ₹10 Rule) -->
+    <!-- Refer & Earn -->
     <div class="bg-gradient-to-br from-red-950/60 to-slate-900 border border-red-500/30 p-6 rounded-3xl shadow-xl">
       <div class="flex justify-between items-start mb-2">
         <div>
@@ -51,26 +50,26 @@
           <h3 class="text-lg font-black text-white mt-1">Get ₹10 Wallet Cash Per Refer!</h3>
         </div>
       </div>
-      <p class="text-xs text-slate-300 mb-4">Jab aapka refer kiya hua dost ya Cyber Cafe **8 PDFs** buy kar lega, aapke wallet mein automatically **₹10 add** ho jayega!</p>
+      <p class="text-xs text-slate-300 mb-4">Share your link. When your referred friend buys 8 PDFs, ₹10 will automatically be credited to your wallet!</p>
       <div class="flex gap-2">
-        <input id="refLinkBox" readonly class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-xs font-bold text-yellow-400 outline-none" value="Loading..."/>
-        <button onclick="copyRefLink()" class="bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black px-5 py-3 rounded-xl text-xs uppercase">Copy Link</button>
+        <input id="refLinkBox" readonly class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-xs font-bold text-yellow-400 outline-none" value="Generating link..."/>
+        <button onclick="copyRefLink()" class="bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black px-5 py-3 rounded-xl text-xs uppercase transition">Copy Link</button>
       </div>
     </div>
   </div>
 
-  <!-- MY ORDERS + SEARCH + 6 MONTH DOWNLOAD + YT VIDEO -->
-  <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+  <!-- MY ORDERS + SEARCH -->
+  <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
       <div>
         <h3 class="text-xl font-black uppercase italic">My Purchased <span class="text-red-500">PDFs & Videos</span></h3>
-        <p class="text-[11px] text-slate-400">Active for 6 Months on your registered device footprint</p>
+        <p class="text-[11px] text-slate-400">Active download links for your purchased study materials</p>
       </div>
       <input id="orderSearch" oninput="filterOrders()" type="search" placeholder="Search Subject Code (e.g. MPA-036)..." class="w-full md:w-72 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-red-500"/>
     </div>
 
     <div id="ordersList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <p class="text-xs text-slate-400">Loading your orders...</p>
+      <p class="text-xs text-slate-400 col-span-full py-6 text-center">Loading your orders...</p>
     </div>
   </div>
 </main>
@@ -90,28 +89,38 @@
   onAuthStateChanged(auth, async user => {
     if (!user) { window.location.href = "index.html"; return; }
     currentUser = user;
+    
+    // Set Welcome Name in Header
+    const displayName = user.displayName || user.email.split('@')[0];
+    document.getElementById('headerUserName').innerText = `Welcome, ${displayName}`;
+
     loadDashboardData();
   });
 
   async function loadDashboardData() {
-    const res = await fetch('/api/backend?action=dashboard-data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ uid: currentUser.uid, fingerprint: fp })
-    });
-    const data = await res.json();
-    if (!res.ok) { alert(data.error); return; }
+    try {
+      const res = await fetch('/api/backend?action=dashboard-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid: currentUser.uid, fingerprint: fp })
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(data.error || "Failed to load dashboard"); return; }
 
-    document.getElementById('walletBal').innerText = data.walletBalance || 0;
-    document.getElementById('refLinkBox').value = `https://www.studenthelpclub.in/?ref=${data.myRefCode}`;
-    allOrders = data.orders || [];
-    renderOrders(allOrders);
+      document.getElementById('walletBal').innerText = data.walletBalance || 0;
+      document.getElementById('refLinkBox').value = data.myRefCode ? `https://www.studenthelpclub.in/?ref=${data.myRefCode}` : 'Link not available';
+      allOrders = data.orders || [];
+      renderOrders(allOrders);
+    } catch (err) {
+      console.error(err);
+      document.getElementById('ordersList').innerHTML = `<p class="text-xs text-red-400 col-span-full py-6 text-center">Error loading data. Please refresh.</p>`;
+    }
   }
 
   function renderOrders(list) {
     const box = document.getElementById('ordersList');
     if (!list.length) {
-      box.innerHTML = `<p class="text-xs text-slate-500 col-span-full py-8 text-center">Abhi tak koi PDF purchase nahi kiya gaya hai.</p>`;
+      box.innerHTML = `<p class="text-xs text-slate-500 col-span-full py-8 text-center">Abhi tak aapne koi PDF purchase nahi ki hai.</p>`;
       return;
     }
     box.innerHTML = list.map(o => `
@@ -120,7 +129,7 @@
           <div>
             <span class="text-[9px] font-black bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-md uppercase">Valid till: ${new Date(o.expiresAt).toLocaleDateString('en-IN')}</span>
             <h4 class="text-base font-black text-white mt-2 uppercase">${o.subjectCode}</h4>
-            <p class="text-[11px] text-slate-400">${o.medium || 'Solved Assignment PDF'}</p>
+            <p class="text-[11px] text-slate-400">${o.subjectName || 'Solved Assignment PDF'}</p>
           </div>
           ${o.ytLink ? `<a href="${o.ytLink}" target="_blank" class="bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white transition"><i class="fab fa-youtube mr-1"></i> Watch Video</a>` : ''}
         </div>
@@ -153,12 +162,15 @@
   window.addMoneyToWallet = async () => {
     const amount = Number(document.getElementById('addAmtInput').value);
     if (!amount || amount < 10) { alert("Minimum ₹10 add kar sakte hain."); return; }
+    
     const res = await fetch('/api/backend?action=create-wallet-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ amount })
     });
     const order = await res.json();
+    if (!res.ok) { alert(order.error || "Error creating payment order"); return; }
+
     const options = {
       key: order.key,
       amount: order.amount,
@@ -166,12 +178,17 @@
       name: "SHGC Wallet Recharge",
       order_id: order.order_id,
       handler: async function (response) {
-        await fetch('/api/backend?action=verify-wallet-recharge', {
+        const verifyRes = await fetch('/api/backend?action=verify-wallet-recharge', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...response, uid: currentUser.uid, amount })
         });
-        loadDashboardData();
+        if (verifyRes.ok) {
+          alert("Wallet successfully recharged!");
+          loadDashboardData();
+        } else {
+          alert("Recharge verification failed.");
+        }
       }
     };
     new Razorpay(options).open();
@@ -181,10 +198,10 @@
     const inp = document.getElementById('refLinkBox');
     inp.select();
     navigator.clipboard.writeText(inp.value);
-    alert("Referral Link Copied! Share on WhatsApp & Telegram.");
+    alert("Referral Link Copied! Share it with your friends.");
   };
 
-  document.getElementById('logoutBtn').onclick = () => signOut(auth);
+  document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => window.location.href = "index.html");
 </script>
 </body>
 </html>
