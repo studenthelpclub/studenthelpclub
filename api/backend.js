@@ -2,22 +2,147 @@ const admin = require('firebase-admin');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT))
-  });
+// CRASH-PROOF FIREBASE INITIALIZATION
+function initFirebase() {
+  if (!admin.apps.length) {
+    let rawEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (!rawEnv) throw new Error('FIREBASE_SERVICE_ACCOUNT env variable is missing in Vercel!');
+    
+    let serviceAccount;
+    try {
+      serviceAccount = JSON.parse(rawEnv);
+    } catch (e) {
+      // Fix multi-line paste issue in Vercel Env Variables
+      const cleaned = rawEnv.replace(/\n/g, '\\n').replace(/\\n\s*"/g, '\n"').replace(/{\\n/g, '{\n').replace(/\\n}/g, '\n}');
+      serviceAccount = JSON.parse(cleaned);
+    }
+    if (serviceAccount.private_key) {
+      serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+    }
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+  }
+  return admin.firestore();
 }
 
-const db = admin.firestore();
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET
-});
-
 module.exports = async (req, res) => {
+  // Allow Google Sheet & Frontend Calls
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
   const { action } = req.query;
 
   try {
+    const db = initFirebase();
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID || 'missing_key',
+      key_secret: process.env.RAZORPAY_KEY_SECRET || 'missing_secret'
+    });
+
+    // ====================================================
+    // 0. GOOGLE SHEET -> FIREBASE BULK SYNC (Replaces whatsapp with fileId)
+    // ====================================================
+    if (action === 'sync-from-sheet' && req.method === 'POST') {
+      const { items } = req.body;
+      if (!Array.isArray(items) || !items.length) {
+        return res.status(400).json({ error: 'No items received from Google Sheet' });
+      }
+
+      // Ek baar mein saare existing pdf_store documents load karo
+      const snap = await db.collection('pdf_store').get();
+      const existingDocs = [];
+      snap.forEach(doc => existingDocs.push({ id: doc.id, ...doc.data() }));
+
+      let batch = db.batch();
+      let opCount = 0;
+      let updatedCount = 0;
+      let createdCount = 0;
+
+      for (const item of items) {
+        const cleanCode = String(item.subjectCode || '').trim().toUpperCase();
+        const mediumShort = String(item.medium || 'Hindi').trim(); // "Hindi" or "English"
+        const mediumFull = mediumShort.toLowerCase().includes('eng') ? 'English Medium' : 'Hindi Medium';
+        const fileId = String(item.fileId || '').trim();
+        const ytLink = String(item.ytLink || '').trim();
+
+        if (!cleanCode || !fileId) continue;
+
+        // Check karo ki pdf_store mein ye Subject Code pehle se hai ya nahi
+        const matches = existingDocs.filter(
+          d => String(d.subjectCode || '').trim().toUpperCase() === cleanCode
+        );
+
+        // Match medium if exists, OR pick doc that has no medium yet
+        let targetDoc = matches.find(d => {
+          const m = String(d.medium || '').toLowerCase();
+          return m.includes(mediumShort.toLowerCase());
+        });
+
+        if (!targetDoc && matches.length > 0) {
+          // Agar purane document mein medium set nahi hai, toh pehla match update karo
+          targetDoc = matches.find(d => !d.medium || d._usedForSync !== true);
+        }
+
+        if (targetDoc) {
+          targetDoc._usedForSync = true;
+          const docRef = db.collection('pdf_store').doc(targetDoc.id);
+          const updateData = {
+            fileId: fileId,
+            driveId: fileId,
+            medium: mediumFull,
+            whatsapp: admin.firestore.FieldValue.delete() // WhatsApp link hataya
+          };
+          if (ytLink) updateData.ytLink = ytLink;
+
+          batch.update(docRef, updateData);
+          updatedCount++;
+          opCount++;
+        } else {
+          // Agar ye Subject Code + Medium naya hai toh naya document banao
+          const letters = cleanCode.replace(/[^A-Z]/g, '') || 'IGNOU';
+          const customDocId = `${cleanCode}_${mediumShort}`.replace(/[^A-Za-z0-9_-]/g, '');
+          const newDocRef = db.collection('pdf_store').doc(customDocId);
+          batch.set(newDocRef, {
+            subjectCode: cleanCode,
+            subjectName: `${cleanCode} Solved Assignment (${mediumShort})`,
+            courseName: letters,
+            courses: [letters],
+            medium: mediumFull,
+            price: 25,
+            session: '2026-27',
+            sessions: ['June', 'January'],
+            typedPDF: true,
+            handwrittenPDF: false,
+            fileId: fileId,
+            driveId: fileId,
+            ytLink: ytLink,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+          createdCount++;
+          opCount++;
+        }
+
+        // Firestore Batch limit is 500
+        if (opCount >= 400) {
+          await batch.commit();
+          batch = db.batch();
+          opCount = 0;
+        }
+      }
+
+      if (opCount > 0) await batch.commit();
+
+      return res.status(200).json({
+        success: true,
+        updated: updatedCount,
+        created: createdCount,
+        message: `Updated ${updatedCount} existing PDFs (replaced whatsapp with fileId) & Added ${createdCount} new PDFs!`
+      });
+    }
+
     // 1. DEVICE FOOTPRINT CHECK & AUTO-CREATE USER ON LOGIN
     if (action === 'verify-device' && req.method === 'POST') {
       const { uid, fingerprint, refCode } = req.body;
@@ -96,7 +221,12 @@ module.exports = async (req, res) => {
         if (pdfDoc.exists) {
           const d = pdfDoc.data();
           total += Number(d.price || 25);
-          purchasedItems.push({ docId: id, subjectCode: d.subjectCode || 'IGNOU', subjectName: d.subjectName || 'Assignment PDF', medium: d.medium || '' });
+          purchasedItems.push({
+            docId: id,
+            subjectCode: d.subjectCode || 'IGNOU',
+            subjectName: d.subjectName || 'Assignment PDF',
+            medium: d.medium || 'Hindi Medium'
+          });
         }
       }
 
@@ -140,12 +270,31 @@ module.exports = async (req, res) => {
         });
       }
 
+      // 8-PDF REFERRAL MILESTONE BONUS (₹10)
+      if (user.referredBy && !user.referralRewardClaimed && newCount >= 8) {
+        const refQuery = await db.collection('users').where('myRefCode', '==', user.referredBy).limit(1).get();
+        if (!refQuery.empty) {
+          const referrerDoc = refQuery.docs[0];
+          await referrerDoc.ref.update({
+            walletBalance: admin.firestore.FieldValue.increment(10)
+          });
+          await db.collection('wallet_history').add({
+            uid: referrerDoc.id,
+            type: 'CREDIT',
+            amount: 10,
+            reason: `Referral Bonus: User completed 8 PDF purchases!`,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+          });
+          await userRef.update({ referralRewardClaimed: true });
+        }
+      }
+
       return res.status(200).json({ success: true });
     }
 
-    // 4. SECURE GOOGLE DRIVE DOWNLOAD PROXY (Smart Fallback & Auto-Match)
+    // 4. SECURE GOOGLE DRIVE DOWNLOAD PROXY (Matches by docId OR subjectCode + medium)
     if (action === 'download-pdf' && req.method === 'POST') {
-      const { uid, fingerprint, docId } = req.body;
+      const { uid, docId } = req.body;
       const userDoc = await db.collection('users').doc(uid).get();
       if (!userDoc.exists) return res.status(403).json({ error: 'User not found' });
 
@@ -161,30 +310,39 @@ module.exports = async (req, res) => {
       }
 
       let fileId = "";
-      
+
       // Attempt 1: Direct docId match in pdf_store
-      let storeDoc = await db.collection('pdf_store').doc(docId).get();
+      const storeDoc = await db.collection('pdf_store').doc(docId).get();
       if (storeDoc.exists) {
         const d = storeDoc.data();
-        fileId = d.driveId || d.fileId || d.pdfId;
+        fileId = d.fileId || d.driveId || d.pdfId;
       }
 
-      // Attempt 2: Match by subjectCode if exact docId fails
+      // Attempt 2: Match by subjectCode + medium in pdf_store
       if (!fileId && order.subjectCode) {
-        const querySnap = await db.collection('pdf_store').where('subjectCode', '==', order.subjectCode).get();
+        const querySnap = await db.collection('pdf_store')
+          .where('subjectCode', '==', order.subjectCode)
+          .get();
+
         if (!querySnap.empty) {
-          // If medium matches or take first available
           for (const doc of querySnap.docs) {
             const d = doc.data();
-            if (d.driveId) {
-              fileId = d.driveId;
-              break;
+            const fId = d.fileId || d.driveId;
+            if (fId) {
+              fileId = fId;
+              if (!order.medium || String(d.medium || '').toLowerCase().includes(String(order.medium).toLowerCase().split(' ')[0])) {
+                break;
+              }
             }
           }
         }
       }
 
-      if (!fileId) return res.status(404).json({ error: 'Drive File ID not found in database! Please re-sync sheet.' });
+      if (!fileId) {
+        return res.status(404).json({
+          error: `Is subject (${order.subjectCode}) ka Drive File ID aapki Google Sheet mein nahi mila!`
+        });
+      }
 
       const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
       return res.status(200).json({ downloadUrl: directDownloadUrl });
@@ -328,7 +486,7 @@ module.exports = async (req, res) => {
 
     // 9. VERIFY WALLET RECHARGE
     if (action === 'verify-wallet-recharge' && req.method === 'POST') {
-      const { razorpay_order_id, razorpay_payment_id, uid, amount } = req.body;
+      const { razorpay_payment_id, uid, amount } = req.body;
       if (!uid || !amount) return res.status(400).json({ error: 'Invalid details' });
 
       const userRef = db.collection('users').doc(uid);
@@ -349,6 +507,7 @@ module.exports = async (req, res) => {
 
     return res.status(400).json({ error: 'Invalid Action' });
   } catch (err) {
+    console.error('Backend Error:', err);
     return res.status(500).json({ error: err.message });
   }
 };
