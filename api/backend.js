@@ -3,9 +3,8 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 
 if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT))
   });
 }
 
@@ -19,122 +18,179 @@ module.exports = async (req, res) => {
   const { action } = req.query;
 
   try {
-    // 1. Create Razorpay Order (Aapke pdf_store se exact price lekar)
-    if (action === 'create-order' && req.method === 'POST') {
-      const { docId } = req.body; // e.g., "09EfflwJBfcypdzSRODZ"
-      const doc = await db.collection('pdf_store').doc(docId).get();
-      if (!doc.exists) return res.status(404).json({ error: 'Assignment not found' });
+    // 1. DEVICE FOOTPRINT CHECK ON LOGIN
+    if (action === 'verify-device' && req.method === 'POST') {
+      const { uid, fingerprint, refCode } = req.body;
+      const userRef = db.collection('users').doc(uid);
+      const userDoc = await userRef.get();
 
-      const item = doc.data();
-      const order = await razorpay.orders.create({
-        amount: Number(item.price) * 100, // 25 Rs -> 2500 paise
-        currency: 'INR',
-        receipt: `shgc_${Date.now()}`
-      });
+      if (!userDoc.exists) {
+        // First time user registration with Referral tracking
+        const myRefCode = 'SHGC' + Math.random().toString(36).substring(2, 7).toUpperCase();
+        await userRef.set({
+          walletBalance: 0,
+          myRefCode,
+          referredBy: refCode || null,
+          totalPdfsBought: 0,
+          referralRewardClaimed: false,
+          devices: [fingerprint],
+          createdAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        return res.status(200).json({ status: 'OK', walletBalance: 0, myRefCode });
+      }
+
+      const userData = userDoc.data();
+      let devices = userData.devices || [];
+
+      if (!devices.includes(fingerprint)) {
+        if (devices.length >= 2) {
+          return res.status(403).json({
+            error: 'Account Sharing Detected! Aapka account maximum 2 devices par lock hai.'
+          });
+        }
+        devices.push(fingerprint);
+        await userRef.update({ devices });
+      }
 
       return res.status(200).json({
-        order_id: order.id,
-        amount: order.amount,
-        key: process.env.RAZORPAY_KEY_ID,
-        subjectCode: item.subjectCode,
-        subjectName: item.subjectName
+        status: 'OK',
+        walletBalance: userData.walletBalance || 0,
+        myRefCode: userData.myRefCode
       });
     }
 
-    // 2. Verify Payment + Lock Device Digital Footprint + Save for 6 Months
-    if (action === 'verify-payment' && req.method === 'POST') {
-      const { razorpay_order_id, razorpay_payment_id, razorpay_signature, docId, phone, fingerprint } = req.body;
+    // 2. VALIDATE DAILY DYNAMIC PROMO CODE
+    if (action === 'verify-promo' && req.method === 'POST') {
+      const { code, cartTotal } = req.body;
+      const promoDoc = await db.collection('promo_codes').doc(code.toUpperCase()).get();
 
-      const body = razorpay_order_id + "|" + razorpay_payment_id;
-      const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET).update(body).digest('hex');
+      if (!promoDoc.exists || !promoDoc.data().active) {
+        return res.status(400).json({ error: 'Invalid ya Expired Promo Code!' });
+      }
+      const promo = promoDoc.data();
+      if (cartTotal < (promo.minAmount || 0)) {
+        return res.status(400).json({ error: `Ye code minimum ₹${promo.minAmount} ke order par lagta hai.` });
+      }
+      return res.status(200).json({ discount: Number(promo.discount), code: code.toUpperCase() });
+    }
 
-      if (expectedSignature !== razorpay_signature) {
-        return res.status(400).json({ error: 'Payment Verification Failed!' });
+    // 3. CHECKOUT USING WALLET (With 8-PDF Referral Engine)
+    if (action === 'wallet-checkout' && req.method === 'POST') {
+      const { uid, fingerprint, itemIds, promoCode } = req.body; // itemIds = array of pdf_store doc IDs
+
+      const userRef = db.collection('users').doc(uid);
+      const userDoc = await userRef.get();
+      const user = userDoc.data();
+
+      // Verify Device Footprint
+      if (!user.devices || !user.devices.includes(fingerprint)) {
+        return res.status(403).json({ error: 'Unauthorized Device Footprint!' });
       }
 
-      // pdf_store se details aur secret pdf_links se PDF URL nikalo
-      const itemDoc = await db.collection('pdf_store').doc(docId).get();
-      const item = itemDoc.data();
-      
-      const secretDoc = await db.collection('pdf_links').doc(docId).get();
-      const pdfUrl = secretDoc.exists ? secretDoc.data().pdfUrl : item.pdfUrl;
+      // Calculate Real Price from pdf_store
+      let total = 0;
+      const purchasedItems = [];
+      for (const id of itemIds) {
+        const pdfDoc = await db.collection('pdf_store').doc(id).get();
+        if (pdfDoc.exists) {
+          const d = pdfDoc.data();
+          total += Number(d.price);
+          purchasedItems.push({ docId: id, subjectCode: d.subjectCode, subjectName: d.subjectName, price: d.price });
+        }
+      }
 
-      // 6 Months Expiry
+      // Apply Promo Code if any
+      if (promoCode) {
+        const pDoc = await db.collection('promo_codes').doc(promoCode.toUpperCase()).get();
+        if (pDoc.exists && pDoc.data().active && total >= (pDoc.data().minAmount || 0)) {
+          total = Math.max(0, total - Number(pDoc.data().discount));
+        }
+      }
+
+      if ((user.walletBalance || 0) < total) {
+        return res.status(400).json({ error: 'Wallet mein balance kam hai! Pehle Add Money karein.' });
+      }
+
+      const newCount = (user.totalPdfsBought || 0) + purchasedItems.length;
       const expiresAt = new Date();
-      expiresAt.setMonth(expiresAt.getMonth() + 6);
+      expiresAt.setMonth(expiresAt.getMonth() + 6); // 6 Months Active Link
 
-      // Save Order in Firestore 'orders' collection
-      await db.collection('orders').doc(razorpay_payment_id).set({
-        phone,
-        docId,
-        subjectCode: item.subjectCode,
-        subjectName: item.subjectName,
-        session: item.session,
-        price: item.price,
-        pdfUrl: pdfUrl,
-        paymentId: razorpay_payment_id,
-        device_fingerprints: [fingerprint], // 1st Device Locked
-        expiresAt: expiresAt.toISOString(),
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      // Deduct Wallet & Save Order
+      await userRef.update({
+        walletBalance: admin.firestore.FieldValue.increment(-total),
+        totalPdfsBought: newCount
       });
 
-      return res.status(200).json({ success: true, download_url: pdfUrl });
-    }
+      await db.collection('wallet_history').add({
+        uid,
+        type: 'DEBIT',
+        amount: total,
+        reason: `Purchased ${purchasedItems.length} PDF(s)`,
+        timestamp: admin.firestore.FieldValue.serverTimestamp()
+      });
 
-    // 3. My Orders: Re-download for 6 Months (Strict Device Lock Check)
-    if (action === 'my-orders' && req.method === 'POST') {
-      const { phone, fingerprint } = req.body;
-      const snapshot = await db.collection('orders').where('phone', '==', phone).get();
-
-      if (snapshot.empty) {
-        return res.status(404).json({ error: 'Is mobile number par koi order nahi mila.' });
-      }
-
-      const results = [];
-      for (const doc of snapshot.docs) {
-        const ord = doc.data();
-
-        // 6-Month Expiry Check
-        if (new Date(ord.expiresAt) < new Date()) {
-          results.push({
-            subjectCode: ord.subjectCode,
-            subjectName: ord.subjectName,
-            status: 'EXPIRED',
-            message: '6 Mahine ki validity khatam ho chuki hai.'
-          });
-          continue;
-        }
-
-        // Device Digital Footprint Check (Max 2 Devices Allowed: e.g., Phone + Laptop)
-        let devices = ord.device_fingerprints || [];
-        if (!devices.includes(fingerprint)) {
-          if (devices.length >= 2) {
-            results.push({
-              subjectCode: ord.subjectCode,
-              subjectName: ord.subjectName,
-              status: 'BLOCKED',
-              message: 'Account Sharing Blocked! Ye PDF original buyer ke device par lock hai.'
-            });
-            continue;
-          } else {
-            devices.push(fingerprint);
-            await db.collection('orders').doc(doc.id).update({ device_fingerprints: devices });
-          }
-        }
-
-        results.push({
-          subjectCode: ord.subjectCode,
-          subjectName: ord.subjectName,
-          status: 'ACTIVE',
-          download_url: ord.pdfUrl,
-          expiresOn: new Date(ord.expiresAt).toLocaleDateString('en-IN')
+      for (const item of purchasedItems) {
+        await db.collection('orders').add({
+          uid,
+          docId: item.docId,
+          subjectCode: item.subjectCode,
+          subjectName: item.subjectName,
+          expiresAt: expiresAt.toISOString(),
+          timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
       }
 
-      return res.status(200).json({ orders: results });
+      // CHECK 8-PDF REFERRAL MILESTONE RULE (₹10 Reward)
+      if (user.referredBy && !user.referralRewardClaimed && newCount >= 8) {
+        const refQuery = await db.collection('users').where('myRefCode', '==', user.referredBy).limit(1).get();
+        if (!refQuery.empty) {
+          const referrerDoc = refQuery.docs[0];
+          await referrerDoc.ref.update({
+            walletBalance: admin.firestore.FieldValue.increment(10)
+          });
+          await db.collection('wallet_history').add({
+            uid: referrerDoc.id,
+            type: 'CREDIT',
+            amount: 10,
+            reason: `Referral Bonus: User completed 8 PDF purchases!`,
+            timestamp: admin.firestore.FieldValue.serverTimestamp()
+          });
+          await userRef.update({ referralRewardClaimed: true });
+        }
+      }
+
+      return res.status(200).json({ success: true });
     }
 
-    return res.status(400).json({ error: 'Invalid Request' });
+    // 4. SECURE GOOGLE DRIVE DOWNLOAD PROXY (Hides real Drive URL)
+    if (action === 'download-pdf' && req.method === 'POST') {
+      const { uid, fingerprint, docId } = req.body;
+      const userDoc = await db.collection('users').doc(uid).get();
+      if (!userDoc.exists || !userDoc.data().devices.includes(fingerprint)) {
+        return res.status(403).json({ error: 'Device Lock Mismatch! Access Denied.' });
+      }
+
+      // Verify active order within 6 months
+      const orderSnap = await db.collection('orders')
+        .where('uid', '==', uid)
+        .where('docId', '==', docId)
+        .get();
+
+      if (orderSnap.empty) return res.status(403).json({ error: 'Order not found!' });
+      const order = orderSnap.docs[0].data();
+      if (new Date(order.expiresAt) < new Date()) {
+        return res.status(403).json({ error: '6 Months Download Validity Expired!' });
+      }
+
+      // Fetch private Google Drive ID from secret_pdf_links
+      const linkDoc = await db.collection('secret_pdf_links').doc(docId).get();
+      const driveFileId = linkDoc.data().driveFileId;
+      const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${driveFileId}`;
+
+      return res.status(200).json({ downloadUrl: directDownloadUrl });
+    }
+
+    return res.status(400).json({ error: 'Invalid Action' });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
