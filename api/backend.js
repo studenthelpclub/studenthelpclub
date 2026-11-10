@@ -186,6 +186,64 @@ module.exports = async (req, res) => {
       return res.status(200).json({ success: true });
     }
 
+    // 0.2 BULK SAVE PROMO CODES (For Admin Bulk Upload)
+    if (action === 'bulk-save-promos' && req.method === 'POST') {
+      const { codes, discount, minAmount } = req.body;
+      if (!Array.isArray(codes) || !codes.length) return res.status(400).json({ error: 'Invalid codes list' });
+
+      let batch = db.batch();
+      for (let c of codes) {
+        const cleanCode = String(c).trim().toUpperCase();
+        if (!cleanCode) continue;
+        const ref = db.collection('promo_codes').doc(cleanCode);
+        batch.set(ref, {
+          code: cleanCode,
+          discount: Number(discount || 10),
+          minAmount: Number(minAmount || 25),
+          active: true,
+          createdAt: admin.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+      }
+      await batch.commit();
+      return res.status(200).json({ success: true, message: `Successfully added ${codes.length} promo codes!` });
+    }
+
+    // 0.3 SEND PROMO CODE TO TELEGRAM
+    if (action === 'send-telegram-promo' && req.method === 'POST') {
+      const { code, discount, minAmount } = req.body;
+      const botToken = process.env.TELEGRAM_BOT_TOKEN;
+      const chatId = process.env.TELEGRAM_CHAT_ID;
+
+      if (!botToken || !chatId) {
+        return res.status(400).json({ error: 'Telegram Bot Token or Chat ID missing in Vercel environment variables!' });
+      }
+
+      const message = `🔥 *TODAY'S SPECIAL PROMO CODE!* 🔥\n\n` +
+                      `🎁 Code: \`${code}\`\n` +
+                      `💰 Discount: *₹${discount} OFF*\n` +
+                      `🛒 Min Order: *₹${minAmount || 25}*\n\n` +
+                      `👉 Visit portal & apply now: https://www.studenthelpclub.in\n` +
+                      `⚡ *Student Help Club Instant Portal*`;
+
+      const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+      const tgRes = await fetch(telegramUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message,
+          parse_mode: 'Markdown'
+        })
+      });
+
+      const tgData = await tgRes.json();
+      if (!tgData.ok) {
+        return res.status(500).json({ error: 'Telegram API Error: ' + (tgData.description || 'Failed to send') });
+      }
+
+      return res.status(200).json({ success: true, message: 'Promo code successfully broadcasted to Telegram!' });
+    }
+
     // 1. DEVICE FOOTPRINT CHECK & AUTO-CREATE USER ON LOGIN
     if (action === 'verify-device' && req.method === 'POST') {
       const { uid, fingerprint } = req.body;
