@@ -108,7 +108,7 @@
       if (!res.ok) { alert(data.error || "Failed to load dashboard"); return; }
 
       document.getElementById('walletBal').innerText = data.walletBalance || 0;
-      document.getElementById('refLinkBox').value = data.myRefCode ? `https://www.studenthelpclub.in/?ref=${data.myRefCode}` : 'Link not available';
+      const refCode = data.myRefCode || 'SHGC' + currentUser.uid.substring(0, 5).toUpperCase(); document.getElementById('refLinkBox').value = `https://www.studenthelpclub.in/?ref=${refCode}`;
       allOrders = data.orders || [];
       renderOrders(allOrders);
     } catch (err) {
