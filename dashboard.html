@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>My Dashboard | Student Help Club (SHG)</title>
+  <title>My Dashboard | Student Help Club (SHC)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
@@ -34,21 +34,21 @@
   <div class="max-w-7xl mx-auto flex justify-between items-center gap-3">
     <!-- Brand + Live User Status -->
     <div class="flex items-center gap-3 sm:gap-4">
-      <a href="index.html" class="flex items-center gap-2.5 group">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center font-black text-white shadow-lg shadow-red-600/20 group-hover:scale-105 transition">
-          SHG
+      <a href="index.html" class="flex items-center gap-3 group">
+        <div class="px-2.5 h-9 rounded-xl bg-gradient-to-br from-red-600 to-rose-700 flex items-center justify-center font-black text-sm tracking-wider text-white shadow-lg shadow-red-600/20 group-hover:scale-105 transition">
+          SHC
         </div>
         <div>
           <span id="headerUserName" class="text-sm sm:text-base font-extrabold text-white block leading-tight">Welcome, Student</span>
           <div class="flex items-center gap-1.5 mt-0.5">
             <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot inline-block"></span>
-            <span class="text-[10px] font-bold text-emerald-400 tracking-wide">LIVE • <span id="liveUsersCount">24</span> Students Online</span>
+            <span class="text-[10px] font-bold text-emerald-400 tracking-wide">LIVE • <span id="liveUsersCount">1</span> Students Online</span>
           </div>
         </div>
       </a>
     </div>
 
-    <!-- Header Actions -->
+    <!-- Header Actions (Notification Bell Removed) -->
     <div class="flex items-center gap-2 sm:gap-3">
       <!-- Request Missing Assignment Button -->
       <button onclick="UI.openModal('requestModal')" class="hidden sm:flex items-center gap-1.5 text-xs font-bold bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 px-3.5 py-2 rounded-xl transition">
@@ -60,25 +60,6 @@
         <i class="fas fa-store text-red-400"></i> <span class="hidden md:inline">Store</span>
       </a>
 
-      <!-- Notification Bell -->
-      <div class="relative">
-        <button id="notifBellBtn" onclick="NotificationsModule.toggleDropdown()" class="relative w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition">
-          <i class="fas fa-bell"></i>
-          <span id="notifBadge" class="hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-[10px] font-black text-white flex items-center justify-center">0</span>
-        </button>
-
-        <!-- Notification Dropdown -->
-        <div id="notifDropdown" class="hidden absolute right-0 mt-2.5 w-80 sm:w-96 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden z-50">
-          <div class="px-4 py-3 border-b border-slate-800 flex justify-between items-center bg-slate-950/60">
-            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-300">Notifications</span>
-            <button onclick="NotificationsModule.markAllRead()" class="text-[11px] font-bold text-emerald-400 hover:underline">Mark all read</button>
-          </div>
-          <div id="notifList" class="max-h-72 overflow-y-auto divide-y divide-slate-800/70">
-            <p class="text-xs text-slate-500 p-4 text-center">No new notifications</p>
-          </div>
-        </div>
-      </div>
-
       <!-- Logout -->
       <button id="logoutBtn" title="Logout" class="w-9 h-9 sm:w-auto sm:px-3.5 sm:py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-xs font-bold text-red-400 transition flex items-center justify-center gap-1.5">
         <i class="fas fa-right-from-bracket"></i> <span class="hidden sm:inline">Logout</span>
@@ -89,8 +70,8 @@
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
-  <!-- LIVE PROMO CODE BANNER -->
-  <div id="promoBanner" class="bg-gradient-to-r from-amber-500/15 via-red-500/15 to-purple-500/15 border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+  <!-- LIVE PROMO CODE BANNER (Hidden by default; shows ONLY when a live promo exists) -->
+  <div id="promoBanner" class="hidden bg-gradient-to-r from-amber-500/15 via-red-500/15 to-purple-500/15 border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
         <i class="fas fa-tags text-lg"></i>
@@ -98,13 +79,13 @@
       <div>
         <div class="flex items-center gap-2">
           <span class="text-[10px] font-black uppercase bg-amber-500 text-slate-950 px-2 py-0.5 rounded">Live Offer</span>
-          <h4 id="promoTitle" class="text-xs sm:text-sm font-extrabold text-white">Flat 20% OFF on Bulk IGNOU Assignments!</h4>
+          <h4 id="promoTitle" class="text-xs sm:text-sm font-extrabold text-white"></h4>
         </div>
-        <p id="promoDesc" class="text-[11px] text-slate-300 mt-0.5">Use code <span class="font-bold text-amber-400">SHGC20</span> at checkout when buying 4 or more PDFs.</p>
+        <p id="promoDesc" class="text-[11px] text-slate-300 mt-0.5"></p>
       </div>
     </div>
     <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-      <code id="promoCodeText" class="bg-slate-950 border border-dashed border-amber-400/60 px-3 py-1.5 rounded-lg text-xs font-black text-amber-300 tracking-wider">SHGC20</code>
+      <code id="promoCodeText" class="bg-slate-950 border border-dashed border-amber-400/60 px-3 py-1.5 rounded-lg text-xs font-black text-amber-300 tracking-wider"></code>
       <button onclick="PromoModule.copyPromo()" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-3.5 py-2 rounded-lg transition shrink-0">
         <i class="fas fa-copy mr-1"></i> Copy
       </button>
@@ -185,7 +166,7 @@
       <div>
         <div class="flex justify-between items-start mb-2">
           <div>
-            <p class="text-[10px] font-bold uppercase tracking-widest text-yellow-400"><i class="fas fa-gift mr-1"></i> Refer & Earn Program</p>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-yellow-400"><i class="fas fa-gift mr-1"></i> Student Help Club (SHC) Refer & Earn</p>
             <h3 class="text-lg font-black text-white mt-0.5">Get ₹10 Wallet Cash Per Refer!</h3>
           </div>
           <span class="bg-yellow-400/10 text-yellow-300 border border-yellow-400/20 text-[10px] font-bold px-2.5 py-1 rounded-lg">
@@ -288,16 +269,21 @@
     </div>
   </section>
 
-  <!-- TAB 3: ASSIGNMENT REQUESTS TRACKER -->
+  <!-- TAB 3: ASSIGNMENT REQUESTS TRACKER (AUTO-UPDATES TO "AVAILABLE ✅" WHEN UPLOADED) -->
   <section id="requestsTab" class="tab-content hidden bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
       <div>
         <h3 class="text-xl font-black uppercase italic">Requested <span class="text-indigo-400">Assignments</span></h3>
-        <p class="text-[11px] text-slate-400">Can't find your subject PDF on the website? Request it here—we upload within 12–24 hours!</p>
+        <p class="text-[11px] text-slate-400">Jaise hi aapki requested PDF website par upload hogi, yahan <span class="text-emerald-400 font-bold">Available ✅</span> dikhne lagega!</p>
       </div>
-      <button onclick="UI.openModal('requestModal')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl text-xs font-black uppercase transition">
-        <i class="fas fa-plus mr-1"></i> New Request
-      </button>
+      <div class="flex items-center gap-2">
+        <button onclick="RequestModule.refreshStatuses()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-2.5 rounded-xl text-xs font-bold transition">
+          <i class="fas fa-rotate mr-1"></i> Refresh Status
+        </button>
+        <button onclick="UI.openModal('requestModal')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl text-xs font-black uppercase transition">
+          <i class="fas fa-plus mr-1"></i> New Request
+        </button>
+      </div>
     </div>
 
     <div id="requestsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -350,7 +336,7 @@
 
 <!-- MODAL: REQUEST MISSING ASSIGNMENT -->
 <div id="requestModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
-  <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-md w-full p-6 shadow-2xl relative animate-fadeIn">
+  <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
     <button onclick="UI.closeModal('requestModal')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center">
       <i class="fas fa-times"></i>
     </button>
@@ -358,7 +344,7 @@
     <div class="mb-4">
       <span class="text-[10px] font-black uppercase bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-md">On-Demand Upload</span>
       <h3 class="text-lg font-black text-white mt-2">Request Missing Assignment</h3>
-      <p class="text-xs text-slate-400">Subject code daalein, hamari team 24 ghante ke andar PDF upload karke aapko notify karegi.</p>
+      <p class="text-xs text-slate-400">Subject code daalein, PDF upload hote hi aapke Requests tab mein <strong class="text-emerald-400">Available</strong> dikh jayega.</p>
     </div>
 
     <form onsubmit="RequestModule.submit(event)" class="space-y-3.5">
@@ -400,7 +386,10 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, serverTimestamp, collection, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import {
+    getFirestore, doc, setDoc, addDoc, getDocs, serverTimestamp,
+    collection, onSnapshot, query, where
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   /* =========================================================
      1. CONFIG & INITIALIZATION MODULE
@@ -420,14 +409,13 @@
 
   const AppState = {
     user: null,
-    idToken: null,
-    fingerprint: localStorage.getItem('shgc_device_fp') || ('fp_' + Math.random().toString(36).substring(2, 12)),
+    fingerprint: localStorage.getItem('shc_device_fp') || ('fp_' + Math.random().toString(36).substring(2, 12)),
     orders: [],
     transactions: [],
     requests: [],
-    notifications: []
+    availableCatalogCodes: new Set()
   };
-  localStorage.setItem('shgc_device_fp', AppState.fingerprint);
+  localStorage.setItem('shc_device_fp', AppState.fingerprint);
 
   /* =========================================================
      2. SECURITY & API HELPER MODULE
@@ -438,6 +426,10 @@
       return String(str).replace(/[&<>"']/g, m => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
       }[m]));
+    },
+
+    normalizeCode(code) {
+      return String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
     },
 
     async apiPost(action, payload = {}) {
@@ -462,7 +454,7 @@
   };
 
   /* =========================================================
-     3. UI & TOAST NOTIFICATION MODULE
+     3. UI & TOAST MODULE
   ========================================================= */
   const UI = {
     toast(message, type = 'info') {
@@ -529,7 +521,6 @@
         ping();
         setInterval(ping, 45000);
 
-        // Listen to active users in last 3 minutes
         const q = query(collection(db, "live_presence"));
         onSnapshot(q, (snap) => {
           const now = Date.now();
@@ -538,20 +529,60 @@
             const ts = d.data()?.lastSeen?.toMillis?.();
             if (ts && (now - ts) < 180000) activeCount++;
           });
-          // Ensure realistic live count display
           document.getElementById('liveUsersCount').innerText = Math.max(activeCount, 1);
         }, () => {
-          // Fallback if Firestore rules restrict collection read
-          document.getElementById('liveUsersCount').innerText = Math.floor(18 + Math.random() * 12);
+          document.getElementById('liveUsersCount').innerText = "1";
         });
       } catch (e) {
-        document.getElementById('liveUsersCount').innerText = "21";
+        document.getElementById('liveUsersCount').innerText = "1";
       }
     }
   };
 
   /* =========================================================
-     5. ORDERS & STEP-BY-STEP DOWNLOAD MODULE
+     5. LIVE PROMO MODULE (ONLY SHOWS REAL ACTIVE PROMOS)
+  ========================================================= */
+  const PromoModule = {
+    show(promo) {
+      const banner = document.getElementById('promoBanner');
+      if (!promo || !promo.code || promo.active === false) {
+        banner.classList.add('hidden');
+        return;
+      }
+      document.getElementById('promoTitle').innerText = promo.title || 'Live Discount Offer!';
+      document.getElementById('promoDesc').innerText = promo.desc || `Apply code ${promo.code} at checkout for instant discount.`;
+      document.getElementById('promoCodeText').innerText = String(promo.code).toUpperCase();
+      banner.classList.remove('hidden');
+    },
+
+    listenLivePromos() {
+      // Real-time listener on Firestore 'promos' collection (where active == true)
+      try {
+        const q = query(collection(db, "promos"), where("active", "==", true));
+        onSnapshot(q, (snap) => {
+          if (!snap.empty) {
+            const activeDoc = snap.docs[0].data();
+            this.show({ ...activeDoc, active: true });
+          }
+        }, () => {});
+      } catch {}
+    },
+
+    async copyPromo() {
+      const code = document.getElementById('promoCodeText').innerText.trim();
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code);
+        UI.toast(`Promo code "${code}" copied! Apply at checkout.`, 'success');
+      } catch {
+        UI.toast(`Code: ${code}`, 'info');
+      }
+    }
+  };
+  window.PromoModule = PromoModule;
+
+  /* =========================================================
+     6. ORDERS & STEP-BY-STEP DOWNLOAD MODULE
   ========================================================= */
   const OrdersModule = {
     render(list) {
@@ -613,18 +644,15 @@
       btn.disabled = true;
 
       try {
-        // Step 1: Preparing download...
         btn.className = "w-full bg-amber-500 text-slate-950 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition flex items-center justify-center gap-2";
         btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>Preparing download...</span>`;
 
         const data = await Security.apiPost('download-pdf', { docId });
         if (!data.downloadUrl) throw new Error("Download URL not generated");
 
-        // Step 2: Downloading...
         btn.className = "w-full bg-blue-600 text-white py-3 rounded-xl font-black text-xs uppercase tracking-wider transition flex items-center justify-center gap-2";
         btn.innerHTML = `<i class="fas fa-cloud-arrow-down fa-bounce"></i> <span>Downloading...</span>`;
 
-        // Fetch blob for reliable download without popup blockers, fallback to anchor tag
         try {
           const fileRes = await fetch(data.downloadUrl);
           if (!fileRes.ok) throw new Error("Direct fetch failed");
@@ -632,13 +660,12 @@
           const blobUrl = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = blobUrl;
-          a.download = `${subjectCode || 'SHGC_Assignment'}.pdf`;
+          a.download = `${subjectCode || 'SHC_Assignment'}.pdf`;
           document.body.appendChild(a);
           a.click();
           a.remove();
           setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
         } catch {
-          // Cross-origin fallback
           const a = document.createElement('a');
           a.href = data.downloadUrl;
           a.target = '_blank';
@@ -648,7 +675,6 @@
           a.remove();
         }
 
-        // Step 3: Completed ✅
         btn.className = "w-full bg-emerald-500 text-slate-950 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition flex items-center justify-center gap-2";
         btn.innerHTML = `<span>Completed ✅</span>`;
         UI.toast(`${subjectCode} downloaded successfully!`, 'success');
@@ -671,7 +697,7 @@
   window.OrdersModule = OrdersModule;
 
   /* =========================================================
-     6. WALLET & TRANSACTION HISTORY MODULE
+     7. WALLET & TRANSACTION HISTORY MODULE
   ========================================================= */
   const WalletModule = {
     setAmount(val) {
@@ -723,7 +749,7 @@
           key: order.key,
           amount: order.amount,
           currency: "INR",
-          name: "Student Help Club (SHGC)",
+          name: "Student Help Club (SHC)",
           description: "Wallet Recharge",
           order_id: order.order_id,
           prefill: {
@@ -736,7 +762,6 @@
               await Security.apiPost('verify-wallet-recharge', { ...response, amount });
               UI.toast(`₹${amount} added to your wallet!`, 'success');
               document.getElementById('addAmtInput').value = '';
-              NotificationsModule.pushLocal("🔔 Wallet Credited", `₹${amount} successfully added to your wallet.`);
               DashboardApp.loadData();
             } catch (verifyErr) {
               UI.toast(verifyErr.message || "Payment verification failed.", 'error');
@@ -799,7 +824,7 @@
   window.WalletModule = WalletModule;
 
   /* =========================================================
-     7. REFERRAL & PROMO CODE MODULE
+     8. REFERRAL MODULE
   ========================================================= */
   const ReferralModule = {
     async copyLink() {
@@ -832,23 +857,54 @@
   };
   window.ReferralModule = ReferralModule;
 
-  const PromoModule = {
-    async copyPromo() {
-      const code = document.getElementById('promoCodeText').innerText.trim();
-      try {
-        await navigator.clipboard.writeText(code);
-        UI.toast(`Promo code "${code}" copied! Apply at checkout.`, 'success');
-      } catch {
-        UI.toast(`Code: ${code}`, 'info');
-      }
-    }
-  };
-  window.PromoModule = PromoModule;
-
   /* =========================================================
-     8. MISSING ASSIGNMENT REQUEST MODULE
+     9. MISSING ASSIGNMENT REQUEST & LIVE AVAILABILITY TRACKER
   ========================================================= */
   const RequestModule = {
+    async syncAvailableCatalog() {
+      // Checks Firestore 'assignments' or 'pdfs' collection so requested PDFs automatically show "Available ✅" once uploaded
+      const collectionsToTry = ['assignments', 'pdfs', 'products'];
+      for (const colName of collectionsToTry) {
+        try {
+          const snap = await getDocs(collection(db, colName));
+          snap.forEach(d => {
+            const data = d.data();
+            const code = data.subjectCode || data.code || data.subject || d.id;
+            if (code) AppState.availableCatalogCodes.add(Security.normalizeCode(code));
+          });
+        } catch {}
+      }
+    },
+
+    listenUserRequests(uid) {
+      try {
+        const q = query(collection(db, "assignment_requests"), where("uid", "==", uid));
+        onSnapshot(q, (snap) => {
+          const liveReqs = [];
+          snap.forEach(d => liveReqs.push({ id: d.id, ...d.data() }));
+          if (liveReqs.length) {
+            AppState.requests = liveReqs;
+            this.render(AppState.requests);
+          }
+        }, () => {});
+      } catch {}
+    },
+
+    async refreshStatuses() {
+      await this.syncAvailableCatalog();
+      this.render(AppState.requests);
+      UI.toast("Assignment availability status updated!", 'info');
+    },
+
+    isAvailable(req) {
+      const statusText = String(req.status || '').toLowerCase();
+      if (req.isAvailable === true || statusText === 'available' || statusText === 'uploaded' || statusText === 'completed') {
+        return true;
+      }
+      const norm = Security.normalizeCode(req.subjectCode);
+      return norm && AppState.availableCatalogCodes.has(norm);
+    },
+
     async submit(e) {
       e.preventDefault();
       const subjectCode = document.getElementById('reqSubjectCode').value.trim().toUpperCase();
@@ -862,35 +918,40 @@
       btn.disabled = true;
       btn.innerText = "Submitting...";
 
+      const newReqObj = {
+        uid: AppState.user.uid,
+        userEmail: AppState.user.email || '',
+        subjectCode,
+        medium,
+        session,
+        note,
+        status: 'Pending',
+        createdAt: new Date().toISOString()
+      };
+
       try {
-        await Security.apiPost('request-assignment', { subjectCode, medium, session, note });
-        UI.toast(`Request for ${subjectCode} submitted!`, 'success');
+        await Security.apiPost('request-assignment', newReqObj).catch(async () => {
+          // Save directly in Firestore so status updates automatically
+          await addDoc(collection(db, "assignment_requests"), {
+            ...newReqObj,
+            timestamp: serverTimestamp()
+          });
+        });
+
+        await this.syncAvailableCatalog();
+
+        // Avoid duplicates if listener already added it
+        if (!AppState.requests.some(r => Security.normalizeCode(r.subjectCode) === Security.normalizeCode(subjectCode))) {
+          AppState.requests.unshift(newReqObj);
+        }
+
+        this.render(AppState.requests);
         UI.closeModal('requestModal');
         e.target.reset();
-
-        AppState.requests.unshift({
-          subjectCode,
-          medium,
-          session,
-          status: 'Pending Review',
-          createdAt: new Date().toISOString()
-        });
-        this.render(AppState.requests);
+        UI.toast(`Request for ${subjectCode} submitted!`, 'success');
         UI.switchTab('requestsTab');
       } catch (err) {
-        // Graceful fallback if backend route isn't added yet
-        AppState.requests.unshift({
-          subjectCode,
-          medium,
-          session,
-          status: 'Submitted',
-          createdAt: new Date().toISOString()
-        });
-        this.render(AppState.requests);
-        UI.closeModal('requestModal');
-        e.target.reset();
-        UI.toast(`Request recorded for ${subjectCode}!`, 'success');
-        UI.switchTab('requestsTab');
+        UI.toast(err.message || "Failed to submit request.", 'error');
       } finally {
         btn.disabled = false;
         btn.innerText = "Submit Assignment Request";
@@ -904,83 +965,35 @@
         return;
       }
 
-      box.innerHTML = list.map(r => `
-        <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl flex justify-between items-center">
-          <div>
-            <h4 class="text-sm font-black text-white uppercase">${Security.escapeHTML(r.subjectCode)}</h4>
-            <p class="text-[11px] text-slate-400 mt-0.5">${Security.escapeHTML(r.medium)} Medium • Session ${Security.escapeHTML(r.session)}</p>
+      box.innerHTML = list.map(r => {
+        const available = this.isAvailable(r);
+        const safeCode = Security.escapeHTML(r.subjectCode);
+        const badgeHTML = available
+          ? `<div class="flex items-center gap-2">
+               <span class="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                 Available ✅
+               </span>
+               <a href="index.html?search=${encodeURIComponent(r.subjectCode || '')}" class="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition">
+                 Get PDF <i class="fas fa-arrow-right ml-0.5"></i>
+               </a>
+             </div>`
+          : `<span class="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+               <i class="fas fa-clock mr-1"></i> Pending Upload
+             </span>`;
+
+        return `
+          <div class="bg-slate-950 border ${available ? 'border-emerald-500/40' : 'border-slate-800'} p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+              <h4 class="text-sm font-black text-white uppercase">${safeCode}</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">${Security.escapeHTML(r.medium)} Medium • Session ${Security.escapeHTML(r.session)}</p>
+            </div>
+            ${badgeHTML}
           </div>
-          <span class="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
-            ${Security.escapeHTML(r.status || 'In Progress')}
-          </span>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
   };
   window.RequestModule = RequestModule;
-
-  /* =========================================================
-     9. NOTIFICATIONS MODULE
-  ========================================================= */
-  const NotificationsModule = {
-    toggleDropdown() {
-      document.getElementById('notifDropdown').classList.toggle('hidden');
-    },
-
-    pushLocal(title, desc) {
-      AppState.notifications.unshift({
-        id: Date.now(),
-        title,
-        desc,
-        time: 'Just now',
-        unread: true
-      });
-      this.render();
-    },
-
-    markAllRead() {
-      AppState.notifications.forEach(n => n.unread = false);
-      this.render();
-    },
-
-    render() {
-      const listEl = document.getElementById('notifList');
-      const badge = document.getElementById('notifBadge');
-      const unreadCount = AppState.notifications.filter(n => n.unread).length;
-
-      if (unreadCount > 0) {
-        badge.innerText = unreadCount;
-        badge.classList.remove('hidden');
-      } else {
-        badge.classList.add('hidden');
-      }
-
-      if (!AppState.notifications.length) {
-        listEl.innerHTML = `<p class="text-xs text-slate-500 p-5 text-center">No notifications right now.</p>`;
-        return;
-      }
-
-      listEl.innerHTML = AppState.notifications.map(n => `
-        <div class="p-3.5 hover:bg-slate-800/50 transition ${n.unread ? 'bg-slate-800/30' : ''}">
-          <div class="flex justify-between items-start gap-2">
-            <p class="text-xs font-extrabold text-white">${Security.escapeHTML(n.title)}</p>
-            <span class="text-[10px] text-slate-500 shrink-0">${Security.escapeHTML(n.time)}</span>
-          </div>
-          <p class="text-[11px] text-slate-400 mt-1">${Security.escapeHTML(n.desc)}</p>
-        </div>
-      `).join('');
-    }
-  };
-  window.NotificationsModule = NotificationsModule;
-
-  // Close notification dropdown on outside click
-  document.addEventListener('click', (e) => {
-    const bell = document.getElementById('notifBellBtn');
-    const drop = document.getElementById('notifDropdown');
-    if (bell && drop && !bell.contains(e.target) && !drop.contains(e.target)) {
-      drop.classList.add('hidden');
-    }
-  });
 
   /* =========================================================
      10. PROFILE MODULE
@@ -1012,7 +1025,6 @@
         }
 
         await Security.apiPost('update-profile', { name, mobile, course, enrollment }).catch(() => {
-          // Save directly in Firestore as backup if API endpoint isn't wired yet
           return setDoc(doc(db, "users", AppState.user.uid), {
             name, mobile, course, enrollment, updatedAt: serverTimestamp()
           }, { merge: true });
@@ -1035,9 +1047,9 @@
   const DashboardApp = {
     async loadData() {
       try {
+        await RequestModule.syncAvailableCatalog();
         const data = await Security.apiPost('dashboard-data');
 
-        // Wallet & Stats
         const balance = Number(data.walletBalance) || 0;
         const orders = Array.isArray(data.orders) ? data.orders : [];
         const txns = Array.isArray(data.transactions) ? data.transactions : [];
@@ -1045,36 +1057,27 @@
 
         AppState.orders = orders;
         AppState.transactions = txns;
-        AppState.requests = Array.isArray(data.requests) ? data.requests : [];
+        if (Array.isArray(data.requests) && data.requests.length) {
+          AppState.requests = data.requests;
+        }
 
         document.getElementById('walletBal').innerText = balance;
         document.getElementById('statTotalPdfs').innerText = orders.length;
         document.getElementById('statWalletTxns').innerText = txns.length;
         document.getElementById('statRefEarnings').innerText = refEarnings;
 
-        // Referral Code & Analytics
-        const refCode = data.myRefCode || ('SHGC' + AppState.user.uid.substring(0, 5).toUpperCase());
+        // Referral Code & Analytics (SHC branding)
+        const refCode = data.myRefCode || ('SHC' + AppState.user.uid.substring(0, 5).toUpperCase());
         document.getElementById('refCodeDisplay').innerText = refCode;
         document.getElementById('refLinkBox').value = `https://www.studenthelpclub.in/?ref=${refCode}`;
         document.getElementById('refFriendsJoined').innerText = Number(data.friendsJoined) || 0;
         document.getElementById('refFriendsPurchased').innerText = Number(data.friendsPurchased) || 0;
         document.getElementById('refTotalBonus').innerText = refEarnings;
 
-        // Live Promo Code (if sent from backend)
-        if (data.activePromo) {
-          document.getElementById('promoTitle').innerText = data.activePromo.title || 'Special Student Discount!';
-          document.getElementById('promoDesc').innerText = data.activePromo.desc || 'Apply code at checkout.';
-          document.getElementById('promoCodeText').innerText = data.activePromo.code || 'SHGC20';
+        // Show Live Promo ONLY if backend sends an active promo
+        if (data.activePromo && data.activePromo.code) {
+          PromoModule.show(data.activePromo);
         }
-
-        // Notifications
-        AppState.notifications = Array.isArray(data.notifications) && data.notifications.length
-          ? data.notifications
-          : [
-              { id: 1, title: "🔔 New PDFs Available", desc: "Latest 2026-27 IGNOU solved assignments added.", time: "Today", unread: true },
-              { id: 2, title: "🔔 Wallet & Referrals Active", desc: "Earn ₹10 instant cash when referred friends buy 8 PDFs.", time: "Info", unread: false }
-            ];
-        NotificationsModule.render();
 
         // Populate Sections
         OrdersModule.render(orders);
@@ -1107,6 +1110,8 @@
     document.getElementById('headerUserName').innerText = `Welcome, ${displayName}`;
 
     PresenceModule.init(user.uid);
+    PromoModule.listenLivePromos();
+    RequestModule.listenUserRequests(user.uid);
     await DashboardApp.loadData();
   });
 
