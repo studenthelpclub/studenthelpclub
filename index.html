@@ -10,7 +10,7 @@
 <link href="https://firestore.googleapis.com" rel="preconnect"/>
 <link as="image" fetchpriority="high" href="shc-logo.jpg" rel="preload"/>
 <link href="https://www.studenthelpclub.in/" rel="canonical"/>
-<title>IGNOU Study & Reference PDFs | Student Help Club</title>
+<title>IGNOU Study & Reference PDFs | Student Help Club (SHC)</title>
 <meta content="Download instant IGNOU Solved Assignments & Reference Study PDFs with YouTube video solutions." name="description"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -19,34 +19,48 @@
 <style>
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; scroll-behavior: smooth; overflow-x: hidden; }
   .offer-banner { background: linear-gradient(135deg, #d32f2f 0%, #a81d1d 100%); border-radius: 40px; padding: 50px 30px; color: white; text-align: center; position: relative; overflow: hidden; border: 6px solid white; box-shadow: 0 30px 60px -12px rgba(211, 47, 47, 0.3); }
-  .swipe-container { display: grid; grid-template-rows: repeat(2, auto); grid-auto-flow: column; grid-auto-columns: minmax(140px, 1fr); gap: 15px; overflow-x: auto; padding-bottom: 20px; scrollbar-width: none; }
+  .swipe-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
   .swipe-container::-webkit-scrollbar { display: none; }
-  .subject-card { background: white; border-radius: 28px; border: 1px solid #f1f5f9; padding: 20px; transition: 0.4s; height: 100%; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
-  .subject-card:hover { transform: translateY(-8px); border-color: #d32f2f; box-shadow: 0 25px 40px rgba(0,0,0,0.07); }
+  .subject-card { background: white; border-radius: 28px; border: 1px solid #f1f5f9; padding: 20px; transition: 0.35s; height: 100%; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+  .subject-card:hover { transform: translateY(-6px); border-color: #d32f2f; box-shadow: 0 25px 40px rgba(0,0,0,0.07); }
   .cart-sheet { position: fixed; top: 0; right: -100%; width: 100%; max-width: 430px; height: 100%; background: white; z-index: 5000; transition: 0.4s ease; box-shadow: -20px 0 50px rgba(0,0,0,0.15); display: flex; flex-direction: column; }
   .cart-sheet.active { right: 0; }
-  #searchBar { max-height: 0; opacity: 0; overflow: hidden; transition: 0.4s ease-in-out; background: white; }
+  #searchBar { max-height: 0; opacity: 0; overflow: hidden; transition: 0.35s ease-in-out; background: white; }
   #searchBar.active { max-height: 120px; opacity: 1; border-bottom: 1px solid #eee; }
   select { font-size: 10px !important; font-weight: 700 !important; border-radius: 10px !important; }
-  .floating-social-container { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column; gap: 12px; z-index: 9999; }
-  .social-float { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+  .floating-social-container { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column; gap: 12px; z-index: 4000; }
+  .social-float { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.25s; }
+  .social-float:hover { transform: scale(1.08); }
+  @keyframes marqueeSlide { 0% { opacity: 0; transform: translateY(-100%); } 100% { opacity: 1; transform: translateY(0); } }
+  .notice-bar-anim { animation: marqueeSlide 0.35s ease forwards; }
 </style>
 </head>
 <body>
 
-<header class="bg-white/80 backdrop-blur-md border-b px-6 py-4 sticky top-0 z-[1000]">
-  <div class="max-w-7xl mx-auto flex justify-between items-center">
-    <div class="flex items-center gap-3">
-      <img alt="Student Help Club Logo" class="w-10 h-10 rounded-xl border shadow-sm" src="shc-logo.jpg"/>
+<!-- ADMIN LIVE ANNOUNCEMENT / OFFER BANNER (Controlled from Admin Panel Settings) -->
+<div id="topAnnouncementBar" class="hidden notice-bar-anim bg-gradient-to-r from-slate-950 via-red-950 to-slate-950 text-white px-4 py-2.5 text-center border-b border-red-500/30 relative z-[1100]">
+  <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-2 text-xs font-extrabold tracking-wide">
+    <span class="bg-yellow-400 text-slate-950 text-[9px] font-black uppercase px-2 py-0.5 rounded-full animate-pulse">LIVE NOTICE</span>
+    <span id="topAnnouncementText"></span>
+    <button id="copyBannerPromoBtn" onclick="copyTopBannerCode()" class="hidden bg-white/15 hover:bg-yellow-400 hover:text-slate-950 text-yellow-300 border border-yellow-400/40 px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase transition">
+      <i class="fas fa-copy mr-1"></i> Copy Code
+    </button>
+  </div>
+</div>
+
+<header class="bg-white/90 backdrop-blur-md border-b px-4 sm:px-6 py-4 sticky top-0 z-[1000]">
+  <div class="max-w-7xl mx-auto flex justify-between items-center gap-2">
+    <a href="index.html" class="flex items-center gap-3">
+      <img alt="Student Help Club Logo" class="w-10 h-10 rounded-xl border shadow-sm object-cover" src="shc-logo.jpg"/>
       <div>
-        <span class="text-xl font-black italic text-[#d32f2f] uppercase tracking-tighter leading-none block">Student Help Club</span>
-        <p class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-1">Instant Automated Portal</p>
+        <span class="text-lg sm:text-xl font-black italic text-[#d32f2f] uppercase tracking-tighter leading-none block">Student Help Club</span>
+        <p class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-1">Instant Automated Portal (SHC)</p>
       </div>
-    </div>
-    <nav class="flex items-center gap-4">
-      <button class="p-2 text-gray-500 hover:text-[#d32f2f] transition" onclick="toggleSearch()"><i class="fas fa-search text-lg"></i></button>
+    </a>
+    <nav class="flex items-center gap-2 sm:gap-3">
+      <button class="p-2.5 text-gray-500 hover:text-[#d32f2f] transition" title="Search Subject" onclick="toggleSearch()"><i class="fas fa-search text-lg"></i></button>
       
-      <button id="headerAuthBtn" class="bg-slate-900 text-white px-4 py-2.5 rounded-xl font-black uppercase text-[9px] tracking-widest hover:bg-[#d32f2f] transition flex items-center gap-2" onclick="toggleLoginModal()">
+      <button id="headerAuthBtn" class="bg-slate-900 text-white px-3.5 sm:px-4 py-2.5 rounded-xl font-black uppercase text-[9px] tracking-widest hover:bg-[#d32f2f] transition flex items-center gap-2" onclick="toggleLoginModal()">
         <i class="fas fa-user"></i> <span id="headerAuthText">Cafe / Student Login</span>
       </button>
 
@@ -57,30 +71,37 @@
     </nav>
   </div>
   <div id="searchBar">
-    <form class="max-w-4xl mx-auto py-4 px-6 flex items-center gap-3" id="searchForm">
-      <input class="flex-1 bg-gray-50 border rounded-2xl px-5 py-3.5 outline-none focus:border-[#d32f2f] text-sm font-bold" id="searchInput" placeholder="Search Subject Code (e.g. MPA-036, BEVAE-181)..." type="search"/>
-      <button class="bg-[#d32f2f] text-white px-6 py-3.5 rounded-2xl font-bold uppercase text-[10px] tracking-widest" type="submit">Search</button>
+    <form class="max-w-4xl mx-auto py-4 px-4 sm:px-6 flex items-center gap-2 sm:gap-3" id="searchForm">
+      <input class="flex-1 bg-gray-50 border rounded-2xl px-5 py-3.5 outline-none focus:border-[#d32f2f] text-sm font-bold uppercase" id="searchInput" placeholder="Search Subject Code (e.g. MPA-036, BEVAE-181)..." type="search"/>
+      <button class="bg-[#d32f2f] text-white px-5 sm:px-6 py-3.5 rounded-2xl font-bold uppercase text-[10px] tracking-widest" type="submit">Search</button>
+      <button type="button" onclick="resetSearch()" class="bg-gray-100 text-gray-600 px-3.5 py-3.5 rounded-2xl font-bold uppercase text-[10px]">Reset</button>
     </form>
   </div>
 </header>
 
-<main class="max-w-7xl mx-auto px-6 py-8">
-  <div class="offer-banner mb-12">
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+  <div class="offer-banner mb-10">
     <p class="text-[10px] font-black uppercase tracking-[0.3em] mb-2 opacity-90">100% Automated Instant PDF Download + Video Guide</p>
     <h1 class="text-3xl md:text-5xl font-black italic uppercase tracking-tighter mb-4">IGNOU <span class="text-yellow-400">Study PDFs</span></h1>
     <p class="text-xs font-bold opacity-95 max-w-xl mx-auto">Join our Telegram & WhatsApp channel for Daily Promo Codes! Cyber Cafe owners get instant Wallet & Bulk Download access.</p>
-    <div class="mt-5 flex justify-center gap-3">
+    <div class="mt-5 flex flex-wrap justify-center gap-3">
       <a href="https://t.me/studenthelpclub" target="_blank" class="bg-white text-slate-900 px-5 py-2.5 rounded-full font-black text-[10px] uppercase tracking-wider hover:bg-yellow-400 transition"><i class="fab fa-telegram text-blue-500 mr-1"></i> Get Daily Promo Code</a>
       <button onclick="toggleLoginModal()" class="bg-yellow-400 text-slate-900 px-5 py-2.5 rounded-full font-black text-[10px] uppercase tracking-wider hover:bg-white transition"><i class="fas fa-gift mr-1"></i> Refer & Earn ₹10</button>
     </div>
   </div>
 
-  <nav class="swipe-container mb-14" id="courseGrid"></nav>
+  <!-- DYNAMIC COURSE FILTER CHIPS -->
+  <nav class="swipe-container mb-8" id="courseGrid"></nav>
 
   <section>
-    <div class="flex justify-between items-center mb-8">
-      <h2 class="text-2xl md:text-3xl font-black uppercase italic text-slate-800">Available <span class="text-[#d32f2f]">Study PDFs</span></h2>
-      <span class="text-[10px] font-bold bg-red-50 text-[#d32f2f] px-3 py-1.5 rounded-full uppercase">Instant Auto-Delivery</span>
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-8">
+      <div>
+        <h2 class="text-2xl md:text-3xl font-black uppercase italic text-slate-800">Available <span class="text-[#d32f2f]">Study PDFs</span></h2>
+        <p id="resultCountText" class="text-[11px] font-bold text-gray-400 mt-0.5">Showing latest IGNOU solved assignments</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-[10px] font-bold bg-red-50 text-[#d32f2f] px-3 py-1.5 rounded-full uppercase">Instant Auto-Delivery</span>
+      </div>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 mb-24" id="popularGrid">
       <p class="col-span-full text-sm text-gray-500 font-bold">Loading latest IGNOU PDFs...</p>
@@ -122,7 +143,6 @@
         Complete Registration & Login 🚀
       </button>
     </div>
-
   </div>
 </div>
 
@@ -155,7 +175,7 @@
   <div class="px-6 py-4 bg-gray-50 border-t border-b">
     <label class="text-[9px] font-black uppercase text-gray-500 block mb-1.5">Have a Promo Code?</label>
     <div class="flex gap-2">
-      <input id="promoInput" type="text" placeholder="Enter Code (e.g. SHGC10)" class="flex-1 bg-white border rounded-xl px-3 py-2 text-xs font-black uppercase outline-none focus:border-[#d32f2f]"/>
+      <input id="promoInput" type="text" placeholder="Enter Code (e.g. SHC10)" class="flex-1 bg-white border rounded-xl px-3 py-2 text-xs font-black uppercase outline-none focus:border-[#d32f2f]"/>
       <button onclick="applyPromoCode()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase hover:bg-[#d32f2f] transition">Apply</button>
     </div>
     <p id="promoMsg" class="text-[10px] font-bold mt-1 hidden"></p>
@@ -193,7 +213,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, doc, setDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
   import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
   const firebaseConfig = { apiKey: "AIzaSyADB27lDGXm0g52dEErHUpPse-omSH1pA8", authDomain: "ignou-web.firebaseapp.com", projectId: "ignou-web", storageBucket: "ignou-web.firebasestorage.app", messagingSenderId: "854950506403", appId: "1:854950506403:web:941a56126a36fd3f9d7416" };
@@ -204,17 +224,90 @@
 
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('ref')) {
-    localStorage.setItem('shgc_referred_by', urlParams.get('ref'));
+    localStorage.setItem('shc_referred_by', urlParams.get('ref'));
   }
 
+  /* =========================================================
+     1. REAL-TIME LIVE VISITOR TRACKING (Syncs with Admin Panel)
+  ========================================================= */
+  function startLiveVisitorHeartbeat() {
+    let vid = localStorage.getItem('shc_visitor_id');
+    if (!vid) {
+      vid = 'vis_' + Math.random().toString(36).substring(2, 12) + '_' + Date.now();
+      localStorage.setItem('shc_visitor_id', vid);
+    }
+
+    const ping = () => {
+      setDoc(doc(db, "live_visitors", vid), {
+        lastActive: Date.now(),
+        page: 'store_home',
+        uid: currentUser ? currentUser.uid : null
+      }, { merge: true }).catch(() => {});
+    };
+
+    ping();
+    setInterval(ping, 30000); // Updates every 30s so Admin Panel shows exact live count
+  }
+
+  /* =========================================================
+     2. ADMIN ANNOUNCEMENT / OFFER BANNER LISTENER
+  ========================================================= */
+  let detectedBannerPromoCode = '';
+
+  function listenAdminAnnouncementBanner() {
+    onSnapshot(doc(db, "site_settings", "main"), (snap) => {
+      const bar = document.getElementById('topAnnouncementBar');
+      const txtEl = document.getElementById('topAnnouncementText');
+      const copyBtn = document.getElementById('copyBannerPromoBtn');
+
+      if (!snap.exists()) {
+        bar.classList.add('hidden');
+        return;
+      }
+
+      const data = snap.data();
+      if (data.noticeActive && data.noticeText && data.noticeText.trim()) {
+        txtEl.innerText = data.noticeText.trim();
+        bar.classList.remove('hidden');
+
+        // Auto-detect promo code in banner text (e.g., SHC10, SHGC20, SAVE50)
+        const match = data.noticeText.match(/\b[A-Z]{2,8}[0-9]{1,4}\b/);
+        if (match) {
+          detectedBannerPromoCode = match[0];
+          copyBtn.innerHTML = `<i class="fas fa-copy mr-1"></i> Copy ${detectedBannerPromoCode}`;
+          copyBtn.classList.remove('hidden');
+        } else {
+          detectedBannerPromoCode = '';
+          copyBtn.classList.add('hidden');
+        }
+      } else {
+        bar.classList.add('hidden');
+      }
+    }, () => {});
+  }
+
+  window.copyTopBannerCode = async () => {
+    if (!detectedBannerPromoCode) return;
+    try {
+      await navigator.clipboard.writeText(detectedBannerPromoCode);
+      document.getElementById('promoInput').value = detectedBannerPromoCode;
+      alert(`✅ Promo code "${detectedBannerPromoCode}" copied! Apply it in your Order Bag.`);
+    } catch {
+      alert(`Promo Code: ${detectedBannerPromoCode}`);
+    }
+  };
+
+  /* =========================================================
+     3. DEVICE FOOTPRINT & STORE INITIALIZATION
+  ========================================================= */
   async function getDeviceFootprint() {
-    let savedFp = localStorage.getItem('shgc_device_fp');
+    let savedFp = localStorage.getItem('shc_device_fp') || localStorage.getItem('shgc_device_fp');
     if (savedFp) return savedFp;
     const raw = [navigator.userAgent, screen.width + 'x' + screen.height, screen.colorDepth, Intl.DateTimeFormat().resolvedOptions().timeZone].join('|');
     const msgBuffer = new TextEncoder().encode(raw);
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
     savedFp = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 32);
-    localStorage.setItem('shgc_device_fp', savedFp);
+    localStorage.setItem('shc_device_fp', savedFp);
     return savedFp;
   }
 
@@ -223,18 +316,82 @@
   let appliedPromo = { code: null, discount: 0 };
   let currentUser = null;
   let tempGoogleUser = null;
+  let selectedCourse = 'ALL';
 
   const escapeHTML = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   async function init() {
+    startLiveVisitorHeartbeat();
+    listenAdminAnnouncementBanner();
+
     const snap = await getDocs(collection(db, "pdf_store"));
     cacheData = snap.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-    renderCards(cacheData.slice(0, 12));
+
+    renderCourseFilters(cacheData);
+
+    // Support direct ?search=CODE from Student Dashboard
+    const initialSearch = urlParams.get('search');
+    if (initialSearch) {
+      document.getElementById('searchBar').classList.add('active');
+      document.getElementById('searchInput').value = initialSearch;
+      performSearch(initialSearch);
+    } else {
+      renderCards(cacheData.slice(0, 16));
+    }
+
     updateCartUI();
   }
 
+  function renderCourseFilters(data) {
+    const courseSet = new Set(['ALL']);
+    data.forEach(p => {
+      if (p.courseName) courseSet.add(String(p.courseName).toUpperCase().trim());
+      if (Array.isArray(p.courses)) p.courses.forEach(c => c && courseSet.add(String(c).toUpperCase().trim()));
+    });
+
+    const grid = document.getElementById('courseGrid');
+    grid.innerHTML = Array.from(courseSet).map(c => {
+      const isActive = c === selectedCourse;
+      return `
+        <button onclick="filterByCourse('${escapeHTML(c)}')" class="px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-wider shrink-0 border transition ${isActive ? 'bg-[#d32f2f] text-white border-[#d32f2f] shadow-md' : 'bg-white text-slate-700 border-gray-200 hover:border-[#d32f2f]'}">
+          ${c === 'ALL' ? '🔥 All Courses' : escapeHTML(c)}
+        </button>
+      `;
+    }).join('');
+  }
+
+  window.filterByCourse = (course) => {
+    selectedCourse = course;
+    renderCourseFilters(cacheData);
+    if (course === 'ALL') {
+      renderCards(cacheData.slice(0, 16));
+    } else {
+      const filtered = cacheData.filter(p =>
+        String(p.courseName || '').toUpperCase() === course ||
+        (Array.isArray(p.courses) && p.courses.map(x => String(x).toUpperCase()).includes(course))
+      );
+      renderCards(filtered);
+    }
+  };
+
   function renderCards(data) {
     const grid = document.getElementById('popularGrid');
+    document.getElementById('resultCountText').innerText = `Showing ${data.length} solved assignment PDF(s)`;
+
+    if (!data.length) {
+      grid.innerHTML = `
+        <div class="col-span-full bg-white border border-dashed border-gray-300 rounded-3xl p-10 text-center">
+          <i class="fas fa-file-circle-question text-4xl text-gray-300 mb-3"></i>
+          <h3 class="text-base font-black text-slate-800 uppercase">Assignment Not Found in Store!</h3>
+          <p class="text-xs text-gray-500 font-bold mt-1 max-w-md mx-auto">Aapki search hamari team ko log ho gayi hai. Login karke Dashboard se is subject ki request bhejein—24 ghante mein upload ho jayegi!</p>
+          <button onclick="toggleLoginModal()" class="mt-4 bg-[#d32f2f] text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-wider hover:bg-slate-900 transition">
+            Request Missing PDF in Dashboard
+          </button>
+        </div>
+      `;
+      return;
+    }
+
     grid.innerHTML = data.map(p => {
       const price = Number(p.price) || 25;
       const ytBtn = p.ytLink
@@ -341,7 +498,7 @@
     setTimeout(() => { window.location.href = url; }, 1500);
   }
 
-  // PAY VIA WALLET (Login Required)
+  // PAY VIA WALLET
   window.payWithWallet = async () => {
     if (!currentUser) { 
       alert("Please Login first to use Wallet!"); 
@@ -378,7 +535,7 @@
     }
   };
 
-  // INSTANT UPI PAY (RAZORPAY - No Login Required on Index Page)
+  // INSTANT UPI PAY (RAZORPAY)
   window.payWithRazorpay = async () => {
     if (!cart.length) { alert("Your cart is empty!"); return; }
 
@@ -407,11 +564,10 @@
         key: order.key, 
         amount: order.amount, 
         currency: "INR", 
-        name: "Student Help Club", 
+        name: "Student Help Club (SHC)", 
         description: `${cart.length} Study PDF(s)`, 
         order_id: order.order_id,
         handler: async function (response) {
-          // If user is not logged in, prompt login or auto-guest link, or if logged in save to dashboard
           if (!currentUser) {
             alert("🎉 Payment Successful! Please Login with Google to claim and download your PDFs for 6 months.");
             localStorage.setItem('pending_cart_payment', JSON.stringify({ response, items: cart }));
@@ -455,10 +611,39 @@
     m.classList.toggle('hidden'); m.classList.toggle('flex');
   };
 
+  window.resetSearch = () => {
+    document.getElementById('searchInput').value = '';
+    selectedCourse = 'ALL';
+    renderCourseFilters(cacheData);
+    renderCards(cacheData.slice(0, 16));
+  };
+
+  function performSearch(rawQuery) {
+    const q = String(rawQuery || '').toUpperCase().trim();
+    if (!q) {
+      renderCards(cacheData.slice(0, 16));
+      return;
+    }
+    const results = cacheData.filter(p =>
+      (p.subjectCode || '').toUpperCase().includes(q) ||
+      (p.subjectName || '').toUpperCase().includes(q)
+    );
+    renderCards(results);
+
+    // Log missing search to Admin Panel Demand Analyzer if 0 matches
+    if (results.length === 0 && q.length >= 3) {
+      const safeDocId = q.replace(/[^A-Z0-9-]/g, '_');
+      setDoc(doc(db, "missing_searches", safeDocId), {
+        query: q,
+        count: increment(1),
+        lastSearchedAt: Date.now()
+      }, { merge: true }).catch(() => {});
+    }
+  }
+
   document.getElementById('searchForm').addEventListener('submit', e => {
     e.preventDefault();
-    const q = document.getElementById('searchInput').value.toUpperCase().trim();
-    renderCards(q ? cacheData.filter(p => (p.subjectCode || '').toUpperCase().includes(q)) : cacheData.slice(0, 12));
+    performSearch(document.getElementById('searchInput').value);
   });
 
   // GOOGLE SIGN IN & PROFILE COMPLETION
@@ -467,7 +652,7 @@
       const res = await signInWithPopup(auth, provider);
       tempGoogleUser = res.user;
       const fp = await getDeviceFootprint();
-      const refCode = localStorage.getItem('shgc_referred_by');
+      const refCode = localStorage.getItem('shc_referred_by');
 
       const check = await fetch('/api/backend?action=verify-device', {
         method: 'POST',
@@ -502,7 +687,7 @@
     }
 
     const fp = await getDeviceFootprint();
-    const refCode = localStorage.getItem('shgc_referred_by');
+    const refCode = localStorage.getItem('shc_referred_by');
 
     const res = await fetch('/api/backend?action=complete-profile', {
       method: 'POST',
