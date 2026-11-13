@@ -48,19 +48,16 @@
       </a>
     </div>
 
-    <!-- Header Actions (Notification Bell Removed) -->
+    <!-- Header Actions -->
     <div class="flex items-center gap-2 sm:gap-3">
-      <!-- Request Missing Assignment Button -->
       <button onclick="UI.openModal('requestModal')" class="hidden sm:flex items-center gap-1.5 text-xs font-bold bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 px-3.5 py-2 rounded-xl transition">
         <i class="fas fa-file-circle-plus"></i> Request Assignment
       </button>
 
-      <!-- Buy More PDFs -->
       <a href="index.html" class="text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
         <i class="fas fa-store text-red-400"></i> <span class="hidden md:inline">Store</span>
       </a>
 
-      <!-- Logout -->
       <button id="logoutBtn" title="Logout" class="w-9 h-9 sm:w-auto sm:px-3.5 sm:py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-xs font-bold text-red-400 transition flex items-center justify-center gap-1.5">
         <i class="fas fa-right-from-bracket"></i> <span class="hidden sm:inline">Logout</span>
       </button>
@@ -70,7 +67,7 @@
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
-  <!-- LIVE PROMO CODE BANNER (Hidden by default; shows ONLY when a live promo exists) -->
+  <!-- LIVE PROMO CODE BANNER (Shows automatically when any promo is live in backend or Firestore) -->
   <div id="promoBanner" class="hidden bg-gradient-to-r from-amber-500/15 via-red-500/15 to-purple-500/15 border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
@@ -105,11 +102,11 @@
       </div>
     </div>
 
-    <div class="glass-card p-5 rounded-2xl flex items-center justify-between">
+    <div class="glass-card p-5 rounded-2xl flex items-center justify-between cursor-pointer hover:border-emerald-500/40 transition" onclick="UI.switchTab('walletHistoryTab')">
       <div>
         <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Wallet Transactions</p>
         <h3 id="statWalletTxns" class="text-2xl sm:text-3xl font-black text-white mt-1">0</h3>
-        <p class="text-[11px] text-slate-400 mt-1 font-semibold">Recharges & Spends</p>
+        <p id="statRechargesSpends" class="text-[11px] text-emerald-400 mt-1 font-semibold">Recharges & Spends</p>
       </div>
       <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">
         <i class="fas fa-wallet"></i>
@@ -233,7 +230,6 @@
     </div>
 
     <div id="ordersList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Skeleton Loader -->
       <div class="col-span-full py-10 text-center space-y-2">
         <i class="fas fa-circle-notch fa-spin text-2xl text-red-500"></i>
         <p class="text-xs text-slate-400 font-semibold">Loading your purchased materials...</p>
@@ -243,10 +239,18 @@
 
   <!-- TAB 2: WALLET TRANSACTION HISTORY -->
   <section id="walletHistoryTab" class="tab-content hidden bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
-    <div class="flex justify-between items-center mb-5">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-5">
       <div>
         <h3 class="text-xl font-black uppercase italic">Wallet <span class="text-emerald-400">Transactions</span></h3>
-        <p class="text-[11px] text-slate-400">Complete log of wallet recharges, PDF purchases, and referral bonuses</p>
+        <p class="text-[11px] text-slate-400">Complete log of wallet recharges, admin credits, PDF purchases, and referral bonuses</p>
+      </div>
+      <div class="flex items-center gap-3 text-xs font-bold">
+        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-xl">
+          Total Added: ₹<span id="totalCreditedAmt">0</span>
+        </span>
+        <span class="bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-xl">
+          Total Spent: ₹<span id="totalDebitedAmt">0</span>
+        </span>
       </div>
     </div>
 
@@ -269,7 +273,7 @@
     </div>
   </section>
 
-  <!-- TAB 3: ASSIGNMENT REQUESTS TRACKER (AUTO-UPDATES TO "AVAILABLE ✅" WHEN UPLOADED) -->
+  <!-- TAB 3: ASSIGNMENT REQUESTS TRACKER -->
   <section id="requestsTab" class="tab-content hidden bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
       <div>
@@ -387,7 +391,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import {
-    getFirestore, doc, setDoc, addDoc, getDocs, serverTimestamp,
+    getFirestore, doc, getDoc, setDoc, addDoc, getDocs, serverTimestamp,
     collection, onSnapshot, query, where
   } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -430,6 +434,14 @@
 
     normalizeCode(code) {
       return String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    },
+
+    parseTimestamp(val) {
+      if (!val) return Date.now();
+      if (typeof val?.toMillis === 'function') return val.toMillis();
+      if (val?.seconds) return val.seconds * 1000;
+      const parsed = Date.parse(val);
+      return isNaN(parsed) ? Date.now() : parsed;
     },
 
     async apiPost(action, payload = {}) {
@@ -540,32 +552,66 @@
   };
 
   /* =========================================================
-     5. LIVE PROMO MODULE (ONLY SHOWS REAL ACTIVE PROMOS)
+     5. LIVE PROMO MODULE (CHECKS ALL POSSIBLE FIRESTORE & API SOURCES)
   ========================================================= */
   const PromoModule = {
     show(promo) {
       const banner = document.getElementById('promoBanner');
-      if (!promo || !promo.code || promo.active === false) {
+      const code = promo?.code || promo?.promoCode || promo?.couponCode;
+      if (!promo || !code || promo.active === false || promo.isActive === false) {
         banner.classList.add('hidden');
         return;
       }
-      document.getElementById('promoTitle').innerText = promo.title || 'Live Discount Offer!';
-      document.getElementById('promoDesc').innerText = promo.desc || `Apply code ${promo.code} at checkout for instant discount.`;
-      document.getElementById('promoCodeText').innerText = String(promo.code).toUpperCase();
+      const discountText = promo.discount ? `Flat ${promo.discount}% OFF` : (promo.flatOff ? `Flat ₹${promo.flatOff} OFF` : 'Special Student Discount');
+      document.getElementById('promoTitle').innerText = promo.title || `${discountText} on Assignments!`;
+      document.getElementById('promoDesc').innerText = promo.desc || promo.description || `Use code ${String(code).toUpperCase()} at checkout for instant discount.`;
+      document.getElementById('promoCodeText').innerText = String(code).toUpperCase();
       banner.classList.remove('hidden');
     },
 
-    listenLivePromos() {
-      // Real-time listener on Firestore 'promos' collection (where active == true)
-      try {
-        const q = query(collection(db, "promos"), where("active", "==", true));
-        onSnapshot(q, (snap) => {
-          if (!snap.empty) {
-            const activeDoc = snap.docs[0].data();
-            this.show({ ...activeDoc, active: true });
+    async detectLivePromos() {
+      // 1. Check common Firestore collections for active promos
+      const promoCollections = ['promos', 'promo_codes', 'coupons', 'offers'];
+      for (const colName of promoCollections) {
+        try {
+          const snap = await getDocs(collection(db, colName));
+          let found = null;
+          snap.forEach(d => {
+            const item = d.data();
+            const isLive = item.active === true || item.isActive === true || String(item.status || '').toLowerCase() === 'active';
+            const code = item.code || item.promoCode || d.id;
+            if (isLive && code) {
+              found = { ...item, code, active: true };
+            }
+          });
+          if (found) {
+            this.show(found);
+            return;
           }
-        }, () => {});
-      } catch {}
+        } catch {}
+      }
+
+      // 2. Check common config docs (e.g., settings/promo or config/promo)
+      const configPaths = [
+        ['settings', 'promo'],
+        ['settings', 'offers'],
+        ['config', 'promo'],
+        ['admin', 'promo']
+      ];
+      for (const [col, docId] of configPaths) {
+        try {
+          const snap = await getDoc(doc(db, col, docId));
+          if (snap.exists()) {
+            const item = snap.data();
+            const code = item.code || item.promoCode;
+            const isLive = item.active !== false && item.isActive !== false && Boolean(code);
+            if (isLive) {
+              this.show({ ...item, code, active: true });
+              return;
+            }
+          }
+        } catch {}
+      }
     },
 
     async copyPromo() {
@@ -697,7 +743,7 @@
   window.OrdersModule = OrdersModule;
 
   /* =========================================================
-     7. WALLET & TRANSACTION HISTORY MODULE
+     7. SMART WALLET LEDGER, ADMIN CREDIT & SPEND RECONCILIATION
   ========================================================= */
   const WalletModule = {
     setAmount(val) {
@@ -733,6 +779,101 @@
       return true;
     },
 
+    async logTransaction(uid, txnObj) {
+      try {
+        await addDoc(collection(db, "wallet_transactions"), {
+          uid,
+          ...txnObj,
+          timestamp: serverTimestamp()
+        });
+      } catch {}
+    },
+
+    async buildUnifiedHistory(uid, currentBalance, orders, backendTxns = []) {
+      const unified = [];
+      const seenSignatures = new Set();
+
+      const addUnique = (item) => {
+        const ts = Security.parseTimestamp(item.date || item.createdAt || item.timestamp);
+        const amt = Number(item.amount) || 0;
+        const type = String(item.type || item.description || 'Wallet Transaction');
+        const sig = `${Math.round(ts / 60000)}_${amt}_${type.toLowerCase()}`;
+        if (!seenSignatures.has(sig)) {
+          seenSignatures.add(sig);
+          unified.push({
+            date: ts,
+            type,
+            amount: amt,
+            flow: amt < 0 || String(item.flow || '').toLowerCase() === 'debit' ? 'debit' : 'credit',
+            status: item.status || 'Success'
+          });
+        }
+      };
+
+      // 1. Add transactions returned by backend API
+      (backendTxns || []).forEach(t => addUnique(t));
+
+      // 2. Fetch transactions from Firestore `wallet_transactions` or `users/{uid}`
+      try {
+        const q = query(collection(db, "wallet_transactions"), where("uid", "==", uid));
+        const snap = await getDocs(q);
+        snap.forEach(d => addUnique(d.data()));
+      } catch {}
+
+      try {
+        const userSnap = await getDoc(doc(db, "users", uid));
+        if (userSnap.exists()) {
+          const uData = userSnap.data();
+          if (Array.isArray(uData.walletHistory)) uData.walletHistory.forEach(t => addUnique(t));
+          if (Array.isArray(uData.transactions)) uData.transactions.forEach(t => addUnique(t));
+        }
+      } catch {}
+
+      // 3. Reconcile Purchased PDFs (Spends) so bought PDFs always appear in Wallet History & Spends
+      orders.forEach(o => {
+        const code = o.subjectCode || 'PDF';
+        const price = Number(o.price || o.amountPaid || o.amount || 25);
+        const alreadyLogged = unified.some(t =>
+          t.flow === 'debit' && t.type.toUpperCase().includes(code.toUpperCase())
+        );
+        if (!alreadyLogged && price > 0) {
+          addUnique({
+            date: o.purchasedAt || o.createdAt || o.date || Date.now(),
+            type: `PDF Purchase (${code})`,
+            amount: -Math.abs(price),
+            flow: 'debit',
+            status: 'Success'
+          });
+        }
+      });
+
+      // 4. Reconcile Admin / Manual Wallet Credits
+      // If currentBalance + totalSpent > totalCredited, it means Admin or Razorpay added money without creating a log row!
+      let totalCredited = 0;
+      let totalDebited = 0;
+      unified.forEach(t => {
+        if (t.flow === 'debit' || t.amount < 0) totalDebited += Math.abs(t.amount);
+        else totalCredited += Math.abs(t.amount);
+      });
+
+      const unaccountedCredit = (currentBalance + totalDebited) - totalCredited;
+      if (unaccountedCredit > 0) {
+        addUnique({
+          date: Date.now(),
+          type: `Wallet Cash Added (Admin / Recharge Credit)`,
+          amount: unaccountedCredit,
+          flow: 'credit',
+          status: 'Success'
+        });
+        totalCredited += unaccountedCredit;
+      }
+
+      // Sort newest first
+      unified.sort((a, b) => b.date - a.date);
+
+      return { transactions: unified, totalCredited, totalDebited };
+    },
+
     async addMoney() {
       const amount = Number(document.getElementById('addAmtInput').value);
       if (!this.validate(amount)) return;
@@ -760,6 +901,13 @@
           handler: async (response) => {
             try {
               await Security.apiPost('verify-wallet-recharge', { ...response, amount });
+              await this.logTransaction(AppState.user.uid, {
+                type: 'Online Wallet Recharge (Razorpay)',
+                amount: amount,
+                flow: 'credit',
+                status: 'Success',
+                date: new Date().toISOString()
+              });
               UI.toast(`₹${amount} added to your wallet!`, 'success');
               document.getElementById('addAmtInput').value = '';
               DashboardApp.loadData();
@@ -788,7 +936,10 @@
       }
     },
 
-    renderTransactions(txns) {
+    renderTransactions(txns, totalCredited = 0, totalDebited = 0) {
+      document.getElementById('totalCreditedAmt').innerText = totalCredited;
+      document.getElementById('totalDebitedAmt').innerText = totalDebited;
+
       const tbody = document.getElementById('walletTxnBody');
       if (!txns || !txns.length) {
         tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-500">No wallet transactions yet.</td></tr>`;
@@ -797,9 +948,9 @@
 
       tbody.innerHTML = txns.map(t => {
         const dateStr = t.date ? new Date(t.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '--';
-        const isCredit = Number(t.amount) >= 0 || t.flow === 'credit';
+        const isDebit = t.flow === 'debit' || Number(t.amount) < 0;
         const absAmt = Math.abs(Number(t.amount) || 0);
-        const amtBadge = isCredit
+        const amtBadge = !isDebit
           ? `<span class="font-black text-emerald-400">+₹${absAmt}</span>`
           : `<span class="font-black text-red-400">-₹${absAmt}</span>`;
         const statusColor = (t.status || 'Success').toLowerCase() === 'success'
@@ -813,7 +964,7 @@
             <td class="py-3.5 px-4 whitespace-nowrap">${amtBadge}</td>
             <td class="py-3.5 px-4 whitespace-nowrap">
               <span class="text-[10px] font-black uppercase px-2.5 py-1 rounded-md border ${statusColor}">
-                ${Security.escapeHTML(t.status || 'Completed')}
+                ${Security.escapeHTML(t.status || 'Success')}
               </span>
             </td>
           </tr>
@@ -862,7 +1013,6 @@
   ========================================================= */
   const RequestModule = {
     async syncAvailableCatalog() {
-      // Checks Firestore 'assignments' or 'pdfs' collection so requested PDFs automatically show "Available ✅" once uploaded
       const collectionsToTry = ['assignments', 'pdfs', 'products'];
       for (const colName of collectionsToTry) {
         try {
@@ -931,7 +1081,6 @@
 
       try {
         await Security.apiPost('request-assignment', newReqObj).catch(async () => {
-          // Save directly in Firestore so status updates automatically
           await addDoc(collection(db, "assignment_requests"), {
             ...newReqObj,
             timestamp: serverTimestamp()
@@ -940,7 +1089,6 @@
 
         await this.syncAvailableCatalog();
 
-        // Avoid duplicates if listener already added it
         if (!AppState.requests.some(r => Security.normalizeCode(r.subjectCode) === Security.normalizeCode(subjectCode))) {
           AppState.requests.unshift(newReqObj);
         }
@@ -1047,23 +1195,31 @@
   const DashboardApp = {
     async loadData() {
       try {
-        await RequestModule.syncAvailableCatalog();
+        await Promise.all([
+          RequestModule.syncAvailableCatalog(),
+          PromoModule.detectLivePromos()
+        ]);
+
         const data = await Security.apiPost('dashboard-data');
 
         const balance = Number(data.walletBalance) || 0;
         const orders = Array.isArray(data.orders) ? data.orders : [];
-        const txns = Array.isArray(data.transactions) ? data.transactions : [];
+        const rawTxns = Array.isArray(data.transactions) ? data.transactions : [];
         const refEarnings = Number(data.referralEarnings ?? data.refBonusEarned ?? 0);
 
         AppState.orders = orders;
-        AppState.transactions = txns;
         if (Array.isArray(data.requests) && data.requests.length) {
           AppState.requests = data.requests;
         }
 
+        // Build unified Wallet History (includes Admin Credits, Razorpay Recharges, & PDF Purchases)
+        const ledger = await WalletModule.buildUnifiedHistory(AppState.user.uid, balance, orders, rawTxns);
+        AppState.transactions = ledger.transactions;
+
         document.getElementById('walletBal').innerText = balance;
         document.getElementById('statTotalPdfs').innerText = orders.length;
-        document.getElementById('statWalletTxns').innerText = txns.length;
+        document.getElementById('statWalletTxns').innerText = ledger.transactions.length;
+        document.getElementById('statRechargesSpends').innerText = `+₹${ledger.totalCredited} Added • -₹${ledger.totalDebited} Spent`;
         document.getElementById('statRefEarnings').innerText = refEarnings;
 
         // Referral Code & Analytics (SHC branding)
@@ -1074,14 +1230,15 @@
         document.getElementById('refFriendsPurchased').innerText = Number(data.friendsPurchased) || 0;
         document.getElementById('refTotalBonus').innerText = refEarnings;
 
-        // Show Live Promo ONLY if backend sends an active promo
-        if (data.activePromo && data.activePromo.code) {
-          PromoModule.show(data.activePromo);
+        // Show Live Promo if backend sends one
+        const backendPromo = data.activePromo || data.livePromo || data.promo;
+        if (backendPromo && (backendPromo.code || backendPromo.promoCode)) {
+          PromoModule.show(backendPromo);
         }
 
         // Populate Sections
         OrdersModule.render(orders);
-        WalletModule.renderTransactions(txns);
+        WalletModule.renderTransactions(ledger.transactions, ledger.totalCredited, ledger.totalDebited);
         RequestModule.render(AppState.requests);
         ProfileModule.populate(AppState.user, data.profile || {});
 
@@ -1110,7 +1267,6 @@
     document.getElementById('headerUserName').innerText = `Welcome, ${displayName}`;
 
     PresenceModule.init(user.uid);
-    PromoModule.listenLivePromos();
     RequestModule.listenUserRequests(user.uid);
     await DashboardApp.loadData();
   });
