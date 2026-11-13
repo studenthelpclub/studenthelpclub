@@ -7,32 +7,46 @@
     <meta name="robots" content="noindex, nofollow">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- SheetJS for Excel Export (.xlsx) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .glass-card { background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5); }
-        input, select, textarea { background: #1e293b; border: 1px solid #334155; padding: 12px; outline: none; width: 100%; color: white; border-radius: 10px; font-size: 13px; transition: 0.3s; }
-        input:focus, select:focus, textarea:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); }
+        body { background-color: #0b1120; color: #e2e8f0; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .glass-card { background: rgba(30, 41, 59, 0.72); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5); }
+        input, select, textarea { background: #1e293b; border: 1px solid #334155; padding: 11px 13px; outline: none; width: 100%; color: white; border-radius: 10px; font-size: 13px; transition: 0.25s; }
+        input:focus, select:focus, textarea:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25); }
         .tab-btn.active { background: #6366f1; color: white; border-color: #6366f1; box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.5); }
-        .tab-btn { transition: all 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade { animation: fadeIn 0.4s ease forwards; }
-        .live-dot { width: 10px; height: 10px; background-color: #10b981; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #10b981; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
+        .tab-btn { transition: all 0.25s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade { animation: fadeIn 0.35s ease forwards; }
+        .live-dot { width: 9px; height: 9px; background-color: #10b981; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #10b981; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.25); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 md:p-8 pb-20">
+
+    <!-- FLOATING TOAST CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
     <div id="adminPanel" class="max-w-7xl mx-auto hidden animate-fade">
         <!-- HEADER -->
-        <div class="glass-card p-6 md:p-8 rounded-[2.5rem] mb-8 border-l-8 border-indigo-500 flex flex-col xl:flex-row justify-between items-center gap-6">
-            <div>
-                <h1 class="text-3xl font-black text-white italic uppercase tracking-tight">SHC Admin <span class="text-indigo-400">Pro</span></h1>
+        <div class="glass-card p-5 md:p-7 rounded-[2.2rem] mb-8 border-l-8 border-indigo-500 flex flex-col xl:flex-row justify-between items-center gap-5">
+            <div class="text-center xl:text-left">
+                <div class="flex items-center justify-center xl:justify-start gap-2.5">
+                    <h1 class="text-2xl md:text-3xl font-black text-white italic uppercase tracking-tight">SHC Admin <span class="text-indigo-400">Pro</span></h1>
+                    <span class="bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                        <span class="live-dot"></span> LIVE
+                    </span>
+                </div>
                 <p class="text-indigo-300 text-[10px] font-bold uppercase tracking-widest mt-1">100% Real-Time Command Center • Vishal Kumar</p>
             </div>
-            <div class="flex flex-wrap justify-center bg-slate-900/80 p-1.5 rounded-2xl border border-slate-700/60 gap-1">
+
+            <!-- NAVIGATION TABS -->
+            <div class="flex flex-wrap justify-center bg-slate-900/90 p-1.5 rounded-2xl border border-slate-700/60 gap-1">
                 <button onclick="switchTab('analytics')" id="tab-analytics" class="tab-btn active px-3.5 py-2 rounded-xl text-[10px] font-black uppercase">Analytics</button>
+                <button onclick="switchTab('requests')" id="tab-requests" class="tab-btn px-3.5 py-2 rounded-xl text-[10px] font-black uppercase text-pink-300 relative">
+                    <i class="fas fa-bell-concierge mr-1"></i>Requests
+                    <span id="navReqBadge" class="hidden ml-1 bg-pink-600 text-white text-[9px] px-1.5 py-0.2 rounded-full">0</span>
+                </button>
                 <button onclick="switchTab('demand')" id="tab-demand" class="tab-btn px-3.5 py-2 rounded-xl text-[10px] font-black uppercase text-amber-300"><i class="fas fa-fire mr-1"></i>Demand / 0-Sales</button>
                 <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn px-3.5 py-2 rounded-xl text-[10px] font-black uppercase">Orders</button>
                 <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn px-3.5 py-2 rounded-xl text-[10px] font-black uppercase">Inventory</button>
@@ -42,81 +56,126 @@
                 <button onclick="switchTab('articles')" id="tab-articles" class="tab-btn px-3.5 py-2 rounded-xl text-[10px] font-black uppercase">Blogs</button>
                 <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn px-3.5 py-2 rounded-xl text-[10px] font-black uppercase"><i class="fas fa-cog"></i></button>
             </div>
-            <div class="flex items-center gap-3">
-                <button onclick="resetTestOrders()" title="Delete all test orders and start from ₹0" class="bg-amber-500/10 text-amber-400 px-4 py-2.5 rounded-xl font-black text-[10px] uppercase border border-amber-500/20 hover:bg-amber-500 hover:text-slate-950 transition shadow-lg">
+
+            <div class="flex items-center gap-2.5">
+                <button onclick="loadRealDashboardMetrics(true)" title="Sync All Data" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-2.5 rounded-xl font-black text-[10px] uppercase border border-slate-700 transition">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button onclick="resetTestOrders()" title="Delete all test orders and start from ₹0" class="bg-amber-500/10 text-amber-400 px-3.5 py-2.5 rounded-xl font-black text-[10px] uppercase border border-amber-500/20 hover:bg-amber-500 hover:text-slate-950 transition">
                     <i class="fas fa-broom mr-1"></i> Reset (0)
                 </button>
-                <button onclick="logout()" class="bg-red-500/10 text-red-400 px-5 py-2.5 rounded-xl font-black text-xs border border-red-500/20 hover:bg-red-500 hover:text-white transition shadow-lg">LOGOUT</button>
+                <button onclick="logout()" class="bg-red-500/10 text-red-400 px-4 py-2.5 rounded-xl font-black text-xs border border-red-500/20 hover:bg-red-500 hover:text-white transition">LOGOUT</button>
             </div>
         </div>
 
         <!-- 1. ANALYTICS & 100% REAL DATA MONITORING -->
         <div id="section-analytics" class="space-y-8 animate-fade">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-                <div class="glass-card p-6 rounded-3xl border-t-4 border-indigo-500">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Sales Revenue</p>
-                    <h3 class="text-2xl font-black text-white mt-2">₹<span id="metric-sales">0</span></h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+                <div class="glass-card p-5 rounded-3xl border-t-4 border-indigo-500">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Revenue</p>
+                    <h3 class="text-2xl font-black text-white mt-1.5">₹<span id="metric-sales">0</span></h3>
                     <span class="text-indigo-300 text-[10px] font-bold mt-1 inline-block" id="metric-today-sales">Today: ₹0</span>
                 </div>
-                <div class="glass-card p-6 rounded-3xl border-t-4 border-emerald-500">
+                <div class="glass-card p-5 rounded-3xl border-t-4 border-emerald-500">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Registered Users</p>
-                    <h3 class="text-2xl font-black text-white mt-2" id="metric-users">0</h3>
+                    <h3 class="text-2xl font-black text-white mt-1.5" id="metric-users">0</h3>
                     <span class="text-emerald-400 text-[10px] font-bold mt-1 inline-block" id="metric-user-split">0 Students • 0 Shops</span>
                 </div>
-                <div class="glass-card p-6 rounded-3xl border-t-4 border-amber-500">
+                <div class="glass-card p-5 rounded-3xl border-t-4 border-amber-500">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">PDFs Sold</p>
-                    <h3 class="text-2xl font-black text-white mt-2" id="metric-downloads">0</h3>
+                    <h3 class="text-2xl font-black text-white mt-1.5" id="metric-downloads">0</h3>
                     <span class="text-amber-300 text-[10px] font-bold mt-1 inline-block" id="metric-today-orders">Today: 0 Orders</span>
                 </div>
-                <div class="glass-card p-6 rounded-3xl border-t-4 border-cyan-500">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Assignments</p>
-                    <h3 class="text-2xl font-black text-white mt-2" id="metric-inventory">0</h3>
-                    <span class="text-cyan-300 text-[10px] font-bold mt-1 inline-block" id="metric-unsold-badge">0 Unsold (0-Sales)</span>
+                <div class="glass-card p-5 rounded-3xl border-t-4 border-cyan-500">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Assignments</p>
+                    <h3 class="text-2xl font-black text-white mt-1.5" id="metric-inventory">0</h3>
+                    <span class="text-cyan-300 text-[10px] font-bold mt-1 inline-block" id="metric-unsold-badge">0 Unsold</span>
                 </div>
-                <div class="glass-card p-6 rounded-3xl border-t-4 border-purple-500">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Promocodes</p>
-                    <h3 class="text-2xl font-black text-white mt-2" id="metric-promos">0</h3>
+                <div class="glass-card p-5 rounded-3xl border-t-4 border-pink-500 cursor-pointer hover:border-pink-400 transition" onclick="switchTab('requests')">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">PDF Requests</p>
+                    <h3 class="text-2xl font-black text-pink-400 mt-1.5" id="metric-pending-reqs">0</h3>
+                    <span class="text-pink-300 text-[10px] font-bold mt-1 inline-block">Pending Uploads →</span>
+                </div>
+                <div class="glass-card p-5 rounded-3xl border-t-4 border-purple-500">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Promos</p>
+                    <h3 class="text-2xl font-black text-white mt-1.5" id="metric-promos">0</h3>
                     <span class="text-purple-300 text-[10px] font-bold mt-1 inline-block">Running offers</span>
                 </div>
             </div>
 
-            <!-- GRAPHS GRID (100% Real Firestore Data) -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Live Active Users Chart -->
-                <div class="glass-card p-8 rounded-[2.5rem] flex flex-col justify-between">
+            <!-- GRAPHS GRID -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="glass-card p-7 rounded-[2.5rem] flex flex-col justify-between">
                     <div>
-                        <div class="flex justify-between items-center mb-4">
+                        <div class="flex justify-between items-center mb-3">
                             <h3 class="text-sm font-black uppercase text-emerald-400 tracking-wider"><span class="live-dot mr-2"></span>Live Active Users</h3>
-                            <span class="text-xs font-black text-white bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 rounded-full" id="liveUserCount">0 Active</span>
+                            <span class="text-xs font-black text-white bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 rounded-full" id="liveUserCount">1 Active</span>
                         </div>
-                        <p class="text-[11px] text-slate-400 font-bold mb-6">Real-time visitors active in the last 2 minutes.</p>
+                        <p class="text-[11px] text-slate-400 font-bold mb-5">Combined live users across Store & Student Dashboard.</p>
                     </div>
                     <div class="relative h-56"><canvas id="liveUsersChart"></canvas></div>
                 </div>
 
-                <!-- Daily Sales Chart (Real Last 7 Days) -->
-                <div class="glass-card p-8 rounded-[2.5rem] flex flex-col justify-between">
+                <div class="glass-card p-7 rounded-[2.5rem] flex flex-col justify-between">
                     <div>
                         <h3 class="text-sm font-black uppercase text-indigo-300 tracking-wider mb-2"><i class="fas fa-chart-bar mr-2"></i>Daily Sales (Last 7 Days)</h3>
-                        <p class="text-[11px] text-slate-400 font-bold mb-6">Actual day-by-day revenue (₹) from Firestore.</p>
+                        <p class="text-[11px] text-slate-400 font-bold mb-5">Actual day-by-day revenue (₹) from Firestore.</p>
                     </div>
                     <div class="relative h-56"><canvas id="dailySalesChart"></canvas></div>
                 </div>
 
-                <!-- Monthly Revenue Chart (Real Jan-Dec) -->
-                <div class="glass-card p-8 rounded-[2.5rem] flex flex-col justify-between">
+                <div class="glass-card p-7 rounded-[2.5rem] flex flex-col justify-between">
                     <div>
                         <h3 class="text-sm font-black uppercase text-purple-300 tracking-wider mb-2"><i class="fas fa-calendar-alt mr-2"></i>Monthly Revenue (<span id="currentYearLabel">2026</span>)</h3>
-                        <p class="text-[11px] text-slate-400 font-bold mb-6">Actual monthly revenue (₹) from real orders.</p>
+                        <p class="text-[11px] text-slate-400 font-bold mb-5">Actual monthly revenue (₹) from real orders.</p>
                     </div>
                     <div class="relative h-56"><canvas id="monthlyChart"></canvas></div>
                 </div>
             </div>
         </div>
 
-        <!-- 2. NEW! DEMAND & DEAD-STOCK (0-SALES) ANALYZER TAB -->
+        <!-- 2. STUDENT REQUESTED PDFs MANAGEMENT TAB (NEW!) -->
+        <div id="section-requests" class="hidden space-y-6 animate-fade">
+            <div class="glass-card p-7 rounded-[2.5rem] border border-pink-500/30">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div>
+                        <h3 class="text-xl font-black uppercase italic text-pink-400"><i class="fas fa-bell-concierge mr-2"></i>Student Requested PDFs Queue</h3>
+                        <p class="text-xs text-slate-400 font-bold mt-1">Students ne dashboard se jo missing assignments request ki hain wo yahan real-time dikhti hain. Upload karne ke baad <strong>"Mark Available ✅"</strong> dabayein.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <select id="reqFilterStatus" onchange="renderStudentRequests()" class="w-auto bg-slate-900 border border-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl">
+                            <option value="all">All Requests</option>
+                            <option value="pending" selected>Pending Only</option>
+                            <option value="available">Available / Completed</option>
+                        </select>
+                        <button onclick="exportRequestsExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl font-black uppercase text-[10px] tracking-wider transition">
+                            <i class="fas fa-file-excel mr-1"></i> Export Requests
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-700 text-[10px] font-black text-slate-400 uppercase">
+                                <th class="p-3">Subject Code</th>
+                                <th class="p-3">Medium & Session</th>
+                                <th class="p-3">Student Email / UID</th>
+                                <th class="p-3">Student Note</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-right">Fulfillment Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentRequestsTableBody" class="divide-y divide-slate-800 text-xs font-bold">
+                            <tr><td colspan="6" class="p-8 text-center text-slate-500">Loading student requests...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. DEMAND & DEAD-STOCK (0-SALES) ANALYZER TAB -->
         <div id="section-demand" class="hidden space-y-8 animate-fade">
-            <!-- Summary Metrics -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
                 <div class="glass-card p-6 rounded-3xl border-l-4 border-emerald-500">
                     <p class="text-[10px] font-black text-slate-400 uppercase">Selling Subjects (Active Demand)</p>
@@ -141,12 +200,11 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- ZERO SALES (DEAD STOCK) TABLE -->
-                <div class="glass-card p-8 rounded-[3rem] border border-red-500/20">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <div class="glass-card p-7 rounded-[2.5rem] border border-red-500/20">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
                         <div>
-                            <h3 class="text-lg font-black uppercase italic text-red-400"><i class="fas fa-ban mr-2"></i>Zero-Sales PDFs (Do Not Solve Next Year)</h3>
-                            <p class="text-[11px] text-slate-400 font-bold mt-1">Ye assignments abhi tak 1 baar bhi nahi bike hain (0 Sales).</p>
+                            <h3 class="text-lg font-black uppercase italic text-red-400"><i class="fas fa-ban mr-2"></i>Zero-Sales PDFs</h3>
+                            <p class="text-[11px] text-slate-400 font-bold mt-1">0 copies sold so far.</p>
                         </div>
                         <button onclick="exportZeroSalesExcel()" class="bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white border border-red-500/30 px-4 py-2.5 rounded-xl font-black uppercase text-[10px] tracking-wider transition shrink-0">
                             <i class="fas fa-file-excel mr-1"></i> Export 0-Sales
@@ -170,12 +228,11 @@
                     </div>
                 </div>
 
-                <!-- TOP BESTSELLERS TABLE -->
-                <div class="glass-card p-8 rounded-[3rem] border border-emerald-500/20">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <div class="glass-card p-7 rounded-[2.5rem] border border-emerald-500/20">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
                         <div>
-                            <h3 class="text-lg font-black uppercase italic text-emerald-400"><i class="fas fa-trophy mr-2"></i>Top Bestsellers (High Demand)</h3>
-                            <p class="text-[11px] text-slate-400 font-bold mt-1">Sabse jyada bikne wale assignments (Next year sabse pehle banayein).</p>
+                            <h3 class="text-lg font-black uppercase italic text-emerald-400"><i class="fas fa-trophy mr-2"></i>Top Bestsellers</h3>
+                            <p class="text-[11px] text-slate-400 font-bold mt-1">Highest selling IGNOU assignments.</p>
                         </div>
                         <button onclick="exportBestsellersExcel()" class="bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-white border border-emerald-500/30 px-4 py-2.5 rounded-xl font-black uppercase text-[10px] tracking-wider transition shrink-0">
                             <i class="fas fa-file-excel mr-1"></i> Export Top List
@@ -200,12 +257,11 @@
                 </div>
             </div>
 
-            <!-- REQUESTED / MISSING SUBJECTS LOGGED FROM SEARCH -->
-            <div class="glass-card p-8 rounded-[3rem]">
+            <div class="glass-card p-7 rounded-[2.5rem]">
                 <div class="flex justify-between items-center mb-4">
                     <div>
-                        <h3 class="text-lg font-black uppercase italic text-amber-400"><i class="fas fa-search-plus mr-2"></i>Student Search Requests (Missing Assignments)</h3>
-                        <p class="text-xs text-slate-400 font-bold">Jab student koi aisa code search karega jo aapke store mein nahi hai, wo yaha dikhega.</p>
+                        <h3 class="text-lg font-black uppercase italic text-amber-400"><i class="fas fa-search-plus mr-2"></i>Store Missing Search Logs</h3>
+                        <p class="text-xs text-slate-400 font-bold">Keywords searched on storefront that returned 0 results.</p>
                     </div>
                     <button onclick="clearMissingSearches()" class="text-[10px] font-black uppercase text-red-400 bg-red-500/10 px-4 py-2 rounded-xl border border-red-500/20 hover:bg-red-500 hover:text-white transition">Clear Logs</button>
                 </div>
@@ -215,12 +271,11 @@
             </div>
         </div>
 
-        <!-- 3. LIVE ORDERS + MANUAL GRANT PDF TOOL -->
+        <!-- 4. LIVE ORDERS + MANUAL GRANT PDF TOOL -->
         <div id="section-orders" class="hidden space-y-8 animate-fade">
-            <!-- Manual Grant PDF Card (Support Tool) -->
-            <div class="glass-card p-8 rounded-[3rem] border border-indigo-500/30">
+            <div class="glass-card p-7 rounded-[2.5rem] border border-indigo-500/30">
                 <h3 class="text-lg font-black uppercase italic text-indigo-400 mb-2"><i class="fas fa-hand-holding-medical mr-2"></i>Manual PDF Grant (Customer Support / Free Access)</h3>
-                <p class="text-xs text-slate-400 font-bold mb-6">Agar kisi student ka UPI payment kat gaya par order add nahi hua, toh yaha se direct uske account mein PDF bhej dein.</p>
+                <p class="text-xs text-slate-400 font-bold mb-5">Student ke account mein direct PDF grant karein aur automatically uski pending request fulfill karein.</p>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                         <label class="text-[9px] font-black uppercase text-slate-400 block mb-1">User Email or UID</label>
@@ -245,14 +300,13 @@
                 </div>
             </div>
 
-            <!-- Orders History Table -->
-            <div class="glass-card p-8 rounded-[3rem]">
+            <div class="glass-card p-7 rounded-[2.5rem]">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
                     <div>
                         <h3 class="text-xl font-black uppercase italic text-white"><i class="fas fa-shopping-bag mr-2 text-amber-400"></i>Real-Time Order History</h3>
                         <p class="text-xs text-slate-400 font-bold mt-1">Monitor every PDF purchase and delete test orders anytime.</p>
                     </div>
-                    <button onclick="loadRealDashboardMetrics()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl font-black uppercase text-[10px] tracking-wider transition">
+                    <button onclick="loadRealDashboardMetrics(true)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl font-black uppercase text-[10px] tracking-wider transition">
                         <i class="fas fa-sync-alt mr-1"></i> Refresh Orders
                     </button>
                 </div>
@@ -276,9 +330,9 @@
             </div>
         </div>
 
-        <!-- 4. INVENTORY & ASSIGNMENTS CHECKER + BULK PRICE UPDATER -->
+        <!-- 5. INVENTORY & ASSIGNMENTS CHECKER -->
         <div id="section-inventory" class="hidden space-y-8 animate-fade">
-            <div class="glass-card p-8 rounded-[3rem]">
+            <div class="glass-card p-7 rounded-[2.5rem]">
                 <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
                     <div>
                         <h3 class="text-xl font-black uppercase italic text-white">Available Assignments Inventory</h3>
@@ -311,23 +365,26 @@
             </div>
         </div>
 
-        <!-- 5. REGISTERED USERS / LEADS DIRECTORY -->
+        <!-- 6. REGISTERED USERS / LEADS DIRECTORY -->
         <div id="section-users" class="hidden space-y-8 animate-fade">
-            <div class="glass-card p-8 rounded-[3rem]">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+            <div class="glass-card p-7 rounded-[2.5rem]">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
                     <div>
                         <h3 class="text-xl font-black uppercase italic text-white"><i class="fas fa-address-book mr-2 text-emerald-400"></i>Registered Users & Leads Directory</h3>
-                        <p class="text-xs text-slate-400 font-bold mt-1">Export leads to Excel, manually add Wallet Balance, or reset 2-Device Lock.</p>
+                        <p class="text-xs text-slate-400 font-bold mt-1">Adding wallet balance automatically logs an Admin Credit entry in the student's Wallet History.</p>
                     </div>
-                    <button onclick="downloadUsersExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3.5 rounded-2xl font-black uppercase text-xs tracking-wider transition shadow-lg flex items-center gap-2">
-                        <i class="fas fa-file-excel text-lg"></i> Download Excel (.xlsx)
-                    </button>
+                    <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                        <input type="search" id="userSearchInput" oninput="filterUsersTable()" placeholder="Search Name, Email, Mobile..." class="w-full sm:w-64 bg-slate-900 border border-slate-700 text-white px-4 py-3 rounded-2xl text-xs font-bold"/>
+                        <button onclick="downloadUsersExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-2xl font-black uppercase text-xs tracking-wider transition shadow-lg flex items-center gap-2 shrink-0">
+                            <i class="fas fa-file-excel"></i> Export Excel
+                        </button>
+                    </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-slate-700 text-[10px] font-black text-slate-400 uppercase">
-                                <th class="p-3">Name</th>
+                                <th class="p-3">Name & Course</th>
                                 <th class="p-3">Email & Mobile</th>
                                 <th class="p-3">User Type</th>
                                 <th class="p-3">Wallet</th>
@@ -343,49 +400,60 @@
             </div>
         </div>
 
-        <!-- 6. ADD ASSIGNMENTS BULK SECTION -->
+        <!-- 7. ADD ASSIGNMENTS BULK SECTION -->
         <div id="section-assignments" class="hidden space-y-8 animate-fade">
-            <div class="glass-card p-8 rounded-[2.5rem] shadow-xl">
-                <label class="block text-[10px] font-black text-slate-400 uppercase mb-3 tracking-[0.2em]">Bulk Input (Pipe Separated)</label>
+            <div class="glass-card p-7 rounded-[2.5rem] shadow-xl">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Bulk Input (Pipe Separated)</label>
+                    <button onclick="fillSampleTemplate()" class="text-[10px] font-black uppercase bg-slate-800 hover:bg-slate-700 text-indigo-300 px-3 py-1.5 rounded-lg border border-slate-700">
+                        <i class="fas fa-magic mr-1"></i> Insert Sample Format
+                    </button>
+                </div>
                 <textarea id="bulkInput" rows="5" class="font-mono text-xs" placeholder="Code | Name | Course | Year | Sessions | Price | Y | N"></textarea>
-                <button onclick="processList()" class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition shadow-lg">Parse List</button>
+                <p class="text-[11px] text-emerald-400 font-semibold mt-2"><i class="fas fa-bolt mr-1"></i> Auto-Fulfill Enabled: Uploading a subject code automatically marks matching student requests as "Available ✅".</p>
+                <button onclick="processList()" class="mt-5 bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition shadow-lg">Parse List</button>
             </div>
             <div class="glass-card rounded-[2.5rem] shadow-xl overflow-hidden">
                 <div class="overflow-x-auto"><table class="w-full text-left"><tbody id="tableBody" class="divide-y divide-slate-800"></tbody></table></div>
-                <div id="saveAction" class="p-8 bg-slate-800/30 hidden">
+                <div id="saveAction" class="p-7 bg-slate-800/30 hidden">
                     <button onclick="uploadToFirebase()" id="finalBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-5 rounded-2xl text-[11px] uppercase tracking-widest transition shadow-xl">Push to Firestore</button>
                 </div>
             </div>
         </div>
 
-        <!-- 7. PROMOCodes MANAGEMENT & BULK ADD -->
+        <!-- 8. PROMO CODES MANAGEMENT -->
         <div id="section-promos" class="hidden space-y-8 animate-fade">
-            <div class="glass-card p-8 md:p-10 rounded-[3rem]">
-                <h3 class="text-xl font-black uppercase italic mb-6 text-indigo-400">Create Single Promo Code</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="glass-card p-7 md:p-9 rounded-[2.5rem]">
+                <h3 class="text-xl font-black uppercase italic mb-2 text-indigo-400">Create / Edit Live Promo Code</h3>
+                <p class="text-xs text-slate-400 font-bold mb-6">Active promo codes automatically appear on the Student Dashboard Live Offer banner.</p>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-6">
                     <div>
-                        <label class="text-[9px] font-black uppercase text-slate-400 ml-1 block mb-1">Promo Code Name</label>
-                        <input type="text" id="promo-code" placeholder="e.g. SHGC10" class="uppercase font-bold">
+                        <label class="text-[9px] font-black uppercase text-slate-400 ml-1 block mb-1">Promo Code Name *</label>
+                        <input type="text" id="promo-code" placeholder="e.g. SHC10" class="uppercase font-bold">
                     </div>
                     <div>
-                        <label class="text-[9px] font-black uppercase text-slate-400 ml-1 block mb-1">Discount Amount (₹)</label>
+                        <label class="text-[9px] font-black uppercase text-slate-400 ml-1 block mb-1">Discount Amount (₹) *</label>
                         <input type="number" id="promo-discount" placeholder="10">
                     </div>
                     <div>
                         <label class="text-[9px] font-black uppercase text-slate-400 ml-1 block mb-1">Min Order Amount (₹)</label>
                         <input type="number" id="promo-min" placeholder="25">
                     </div>
+                    <div>
+                        <label class="text-[9px] font-black uppercase text-slate-400 ml-1 block mb-1">Offer Banner Headline</label>
+                        <input type="text" id="promo-title" placeholder="Flat ₹10 OFF on Assignments!">
+                    </div>
                 </div>
-                <button onclick="savePromoCode()" id="promoBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition shadow-lg">Save Promo Code</button>
+                <button onclick="savePromoCode()" id="promoBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition shadow-lg">Save & Make Live</button>
             </div>
 
-            <div class="glass-card p-8 md:p-10 rounded-[3rem]">
-                <h3 class="text-xl font-black uppercase italic mb-4 text-cyan-400"><i class="fas fa-layer-group mr-2"></i>Bulk Add Promo Codes</h3>
+            <div class="glass-card p-7 md:p-9 rounded-[2.5rem]">
+                <h3 class="text-xl font-black uppercase italic mb-3 text-cyan-400"><i class="fas fa-layer-group mr-2"></i>Bulk Add Promo Codes</h3>
                 <p class="text-xs text-slate-400 font-bold mb-4">Enter multiple promo codes separated by comma or new line.</p>
                 <div class="space-y-4">
                     <div>
                         <label class="text-[9px] font-black uppercase text-slate-400 ml-1 block mb-1">Promo Codes</label>
-                        <textarea id="bulkPromoCodes" rows="3" class="font-mono" placeholder="SHGC10, SHGC20, SHGC30"></textarea>
+                        <textarea id="bulkPromoCodes" rows="3" class="font-mono" placeholder="SHC10, SHC20, SHC30"></textarea>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label class="text-[9px] font-black uppercase text-slate-400 ml-1 block mb-1">Discount (₹)</label><input type="number" id="bulkPromoDiscount" placeholder="10"></div>
@@ -395,7 +463,7 @@
                 </div>
             </div>
 
-            <div class="glass-card p-8 rounded-[3rem]">
+            <div class="glass-card p-7 rounded-[2.5rem]">
                 <h3 class="text-lg font-black uppercase italic mb-4 text-emerald-400"><i class="fas fa-tags mr-2"></i>Promocodes List & Management</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
@@ -416,9 +484,9 @@
             </div>
         </div>
 
-        <!-- 8. ARTICLES SECTION -->
+        <!-- 9. ARTICLES SECTION -->
         <div id="section-articles" class="hidden space-y-8 animate-fade">
-            <div class="glass-card p-8 md:p-10 rounded-[3rem] shadow-xl border border-indigo-500/20">
+            <div class="glass-card p-7 md:p-9 rounded-[2.5rem] shadow-xl border border-indigo-500/20">
                 <h3 class="text-xl font-black uppercase italic mb-8 text-indigo-400">Publish Pillar Article</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div><label class="text-[9px] font-black uppercase text-slate-400 ml-1 block mb-1">Title</label><input type="text" id="art-title"></div>
@@ -430,15 +498,15 @@
             </div>
         </div>
 
-        <!-- 9. PORTAL SETTINGS & ANNOUNCEMENT BANNER -->
+        <!-- 10. PORTAL SETTINGS & ANNOUNCEMENT BANNER -->
         <div id="section-settings" class="hidden space-y-8 animate-fade">
-            <div class="glass-card p-8 md:p-10 rounded-[3rem]">
+            <div class="glass-card p-7 md:p-9 rounded-[2.5rem]">
                 <h3 class="text-xl font-black uppercase italic mb-2 text-indigo-400"><i class="fas fa-bullhorn mr-2"></i>Website Top Announcement Bar</h3>
                 <p class="text-xs text-slate-400 font-bold mb-6">Set a live scrolling notice or promo offer on the main store header.</p>
                 <div class="space-y-4">
                     <div>
                         <label class="text-[9px] font-black uppercase text-slate-400 block mb-1">Announcement Text</label>
-                        <input type="text" id="settingNoticeText" placeholder="🔥 IGNOU Assignment Submission Date Extended! Use Code SHGC10 for Instant Discount!">
+                        <input type="text" id="settingNoticeText" placeholder="🔥 IGNOU Assignment Submission Date Extended! Use Code SHC10 for Instant Discount!">
                     </div>
                     <div class="flex items-center gap-3">
                         <input type="checkbox" id="settingNoticeActive" class="w-4 h-4 accent-indigo-500">
@@ -469,6 +537,7 @@
 
         let allInventory = [];
         let allUsersData = [];
+        let allStudentRequests = [];
         let zeroSalesList = [];
         let bestsellersList = [];
         let salesCountByCode = {};
@@ -479,6 +548,17 @@
         let liveHistoryLabels = ['5m ago', '4m ago', '3m ago', '2m ago', '1m ago', 'Now'];
 
         const escapeHTML = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        const normalizeCode = c => String(c || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+        window.notify = (msg, type = 'success') => {
+            const box = document.getElementById('toastContainer');
+            const bg = type === 'error' ? 'bg-red-950/95 border-red-500/50 text-red-200' : 'bg-slate-900/95 border-indigo-500/50 text-white';
+            const el = document.createElement('div');
+            el.className = `pointer-events-auto border ${bg} px-4 py-3 rounded-2xl shadow-2xl text-xs font-bold backdrop-blur-md transition-all`;
+            el.innerHTML = escapeHTML(msg);
+            box.appendChild(el);
+            setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3200);
+        };
 
         onAuthStateChanged(auth, (user) => { 
             if (user) {
@@ -486,6 +566,7 @@
                 document.getElementById('currentYearLabel').innerText = new Date().getFullYear();
                 loadRealDashboardMetrics();
                 startRealTimeLiveVisitorsListener();
+                listenStudentRequests();
                 loadActivePromos();
                 loadUsersDirectory();
                 loadSiteSettings();
@@ -495,40 +576,57 @@
         });
 
         window.switchTab = (tab) => {
-            ['analytics', 'demand', 'orders', 'inventory', 'users', 'assignments', 'promos', 'articles', 'settings'].forEach(t => {
+            ['analytics', 'requests', 'demand', 'orders', 'inventory', 'users', 'assignments', 'promos', 'articles', 'settings'].forEach(t => {
                 document.getElementById(`section-${t}`).classList.toggle('hidden', t !== tab);
                 document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
             });
             if(tab === 'promos') loadActivePromos();
             if(tab === 'inventory' || tab === 'demand' || tab === 'orders') loadRealDashboardMetrics();
             if(tab === 'users') loadUsersDirectory();
+            if(tab === 'requests') renderStudentRequests();
         };
 
-        // 1. REAL-TIME LIVE VISITORS LISTENER
+        // 1. REAL-TIME LIVE VISITORS LISTENER (COMBINES STORE + DASHBOARD PRESENCE)
         function startRealTimeLiveVisitorsListener() {
-            const adminVid = localStorage.getItem('shgc_visitor_id') || 'admin_session';
+            const adminVid = localStorage.getItem('shc_visitor_id') || 'admin_session';
             setDoc(doc(db, "live_visitors", adminVid), { lastActive: Date.now(), page: 'admin' }, { merge: true }).catch(()=>{});
 
-            onSnapshot(collection(db, "live_visitors"), (snap) => {
-                const now = Date.now();
-                let activeNow = 0;
-                snap.forEach(d => {
-                    const data = d.data();
-                    if (data.lastActive && (now - Number(data.lastActive)) <= 120000) {
-                        activeNow++;
-                    }
-                });
-                if (activeNow === 0) activeNow = 1;
-                document.getElementById('liveUserCount').innerText = `${activeNow} Active`;
+            let storeActive = 0;
+            let dashboardActive = 0;
+
+            const refreshChart = () => {
+                const total = Math.max(1, storeActive + dashboardActive);
+                document.getElementById('liveUserCount').innerText = `${total} Active`;
 
                 liveHistoryPoints.shift();
-                liveHistoryPoints.push(activeNow);
+                liveHistoryPoints.push(total);
                 const timeStr = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 liveHistoryLabels.shift();
                 liveHistoryLabels.push(timeStr);
-
                 updateLiveChart();
+            };
+
+            onSnapshot(collection(db, "live_visitors"), (snap) => {
+                const now = Date.now();
+                let count = 0;
+                snap.forEach(d => {
+                    const data = d.data();
+                    if (data.lastActive && (now - Number(data.lastActive)) <= 120000) count++;
+                });
+                storeActive = count;
+                refreshChart();
             });
+
+            onSnapshot(collection(db, "live_presence"), (snap) => {
+                const now = Date.now();
+                let count = 0;
+                snap.forEach(d => {
+                    const ts = d.data()?.lastSeen?.toMillis?.();
+                    if (ts && (now - ts) <= 180000) count++;
+                });
+                dashboardActive = count;
+                refreshChart();
+            }, () => {});
         }
 
         function updateLiveChart() {
@@ -567,8 +665,126 @@
             });
         }
 
-        // 2. LOAD 100% REAL METRICS + DEMAND & 0-SALES ANALYZER
-        window.loadRealDashboardMetrics = async () => {
+        // 2. REAL-TIME STUDENT REQUESTED PDFs LISTENER & FULFILLMENT
+        function listenStudentRequests() {
+            onSnapshot(collection(db, "assignment_requests"), (snap) => {
+                allStudentRequests = [];
+                snap.forEach(d => {
+                    allStudentRequests.push({ id: d.id, ...d.data() });
+                });
+
+                // Sort newest first
+                allStudentRequests.sort((a, b) => {
+                    const ta = a.timestamp?.toMillis?.() || Date.parse(a.createdAt || 0) || 0;
+                    const tb = b.timestamp?.toMillis?.() || Date.parse(b.createdAt || 0) || 0;
+                    return tb - ta;
+                });
+
+                const pendingCount = allStudentRequests.filter(r => {
+                    const st = String(r.status || 'Pending').toLowerCase();
+                    return st !== 'available' && st !== 'completed' && r.isAvailable !== true;
+                }).length;
+
+                document.getElementById('metric-pending-reqs').innerText = pendingCount;
+                const badge = document.getElementById('navReqBadge');
+                if (pendingCount > 0) {
+                    badge.innerText = pendingCount;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+
+                renderStudentRequests();
+            });
+        }
+
+        window.renderStudentRequests = () => {
+            const tbody = document.getElementById('studentRequestsTableBody');
+            const filter = document.getElementById('reqFilterStatus').value;
+
+            const filtered = allStudentRequests.filter(r => {
+                const isAvail = String(r.status || '').toLowerCase() === 'available' || r.isAvailable === true;
+                if (filter === 'pending') return !isAvail;
+                if (filter === 'available') return isAvail;
+                return true;
+            });
+
+            if (!filtered.length) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-500">No requests found in this filter.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(r => {
+                const isAvail = String(r.status || '').toLowerCase() === 'available' || r.isAvailable === true;
+                const safeCode = escapeHTML(r.subjectCode);
+                const safeEmail = escapeHTML(r.userEmail || r.uid || 'Student');
+                const safeMedium = escapeHTML(r.medium || 'English');
+                const safeSession = escapeHTML(r.session || '2026-27');
+                const safeNote = escapeHTML(r.note || '—');
+
+                const statusBadge = isAvail
+                    ? `<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Available ✅</span>`
+                    : `<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/15 text-amber-300 border border-amber-500/30">Pending Upload</span>`;
+
+                return `
+                    <tr class="border-b border-slate-800/60 hover:bg-slate-800/30">
+                        <td class="p-3 text-pink-400 font-mono font-black text-sm">${safeCode}</td>
+                        <td class="p-3 text-slate-300">${safeMedium} • ${safeSession}</td>
+                        <td class="p-3 text-slate-300 text-[11px]">${safeEmail}</td>
+                        <td class="p-3 text-slate-400 text-[11px] max-w-xs truncate">${safeNote}</td>
+                        <td class="p-3">${statusBadge}</td>
+                        <td class="p-3 text-right space-x-1.5 whitespace-nowrap">
+                            ${!isAvail ? `<button onclick="markRequestAvailable('${r.id}', '${safeCode}')" class="px-3 py-1.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 rounded-xl text-[10px] font-black uppercase hover:bg-emerald-500 hover:text-slate-950 transition">Mark Available ✅</button>` : ''}
+                            <button onclick="prefillGrantFromRequest('${safeEmail}', '${safeCode}', '${safeMedium}')" class="px-3 py-1.5 bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 rounded-xl text-[10px] font-black uppercase hover:bg-indigo-600 hover:text-white transition">Grant PDF</button>
+                            <button onclick="deleteStudentRequest('${r.id}')" class="px-2.5 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white transition"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        };
+
+        window.markRequestAvailable = async (reqId, code) => {
+            await setDoc(doc(db, "assignment_requests", reqId), {
+                status: 'Available',
+                isAvailable: true,
+                fulfilledAt: serverTimestamp()
+            }, { merge: true });
+            notify(`✅ ${code} marked as Available on Student Dashboard!`);
+        };
+
+        window.prefillGrantFromRequest = (email, code, medium) => {
+            switchTab('orders');
+            document.getElementById('grantUserInput').value = email;
+            document.getElementById('grantSubjectInput').value = code;
+            const medSelect = document.getElementById('grantMediumInput');
+            medSelect.value = medium.toLowerCase().includes('eng') ? 'English Medium' : 'Hindi Medium';
+            notify(`Prefilled Grant Form for ${code}`);
+        };
+
+        window.deleteStudentRequest = async (reqId) => {
+            if (!confirm("Delete this student request?")) return;
+            await deleteDoc(doc(db, "assignment_requests", reqId));
+            notify("Request deleted.");
+        };
+
+        window.exportRequestsExcel = () => {
+            if (!allStudentRequests.length) return alert("No requests to export!");
+            const rows = allStudentRequests.map(r => ({
+                "Subject Code": r.subjectCode || "",
+                "Medium": r.medium || "",
+                "Session": r.session || "",
+                "Student Email": r.userEmail || r.uid || "",
+                "Note": r.note || "",
+                "Status": r.status || "Pending"
+            }));
+            const ws = XLSX.utils.json_to_sheet(rows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Requested PDFs");
+            XLSX.writeFile(wb, "SHC_Student_Requested_PDFs.xlsx");
+        };
+
+        // 3. LOAD 100% REAL METRICS + DEMAND & 0-SALES ANALYZER
+        window.loadRealDashboardMetrics = async (showToast = false) => {
             try {
                 const usersSnap = await getDocs(collection(db, "users"));
                 let shopCount = 0, studentCount = 0;
@@ -579,7 +795,6 @@
                 document.getElementById('metric-users').innerText = usersSnap.size;
                 document.getElementById('metric-user-split').innerText = `${studentCount} Students • ${shopCount} Shops`;
 
-                // Load Inventory
                 const pdfSnap = await getDocs(collection(db, "pdf_store"));
                 document.getElementById('metric-inventory').innerText = pdfSnap.size;
                 const priceMap = {};
@@ -590,13 +805,11 @@
                     allInventory.push({ id: d.id, ...data });
                 });
 
-                // Promos Count
                 const promosSnap = await getDocs(collection(db, "promo_codes"));
                 let activePromosCount = 0;
                 promosSnap.forEach(doc => { if(doc.data().active !== false) activePromosCount++; });
                 document.getElementById('metric-promos').innerText = activePromosCount;
 
-                // Orders & Demand Analysis
                 const ordersSnap = await getDocs(collection(db, "orders"));
                 let totalSales = 0, todaySales = 0, todayOrders = 0;
                 let hindiSoldCount = 0, englishSoldCount = 0;
@@ -625,12 +838,9 @@
                     const med = String(ord.medium || 'Hindi Medium');
 
                     totalSales += itemPrice;
-
-                    // Track medium demand
                     if (med.toLowerCase().includes('eng')) englishSoldCount++;
                     else hindiSoldCount++;
 
-                    // Track per-subject sales count & revenue
                     if (!salesCountByCode[code]) {
                         salesCountByCode[code] = { count: 0, revenue: 0, hindi: 0, english: 0 };
                     }
@@ -670,7 +880,6 @@
                     });
                 });
 
-                // Build Zero-Sales (Dead Stock) & Bestsellers Lists
                 zeroSalesList = [];
                 bestsellersList = [];
 
@@ -694,12 +903,11 @@
                 bestsellersList.sort((a, b) => b.soldCount - a.soldCount);
                 zeroSalesList.sort((a, b) => String(a.subjectCode).localeCompare(String(b.subjectCode)));
 
-                // Update UI Metrics
                 document.getElementById('metric-sales').innerText = totalSales;
                 document.getElementById('metric-today-sales').innerText = `Today: ₹${todaySales}`;
                 document.getElementById('metric-downloads').innerText = ordersSnap.size;
                 document.getElementById('metric-today-orders').innerText = `Today: ${todayOrders} Orders`;
-                document.getElementById('metric-unsold-badge').innerText = `${zeroSalesList.length} Unsold (0-Sales)`;
+                document.getElementById('metric-unsold-badge').innerText = `${zeroSalesList.length} Unsold`;
 
                 document.getElementById('demand-selling-count').innerText = bestsellersList.length;
                 document.getElementById('demand-zero-count').innerText = zeroSalesList.length;
@@ -711,12 +919,12 @@
                 renderInventory(allInventory);
                 renderDemandTables(zeroSalesList, bestsellersList);
                 loadMissingSearches();
+                if (showToast) notify("✅ Dashboard synced with live Firestore data!");
             } catch (err) {
                 console.error("Error loading real metrics:", err);
             }
         };
 
-        // Render Zero-Sales & Bestsellers Tables
         function renderDemandTables(zeros, bests) {
             const zBody = document.getElementById('zeroSalesTableBody');
             if (!zeros.length) {
@@ -762,8 +970,7 @@
                 "Subject Name": i.subjectName || "",
                 "Course": i.courseName || "IGNOU",
                 "Available Mediums": Array.isArray(i.mediums) ? i.mediums.join(', ') : (i.medium || ""),
-                "Units Sold": 0,
-                "Action Next Year": "DO NOT SOLVE (0 Demand)"
+                "Units Sold": 0
             }));
             const ws = XLSX.utils.json_to_sheet(rows);
             const wb = XLSX.utils.book_new();
@@ -780,8 +987,7 @@
                 "Total Units Sold": i.soldCount,
                 "Hindi Sold": i.hindiSold,
                 "English Sold": i.englishSold,
-                "Total Revenue (₹)": i.revenue,
-                "Action Next Year": "HIGH PRIORITY"
+                "Total Revenue (₹)": i.revenue
             }));
             const ws = XLSX.utils.json_to_sheet(rows);
             const wb = XLSX.utils.book_new();
@@ -789,7 +995,6 @@
             XLSX.writeFile(wb, "SHC_Top_Bestsellers_Demand.xlsx");
         };
 
-        // Missing Subject Searches Loader
         async function loadMissingSearches() {
             const box = document.getElementById('missingSearchesBox');
             try {
@@ -816,7 +1021,7 @@
             loadMissingSearches();
         };
 
-        // Manual Grant PDF to User
+        // Manual Grant PDF to User + Auto-Fulfill Request
         window.manualGrantPdf = async () => {
             const userKey = document.getElementById('grantUserInput').value.trim();
             const subCode = document.getElementById('grantSubjectInput').value.trim().toUpperCase();
@@ -827,7 +1032,6 @@
             btn.disabled = true; btn.innerText = "GRANTING...";
 
             try {
-                // Find User UID by email or direct UID
                 let targetUid = userKey;
                 const usersSnap = await getDocs(collection(db, "users"));
                 usersSnap.forEach(u => {
@@ -837,10 +1041,9 @@
                     }
                 });
 
-                // Find Subject in pdf_store
-                const pdfItem = allInventory.find(i => String(i.subjectCode || '').toUpperCase() === subCode);
+                const pdfItem = allInventory.find(i => normalizeCode(i.subjectCode) === normalizeCode(subCode));
                 if (!pdfItem) {
-                    alert(`Subject ${subCode} not found in store inventory!`);
+                    alert(`Subject ${subCode} not found in store inventory! Pehle Add PDFs tab se ise store mein add karein.`);
                     btn.disabled = false; btn.innerText = "Grant PDF Now 🚀";
                     return;
                 }
@@ -860,7 +1063,18 @@
                     timestamp: serverTimestamp()
                 });
 
-                alert(`✅ ${subCode} (${medium}) successfully granted to user (${targetUid})!`);
+                // Auto-fulfill matching student request if exists
+                for (const r of allStudentRequests) {
+                    if (normalizeCode(r.subjectCode) === normalizeCode(subCode)) {
+                        await setDoc(doc(db, "assignment_requests", r.id), {
+                            status: 'Available',
+                            isAvailable: true,
+                            fulfilledAt: serverTimestamp()
+                        }, { merge: true });
+                    }
+                }
+
+                notify(`✅ ${subCode} (${medium}) granted to ${targetUid}!`);
                 document.getElementById('grantUserInput').value = '';
                 document.getElementById('grantSubjectInput').value = '';
                 loadRealDashboardMetrics();
@@ -930,6 +1144,7 @@
         window.deleteSingleOrder = async (orderId) => {
             if (!confirm("Delete this order record?")) return;
             await deleteDoc(doc(db, "orders", orderId));
+            notify("Order deleted.");
             loadRealDashboardMetrics();
         };
 
@@ -940,7 +1155,7 @@
                 for (const d of ordersSnap.docs) await deleteDoc(doc(db, "orders", d.id));
                 const usersSnap = await getDocs(collection(db, "users"));
                 for (const u of usersSnap.docs) await setDoc(doc(db, "users", u.id), { totalPdfsBought: 0 }, { merge: true });
-                alert("✅ Saare test orders clear ho gaye! Ab aapka portal ₹0 aur 0 Orders se fresh start ho gaya hai.");
+                notify("✅ Saare test orders clear ho gaye!");
                 loadRealDashboardMetrics();
                 loadUsersDirectory();
             } catch (err) { alert("Error resetting orders: " + err.message); }
@@ -974,6 +1189,7 @@
             const newPrice = prompt(`Enter new price (₹) for ${code}:`, oldPrice);
             if (newPrice === null || isNaN(Number(newPrice))) return;
             await setDoc(doc(db, "pdf_store", docId), { price: Number(newPrice) }, { merge: true });
+            notify(`Updated ${code} price to ₹${newPrice}`);
             loadRealDashboardMetrics();
         };
 
@@ -984,13 +1200,14 @@
             for (const item of allInventory) {
                 await setDoc(doc(db, "pdf_store", item.id), { price: Number(newPrice) }, { merge: true });
             }
-            alert(`✅ All assignments updated to ₹${newPrice}!`);
+            notify(`✅ All assignments updated to ₹${newPrice}!`);
             loadRealDashboardMetrics();
         };
 
         window.deletePdfItem = async (docId, code) => {
             if (!confirm(`Delete ${code} from store inventory?`)) return;
             await deleteDoc(doc(db, "pdf_store", docId));
+            notify(`${code} deleted.`);
             loadRealDashboardMetrics();
         };
 
@@ -1000,49 +1217,86 @@
             renderInventory(filtered);
         };
 
-        // USERS DIRECTORY
+        // USERS DIRECTORY + WALLET TRANSACTION LOGGING
         async function loadUsersDirectory() {
             const tbody = document.getElementById('usersTableBody');
             try {
                 const snap = await getDocs(collection(db, "users"));
                 allUsersData = [];
                 snap.forEach(d => allUsersData.push({ uid: d.id, ...d.data() }));
-                if(!allUsersData.length) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No registered users found</td></tr>`;
-                    return;
-                }
-                tbody.innerHTML = allUsersData.map(u => `
-                    <tr class="border-b border-slate-800/60 hover:bg-slate-800/30">
-                        <td class="p-3 text-white font-bold">${escapeHTML(u.name || 'User')}</td>
-                        <td class="p-3">
-                            <div class="text-slate-300">${escapeHTML(u.email || 'N/A')}</div>
-                            <div class="text-indigo-400 font-mono text-[10px]">${escapeHTML(u.mobile || 'No Mobile')}</div>
-                        </td>
-                        <td class="p-3"><span class="px-2.5 py-1 rounded-full text-[10px] font-black ${u.isShopOwner ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}">${u.isShopOwner ? 'Shop Owner' : 'Student'}</span></td>
-                        <td class="p-3 text-emerald-400 font-black">₹${u.walletBalance || 0}</td>
-                        <td class="p-3 text-slate-300">${u.totalPdfsBought || 0} PDFs</td>
-                        <td class="p-3 text-right space-x-1">
-                            <button onclick="updateUserWallet('${u.uid}', '${escapeHTML(u.name || 'User')}', ${u.walletBalance || 0})" class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-[10px] font-black uppercase hover:bg-emerald-500 hover:text-white transition">+ ₹ Balance</button>
-                            <button onclick="resetUserDevices('${u.uid}', '${escapeHTML(u.name || 'User')}')" class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg text-[10px] font-black uppercase hover:bg-amber-500 hover:text-white transition">Reset Devices (${(u.devices || []).length})</button>
-                        </td>
-                    </tr>
-                `).join('');
+                renderUsersTable(allUsersData);
             } catch(err) {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-400">Error loading users directory</td></tr>`;
             }
         }
 
+        function renderUsersTable(list) {
+            const tbody = document.getElementById('usersTableBody');
+            if(!list.length) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No registered users found</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(u => `
+                <tr class="border-b border-slate-800/60 hover:bg-slate-800/30">
+                    <td class="p-3">
+                        <div class="text-white font-bold">${escapeHTML(u.name || 'User')}</div>
+                        ${u.course ? `<div class="text-[10px] text-slate-400">${escapeHTML(u.course)} ${u.enrollment ? '• ' + escapeHTML(u.enrollment) : ''}</div>` : ''}
+                    </td>
+                    <td class="p-3">
+                        <div class="text-slate-300">${escapeHTML(u.email || 'N/A')}</div>
+                        <div class="text-indigo-400 font-mono text-[10px]">${escapeHTML(u.mobile || 'No Mobile')}</div>
+                    </td>
+                    <td class="p-3"><span class="px-2.5 py-1 rounded-full text-[10px] font-black ${u.isShopOwner ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}">${u.isShopOwner ? 'Shop Owner' : 'Student'}</span></td>
+                    <td class="p-3 text-emerald-400 font-black">₹${u.walletBalance || 0}</td>
+                    <td class="p-3 text-slate-300">${u.totalPdfsBought || 0} PDFs</td>
+                    <td class="p-3 text-right space-x-1 whitespace-nowrap">
+                        <button onclick="updateUserWallet('${u.uid}', '${escapeHTML(u.name || 'User')}', ${u.walletBalance || 0})" class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-[10px] font-black uppercase hover:bg-emerald-500 hover:text-white transition">+ ₹ Balance</button>
+                        <button onclick="resetUserDevices('${u.uid}', '${escapeHTML(u.name || 'User')}')" class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg text-[10px] font-black uppercase hover:bg-amber-500 hover:text-white transition">Reset Devices (${(u.devices || []).length})</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.filterUsersTable = () => {
+            const q = document.getElementById('userSearchInput').value.toLowerCase().trim();
+            const filtered = allUsersData.filter(u =>
+                String(u.name || '').toLowerCase().includes(q) ||
+                String(u.email || '').toLowerCase().includes(q) ||
+                String(u.mobile || '').toLowerCase().includes(q) ||
+                String(u.myRefCode || '').toLowerCase().includes(q)
+            );
+            renderUsersTable(filtered);
+        };
+
         window.updateUserWallet = async (uid, name, currentBal) => {
-            const newBal = prompt(`Set new Wallet Balance (₹) for ${name}:`, currentBal);
-            if (newBal === null || isNaN(Number(newBal))) return;
-            await setDoc(doc(db, "users", uid), { walletBalance: Number(newBal) }, { merge: true });
+            const newBalStr = prompt(`Set new Wallet Balance (₹) for ${name} (Current: ₹${currentBal}):`, currentBal);
+            if (newBalStr === null || isNaN(Number(newBalStr))) return;
+            const newBal = Number(newBalStr);
+            const diff = newBal - Number(currentBal || 0);
+
+            await setDoc(doc(db, "users", uid), { walletBalance: newBal }, { merge: true });
+
+            // Log transaction so it shows up clearly in Student Dashboard Wallet History
+            if (diff !== 0) {
+                await addDoc(collection(db, "wallet_transactions"), {
+                    uid,
+                    type: diff > 0 ? 'Cash Added by Admin' : 'Wallet Adjusted by Admin',
+                    amount: diff,
+                    flow: diff > 0 ? 'credit' : 'debit',
+                    status: 'Success',
+                    date: new Date().toISOString(),
+                    timestamp: serverTimestamp()
+                });
+            }
+
+            notify(`✅ Wallet updated to ₹${newBal} for ${name}!`);
             loadUsersDirectory();
         };
 
         window.resetUserDevices = async (uid, name) => {
             if (!confirm(`Reset 2-Device lock for ${name}?`)) return;
             await setDoc(doc(db, "users", uid), { devices: [] }, { merge: true });
-            alert("Device lock cleared!");
+            notify("Device lock cleared!");
             loadUsersDirectory();
         };
 
@@ -1052,6 +1306,8 @@
                 "Full Name": u.name || "N/A",
                 "Email Address": u.email || "N/A",
                 "Mobile Number": u.mobile || "N/A",
+                "Course": u.course || "N/A",
+                "Enrollment": u.enrollment || "N/A",
                 "User Role": u.isShopOwner ? "Shop Owner / Cyber Cafe" : "Student",
                 "Wallet Balance (₹)": u.walletBalance || 0,
                 "Total PDFs Purchased": u.totalPdfsBought || 0,
@@ -1082,7 +1338,7 @@
                             <td class="p-3 text-indigo-400 font-mono font-black">${escapeHTML(p.code || codeId)}</td>
                             <td class="p-3 text-emerald-400">₹${p.discount} OFF</td>
                             <td class="p-3">Min. ₹${p.minAmount || 0}</td>
-                            <td class="p-3"><span class="px-2.5 py-1 rounded-lg text-[10px] font-bold ${isActive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}">${isActive ? 'Active' : 'Expired'}</span></td>
+                            <td class="p-3"><span class="px-2.5 py-1 rounded-lg text-[10px] font-bold ${isActive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}">${isActive ? 'Active (Live)' : 'Expired'}</span></td>
                             <td class="p-3 text-right space-x-2">
                                 <button onclick="togglePromoStatus('${codeId}', ${!isActive})" class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase border ${isActive ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500 hover:text-white' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500 hover:text-white'} transition">${isActive ? 'Expire' : 'Activate'}</button>
                                 <button onclick="deletePromoCode('${codeId}')" class="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white transition">Delete</button>
@@ -1097,6 +1353,7 @@
 
         window.togglePromoStatus = async (codeId, newStatus) => {
             await setDoc(doc(db, "promo_codes", codeId), { active: newStatus }, { merge: true });
+            notify(`Promo ${codeId} is now ${newStatus ? 'Active' : 'Expired'}`);
             loadActivePromos();
             loadRealDashboardMetrics();
         };
@@ -1104,6 +1361,7 @@
         window.deletePromoCode = async (codeId) => {
             if(!confirm(`Delete promo code '${codeId}'?`)) return;
             await deleteDoc(doc(db, "promo_codes", codeId));
+            notify(`Promo ${codeId} deleted.`);
             loadActivePromos();
             loadRealDashboardMetrics();
         };
@@ -1112,18 +1370,30 @@
             const code = document.getElementById('promo-code').value.trim().toUpperCase();
             const discount = Number(document.getElementById('promo-discount').value);
             const minAmount = Number(document.getElementById('promo-min').value);
+            const title = document.getElementById('promo-title').value.trim();
             const btn = document.getElementById('promoBtn');
             if(!code || !discount) return alert("Please enter valid code and discount!");
             btn.disabled = true; btn.innerText = "SAVING...";
             try {
-                await setDoc(doc(db, "promo_codes", code), { code, discount, minAmount: minAmount || 0, active: true, createdAt: serverTimestamp() });
+                await setDoc(doc(db, "promo_codes", code), {
+                    code,
+                    discount,
+                    flatOff: discount,
+                    minAmount: minAmount || 0,
+                    title: title || `Flat ₹${discount} OFF on Assignments!`,
+                    desc: `Use code ${code} at checkout (Min order ₹${minAmount || 0}).`,
+                    active: true,
+                    createdAt: serverTimestamp()
+                });
                 document.getElementById('promo-code').value = '';
                 document.getElementById('promo-discount').value = '';
                 document.getElementById('promo-min').value = '';
+                document.getElementById('promo-title').value = '';
+                notify(`✅ Promo code ${code} is now LIVE!`);
                 loadActivePromos();
                 loadRealDashboardMetrics();
             } catch (err) { alert(err.message); }
-            finally { btn.disabled = false; btn.innerText = "Save Promo Code"; }
+            finally { btn.disabled = false; btn.innerText = "Save & Make Live"; }
         };
 
         window.saveBulkPromos = async () => {
@@ -1131,23 +1401,27 @@
             const discount = Number(document.getElementById('bulkPromoDiscount').value);
             const minAmount = Number(document.getElementById('bulkPromoMin').value);
             const btn = document.getElementById('bulkPromoBtn');
-            const codes = rawText.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+            const codes = rawText.split(/[\n,]+/).map(s => s.trim().toUpperCase()).filter(Boolean);
             if(!codes.length || !discount) return alert("Please enter valid codes and discount amount!");
             btn.disabled = true; btn.innerText = "UPLOADING...";
             try {
-                const res = await fetch('/api/backend?action=bulk-save-promos', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ codes, discount, minAmount })
-                });
-                const data = await res.json();
-                if(res.ok) {
-                    alert(data.message || `Successfully added ${codes.length} promo codes!`);
-                    document.getElementById('bulkPromoCodes').value = '';
-                    loadActivePromos();
-                    loadRealDashboardMetrics();
-                } else { alert(data.error || "Failed to upload bulk promos"); }
-            } catch (err) { alert("Network error: " + err.message); }
+                for (const code of codes) {
+                    await setDoc(doc(db, "promo_codes", code), {
+                        code,
+                        discount,
+                        flatOff: discount,
+                        minAmount: minAmount || 0,
+                        title: `Flat ₹${discount} OFF on Assignments!`,
+                        desc: `Use code ${code} at checkout (Min order ₹${minAmount || 0}).`,
+                        active: true,
+                        createdAt: serverTimestamp()
+                    });
+                }
+                notify(`✅ Successfully added ${codes.length} promo codes!`);
+                document.getElementById('bulkPromoCodes').value = '';
+                loadActivePromos();
+                loadRealDashboardMetrics();
+            } catch (err) { alert("Error: " + err.message); }
             finally { btn.disabled = false; btn.innerText = "Upload Bulk Promos"; }
         };
 
@@ -1167,7 +1441,11 @@
             const noticeText = document.getElementById('settingNoticeText').value.trim();
             const noticeActive = document.getElementById('settingNoticeActive').checked;
             await setDoc(doc(db, "site_settings", "main"), { noticeText, noticeActive, updatedAt: serverTimestamp() }, { merge: true });
-            alert("✅ Website settings updated!");
+            notify("✅ Website settings updated!");
+        };
+
+        window.fillSampleTemplate = () => {
+            document.getElementById('bulkInput').value = "BCOC-131 | Financial Accounting | BCOMG | 1st Year | June, Dec | 25 | Y | N";
         };
 
         window.processList = () => {
@@ -1181,14 +1459,14 @@
                 const p = line.split('|');
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="p-3"><input type="text" value="${p[0]?.trim() || ''}" class="data-code"></td>
-                    <td class="p-3"><input type="text" value="${p[1]?.trim() || ''}" class="data-name"></td>
-                    <td class="p-3"><input type="text" value="${p[2]?.trim() || ''}" class="data-course"></td>
-                    <td class="p-3"><input type="text" value="${p[4]?.trim() || 'June'}" class="data-sessions"></td>
-                    <td class="p-3"><input type="number" value="${p[5]?.trim() || '25'}" class="data-price w-16"></td>
-                    <td class="p-3"><input type="text" value="${p[6]?.trim().toUpperCase() || 'Y'}" class="data-typed w-10 text-center"></td>
-                    <td class="p-3"><input type="text" value="${p[7]?.trim().toUpperCase() || 'N'}" class="data-hand w-10 text-center"></td>
-                    <input type="hidden" value="${p[3]?.trim() || ''}" class="data-year">
+                    <td class="p-3"><input type="text" value="${escapeHTML(p[0]?.trim() || '')}" class="data-code uppercase"></td>
+                    <td class="p-3"><input type="text" value="${escapeHTML(p[1]?.trim() || '')}" class="data-name"></td>
+                    <td class="p-3"><input type="text" value="${escapeHTML(p[2]?.trim() || '')}" class="data-course"></td>
+                    <td class="p-3"><input type="text" value="${escapeHTML(p[4]?.trim() || 'June')}" class="data-sessions"></td>
+                    <td class="p-3"><input type="number" value="${escapeHTML(p[5]?.trim() || '25')}" class="data-price w-16"></td>
+                    <td class="p-3"><input type="text" value="${escapeHTML(p[6]?.trim().toUpperCase() || 'Y')}" class="data-typed w-10 text-center"></td>
+                    <td class="p-3"><input type="text" value="${escapeHTML(p[7]?.trim().toUpperCase() || 'N')}" class="data-hand w-10 text-center"></td>
+                    <input type="hidden" value="${escapeHTML(p[3]?.trim() || '')}" class="data-year">
                 `;
                 tbody.appendChild(tr);
             });
@@ -1201,17 +1479,36 @@
             btn.disabled = true; btn.innerText = "PUSHING...";
             try {
                 for (let row of rows) {
+                    const subCode = row.querySelector('.data-code').value.trim().toUpperCase();
                     const sessionsArray = row.querySelector('.data-sessions').value.split(',').map(s => s.trim());
                     const courseArray = row.querySelector('.data-course').value.split(',').map(c => c.trim());
                     await addDoc(collection(db, "pdf_store"), {
-                        subjectCode: row.querySelector('.data-code').value, subjectName: row.querySelector('.data-name').value,
-                        courseName: courseArray[0], courses: courseArray, year: row.querySelector('.data-year').value,
-                        sessions: sessionsArray, session: sessionsArray[0], price: Number(row.querySelector('.data-price').value),
-                        typedPDF: row.querySelector('.data-typed').value === 'Y', handwrittenPDF: row.querySelector('.data-hand').value === 'Y',
+                        subjectCode: subCode,
+                        subjectName: row.querySelector('.data-name').value.trim(),
+                        courseName: courseArray[0],
+                        courses: courseArray,
+                        year: row.querySelector('.data-year').value.trim(),
+                        sessions: sessionsArray,
+                        session: sessionsArray[0],
+                        price: Number(row.querySelector('.data-price').value),
+                        typedPDF: row.querySelector('.data-typed').value === 'Y',
+                        handwrittenPDF: row.querySelector('.data-hand').value === 'Y',
                         timestamp: serverTimestamp()
                     });
+
+                    // Auto-fulfill any pending student requests for this newly uploaded subject code
+                    for (const r of allStudentRequests) {
+                        if (normalizeCode(r.subjectCode) === normalizeCode(subCode)) {
+                            await setDoc(doc(db, "assignment_requests", r.id), {
+                                status: 'Available',
+                                isAvailable: true,
+                                fulfilledAt: serverTimestamp()
+                            }, { merge: true });
+                        }
+                    }
                 }
-                alert("Assignments pushed successfully!"); location.reload();
+                notify("✅ Assignments pushed & student requests auto-updated!");
+                setTimeout(() => location.reload(), 1200);
             } catch (err) { alert(err.message); btn.disabled = false; btn.innerText = "Push to Firestore"; }
         };
 
@@ -1229,7 +1526,8 @@
                     date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
                     timestamp: serverTimestamp()
                 });
-                alert("Article Live!"); location.reload();
+                notify("✅ Article Live!");
+                setTimeout(() => location.reload(), 1000);
             } catch (err) { alert(err.message); btn.disabled = false; btn.innerText = "Publish Blog"; }
         };
 
