@@ -1,6 +1,8 @@
 {
   "buildCommand": "node build.js",
   "outputDirectory": ".",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -35,6 +37,15 @@
     },
     {
       "source": "/blog-template.html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/blog.html",
       "headers": [
         {
           "key": "X-Robots-Tag",
