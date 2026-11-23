@@ -37,6 +37,7 @@
 </head>
 <body>
 
+<a class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:px-4 focus:py-2" href="#main-content">Skip to main content</a>
 <!-- ADMIN LIVE ANNOUNCEMENT / OFFER BANNER (Controlled from Admin Panel Settings) -->
 <div id="topAnnouncementBar" class="hidden notice-bar-anim bg-gradient-to-r from-slate-950 via-red-950 to-slate-950 text-white px-4 py-2.5 text-center border-b border-red-500/30 relative z-[1100]">
   <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-2 text-xs font-extrabold tracking-wide">
@@ -79,7 +80,7 @@
   </div>
 </header>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8" id="main-content">
   <div class="offer-banner mb-10">
     <p class="text-[10px] font-black uppercase tracking-[0.3em] mb-2 opacity-90">100% Automated Instant PDF Download + Video Guide</p>
     <h1 class="text-3xl md:text-5xl font-black italic uppercase tracking-tighter mb-4">IGNOU <span class="text-yellow-400">Study PDFs</span></h1>
@@ -88,6 +89,8 @@
       <a href="https://t.me/studenthelpclub" target="_blank" class="bg-white text-slate-900 px-5 py-2.5 rounded-full font-black text-[10px] uppercase tracking-wider hover:bg-yellow-400 transition"><i class="fab fa-telegram text-blue-500 mr-1"></i> Get Daily Promo Code</a>
       <button onclick="toggleLoginModal()" class="bg-yellow-400 text-slate-900 px-5 py-2.5 rounded-full font-black text-[10px] uppercase tracking-wider hover:bg-white transition"><i class="fas fa-gift mr-1"></i> Refer & Earn ₹10</button>
     </div>
+    <p class="text-xs md:text-sm font-bold opacity-95 max-w-2xl mx-auto leading-relaxed px-4 mt-4">Explore study and reference PDFs for IGNOU courses. Check the course code, academic session, medium and format before ordering. Use the material to understand answers and write your own work.</p>
+    <p class="text-xs mt-3 opacity-95 max-w-2xl mx-auto">Student Help Club is independent and is not affiliated with, endorsed by or an official portal of IGNOU. No marks or results are guaranteed.</p>
   </div>
 
   <!-- DYNAMIC COURSE FILTER CHIPS -->
@@ -108,6 +111,70 @@
     </div>
   </section>
 </main>
+
+<section class="mt-32 pt-20 border-t border-gray-100">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+<div class="space-y-10">
+<div>
+<h2 class="text-3xl font-black italic uppercase tracking-tighter text-slate-800 leading-none mb-6">Important <span class="text-[#d32f2f]">Resources</span></h2>
+<p class="text-gray-600 text-sm leading-loose font-medium mb-4" lang="hi">Student Help Club पर IGNOU students के लिए study PDFs और guidance मिलती है। Course code और session को अपने question paper से मिलाएं। Admission, exam और assignment notices के लिए university की official website देखें।</p>
+<p class="text-gray-500 text-[11px] leading-relaxed italic border-l-4 border-red-100 pl-4 mb-8">Study material is a reference, not a substitute for your own answers or official university instructions.</p>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<a class="group flex items-center justify-between p-6 bg-white border border-gray-100 rounded-3xl shadow-sm hover:border-[#d32f2f] transition-all hover:-translate-y-1" href="blog.html">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-red-50 text-[#d32f2f] rounded-2xl flex items-center justify-center group-hover:bg-[#d32f2f] group-hover:text-white transition-colors"><i aria-hidden="true" class="fas fa-newspaper"></i></div>
+<span class="text-xs font-black uppercase italic text-slate-700 block">IGNOU Study Guides</span>
+</div>
+<i aria-hidden="true" class="fas fa-arrow-right text-gray-300 group-hover:text-[#d32f2f]"></i>
+</a>
+</div>
+</div>
+<div class="bg-slate-900 rounded-[3.5rem] p-12 text-white shadow-2xl relative overflow-hidden">
+<h3 class="text-2xl font-black italic mb-8 uppercase text-yellow-400">Before You Order</h3>
+<ul class="space-y-6 text-xs text-slate-300 font-medium">
+<li class="flex gap-4"><i aria-hidden="true" class="fas fa-check-circle text-yellow-400"></i> Check whether typed or handwritten-reference PDFs are available for your subject.</li>
+<li class="flex gap-4"><i aria-hidden="true" class="fas fa-check-circle text-yellow-400"></i> Confirm the academic session and language before payment.</li>
+</ul>
+<a class="mt-12 w-full bg-white text-slate-900 py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-yellow-400 transition-all block text-center" href="blog.html">Read Study Guides</a>
+</div>
+</div>
+</section>
+<!-- Study-material metadata and integrations -->
+<article class="max-w-7xl mx-auto px-6 py-16 border-t border-gray-100 mt-20 bg-white rounded-[3rem] shadow-sm">
+<div class="space-y-8">
+<div>
+<h2 class="text-3xl font-black italic uppercase text-slate-800 mb-6">How to Choose IGNOU Study &amp; Reference PDFs</h2>
+<p class="text-gray-600 text-sm leading-relaxed mb-4">Student Help Club offers study and reference PDFs for IGNOU courses. Before choosing a PDF, compare its course code and academic session with the assignment question paper issued for your programme. Read the material to understand an approach, then prepare your own answers.</p>
+<p class="text-gray-600 text-sm leading-relaxed mb-4">Browse course categories such as BAG, BCOMG, BSCG and MPS. Availability can differ by subject, session, format and medium. Ask for a sample and confirm exactly what is included before paying. Do not assume that an older-session PDF matches a new question paper.</p>
+</div>
+<div>
+<h3 class="text-xl font-black italic uppercase text-slate-800 mb-3">Check Your Course Assessment Instructions</h3>
+<p class="text-gray-600 text-sm leading-relaxed mb-4">Assignments are part of course assessment. The applicable weightage, passing criteria and submission requirements are set by your programme and course. Read your current programme guide and assignment instructions rather than relying on a single rule for every course. For official information, visit IGNOU. <a class="underline" href="https://www.ignou.ac.in/" rel="noopener noreferrer" target="_blank">IGNOU official website</a></p>
+</div>
+<div>
+<h3 class="text-xl font-black italic uppercase text-slate-800 mb-3">Typed and Handwritten Reference PDFs</h3>
+<p class="text-gray-600 text-sm leading-relaxed mb-4">Typed PDFs offer readable text, while handwritten scan PDFs show a handwritten reference format. Neither is an official submission document. Follow the instructions on your own assignment question paper and study-centre notices. Do not submit purchased material as your own work.</p>
+</div>
+<div>
+<h3 class="text-xl font-black italic uppercase text-slate-800 mb-4">Questions Before You Order</h3>
+<div class="space-y-4">
+<p class="text-gray-600 text-sm leading-relaxed"><strong>1. Which session should I choose?</strong><br/>Use the session printed on your current assignment question paper. If the correct session is not listed, ask us about availability before ordering.</p>
+<p class="text-gray-600 text-sm leading-relaxed"><strong>2. Can I submit the purchased PDF as my assignment?</strong><br/>No. Use it as study and reference material. Write your own answers and follow the instructions issued for your course.</p>
+<p class="text-gray-600 text-sm leading-relaxed"><strong>3. Where do I check submission deadlines and passing criteria?</strong><br/>Check your current programme guide, official IGNOU notices and your regional or study centre. Dates and requirements may differ by programme and session.</p>
+</div>
+</div>
+<div class="bg-red-50 p-8 rounded-[3rem] border border-red-100 shadow-inner mt-8">
+<h3 class="text-lg font-black italic uppercase text-[#d32f2f] mb-4">Why Choose Student Help Club?</h3>
+<ul class="space-y-4 text-xs font-bold text-slate-700 uppercase tracking-tight">
+<li class="flex items-center gap-3 text-red-800"><i aria-hidden="true" class="fas fa-check-circle"></i> Study and reference PDFs to support your own learning</li>
+<li class="flex items-center gap-3 text-red-800"><i aria-hidden="true" class="fas fa-check-circle"></i> Choose the course code, session and medium carefully</li>
+<li class="flex items-center gap-3 text-red-800"><i aria-hidden="true" class="fas fa-check-circle"></i> Ask about availability and delivery before payment</li>
+<li class="flex items-center gap-3 text-red-800"><i aria-hidden="true" class="fas fa-check-circle"></i> Read our terms, refund policy and disclaimer before ordering</li>
+</ul>
+</div>
+</div>
+</article>
 
 <footer class="bg-[#0c0c0c] text-white pt-10 md:pt-24 pb-6 md:pb-12 px-10 mt-16 md:mt-32 rounded-t-[4rem] border-t-4 border-[#d32f2f]">
 <div class="max-w-7xl mx-auto">
