@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'GEMINI_API_KEY not configured on Vercel' });
+    return res.status(500).json({ error: 'Vercel par GEMINI_API_KEY set nahi hai!' });
   }
 
   try {
@@ -24,8 +24,7 @@ export default async function handler(req, res) {
             {
               parts: [
                 {
-                  text: `Extract all IGNOU subject/course codes from this image (examples: BEVAE-181, BCOC-131, MPA-036, BHIC-131, BEGS-186). 
-Return ONLY a valid JSON array of uppercase strings. Do not include any markdown, explanation, or extra text. Example: ["BEVAE-181", "BCOC-131"]. If no codes found, return [].`
+                  text: `Extract all IGNOU subject/course codes from this image (examples: BCOS183, BCOC-133, BEGAE182, BPAS-184, MPA-036). Return ONLY a JSON array of uppercase strings.`
                 },
                 {
                   inline_data: {
@@ -35,19 +34,39 @@ Return ONLY a valid JSON array of uppercase strings. Do not include any markdown
                 }
               ]
             }
-          ]
+          ],
+          generationConfig: {
+            responseMimeType: 'application/json'
+          }
         })
       }
     );
 
     const data = await response.json();
-    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
-    const cleaned = rawText.replace(/```json|```/g, '').trim();
-    const codes = JSON.parse(cleaned);
 
-    return res.status(200).json({ codes: Array.isArray(codes) ? codes : [] });
+    // Agar Gemini API se koi error aaye toh asli error dikhaye
+    if (!response.ok) {
+      return res.status(500).json({
+        error: `Gemini API Error: ${data?.error?.message || response.statusText}`
+      });
+    }
+
+    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    let codes = [];
+
+    try {
+      const cleaned = rawText.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(cleaned);
+      if (Array.isArray(parsed)) codes = parsed;
+    } catch {
+      // Fallback: agar JSON parse fail ho toh regex se codes nikal le
+      const matches = rawText.toUpperCase().match(/\b[A-Z]{2,5}[-\s]?[0-9]{2,4}\b/g);
+      if (matches) codes = [...new Set(matches)];
+    }
+
+    return res.status(200).json({ codes });
   } catch (err) {
     console.error('Gemini Extract Error:', err);
-    return res.status(500).json({ error: 'Photo scan karne me error aaya. Dobara try karein.' });
+    return res.status(500).json({ error: `Server Error: ${err.message}` });
   }
 }
