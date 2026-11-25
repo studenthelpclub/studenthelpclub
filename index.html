@@ -15,7 +15,7 @@
 <meta content="Download instant IGNOU Solved Assignments & Reference Study PDFs with YouTube video solutions." name="description"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
@@ -1145,7 +1145,8 @@
       `;
       resBox.classList.remove('hidden');
     } catch (err) {
-      alert("Scan karne me dikkat aayi. Codes paste karke try karein.");
+      console.error("OCR Error:", err);
+      alert("OCR Error: " + (err?.message || err));
     } finally {
       btn.disabled = false;
       btn.innerHTML = `<i class="fas fa-bolt mr-1"></i> Auto Add to Bag`;
