@@ -43,8 +43,7 @@
           "value": "noindex"
         }
       ]
-    },
-    
+    },    
     {
       "source": "/blog.html",
       "headers": [
