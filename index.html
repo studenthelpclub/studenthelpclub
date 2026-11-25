@@ -13,7 +13,7 @@
 <title>IGNOU Study & Reference PDFs | Student Help Club (SHC)</title>
 <meta content="Download instant IGNOU Solved Assignments & Reference Study PDFs with YouTube video solutions." name="description"/>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
@@ -319,10 +319,49 @@
   </div>
 </aside>
 
+<!-- AI PHOTO AUTO-CART MODAL -->
+<div id="aiScannerModal" class="fixed inset-0 bg-black/60 z-[7000] hidden items-center justify-center p-4 backdrop-blur-md">
+  <div class="bg-white p-6 sm:p-8 rounded-[2.5rem] w-full max-w-md relative shadow-2xl">
+    <button class="absolute top-4 right-6 text-3xl text-gray-300 hover:text-red-500" onclick="toggleAiScanner()">×</button>
+    <div class="w-12 h-12 bg-red-50 text-[#d32f2f] rounded-2xl flex items-center justify-center mb-3 text-xl">
+      <i class="fas fa-wand-magic-sparkles"></i>
+    </div>
+    <h4 class="text-xl font-black italic text-slate-800 uppercase">AI Photo Auto-Cart</h4>
+    <p class="text-[10px] text-gray-400 font-bold uppercase mb-4">Subjects ki photo upload karein — sab ek saath bag me add ho jayenge</p>
+
+    <div class="grid grid-cols-2 gap-3 mb-4">
+      <div>
+        <label class="text-[9px] font-black uppercase text-gray-500 block mb-1">Medium</label>
+        <select id="aiScanMedium" class="w-full bg-gray-50 border p-2.5 rounded-xl text-xs font-bold">
+          <option value="Hindi Medium">Hindi Medium</option>
+          <option value="English Medium">English Medium</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-[9px] font-black uppercase text-gray-500 block mb-1">Session</label>
+        <select id="aiScanSession" class="w-full bg-gray-50 border p-2.5 rounded-xl text-xs font-bold">
+          <option value="June">Session: June</option>
+          <option value="December">Session: December</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="block w-full border-2 border-dashed border-gray-200 hover:border-[#d32f2f] rounded-2xl p-5 text-center cursor-pointer bg-gray-50 transition mb-4">
+      <i class="fas fa-cloud-upload-alt text-2xl text-[#d32f2f] mb-1"></i>
+      <p id="aiFileName" class="text-xs font-bold text-slate-700">ID Card / Subject List Photo Choose Karein</p>
+      <input type="file" id="aiPhotoInput" accept="image/*" class="hidden" onchange="document.getElementById('aiFileName').innerText = this.files[0]?.name || 'Photo Selected'"/>
+    </label>
+
+    <button id="aiScanBtn" onclick="scanAndAutoAdd()" class="w-full bg-[#d32f2f] text-white py-3.5 rounded-2xl font-black uppercase text-[11px] tracking-widest hover:bg-slate-900 transition">
+      <i class="fas fa-bolt mr-1"></i> Scan & Auto Add to Bag
+    </button>
+
+    <div id="aiScanResult" class="hidden mt-4 p-4 rounded-2xl bg-gray-50 border text-xs space-y-2"></div>
+  </div>
+</div>
+
 <div class="floating-social-container">
-  <button onclick="toggleAiScanner()" title="Photo se Auto Add to Cart" class="social-float bg-[#d32f2f] animate-bounce">
-    <i class="fas fa-camera"></i>
-  </button>
+  <button onclick="toggleAiScanner()" title="Photo se Auto Add to Cart" class="social-float bg-[#d32f2f] animate-bounce"><i class="fas fa-camera"></i></button>
   <a class="social-float bg-[#0088cc]" href="https://t.me/studenthelpclub" target="_blank"><i class="fab fa-telegram-plane"></i></a>
   <a class="social-float bg-[#ff0000]" href="https://www.youtube.com/@vishalhelpclub" target="_blank"><i class="fab fa-youtube"></i></a>
 </div>
@@ -414,7 +453,7 @@
   };
 
   /* =========================================================
-     3. DEVICE FOOTPRINT & STORE INITIALIZATION
+     3. DEVICE FOOTPRINT & STORE INITIALIZATION (FAST CACHE)
   ========================================================= */
   async function getDeviceFootprint() {
     let savedFp = localStorage.getItem('shc_device_fp') || localStorage.getItem('shgc_device_fp');
@@ -436,27 +475,52 @@
 
   const escapeHTML = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  async function init() {
-    startLiveVisitorHeartbeat();
-    listenAdminAnnouncementBanner();
-
-    const snap = await getDocs(collection(db, "pdf_store"));
-    cacheData = snap.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-
+  function renderInitialView() {
     renderCourseFilters(cacheData);
-
-    // Support direct ?search=CODE from Student Dashboard
     const initialSearch = urlParams.get('search');
     if (initialSearch) {
       document.getElementById('searchBar').classList.add('active');
       document.getElementById('searchInput').value = initialSearch;
       performSearch(initialSearch);
+    } else if (selectedCourse !== 'ALL') {
+      window.filterByCourse(selectedCourse);
     } else {
       renderCards(cacheData.slice(0, 16));
     }
+  }
 
+  async function init() {
     updateCartUI();
+    startLiveVisitorHeartbeat();
+    listenAdminAnnouncementBanner();
     loadReviews();
+
+    // 1. Instant Load from LocalStorage Cache (0ms render for repeat visitors)
+    const cachedRaw = localStorage.getItem('shc_pdf_cache_v1');
+    if (cachedRaw) {
+      try {
+        const parsed = JSON.parse(cachedRaw);
+        if (Array.isArray(parsed) && parsed.length) {
+          cacheData = parsed;
+          renderInitialView();
+        }
+      } catch (e) {}
+    }
+
+    // 2. Background Fresh Sync from Firebase Firestore
+    const snap = await getDocs(collection(db, "pdf_store"));
+    cacheData = snap.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    try {
+      localStorage.setItem('shc_pdf_cache_v1', JSON.stringify(cacheData));
+    } catch (e) {}
+
+    // Re-render with fresh data if user is not actively typing a search
+    const activeSearch = document.getElementById('searchInput').value.trim();
+    if (!activeSearch) {
+      renderInitialView();
+    } else {
+      performSearch(activeSearch);
+    }
   }
 
   function renderCourseFilters(data) {
@@ -912,6 +976,124 @@
       container.appendChild(p);
     }
   }
+
+  /* =========================================================
+     AI PHOTO SCANNER -> AUTO ADD TO CART
+  ========================================================= */
+  window.toggleAiScanner = () => {
+    const m = document.getElementById('aiScannerModal');
+    m.classList.toggle('hidden');
+    m.classList.toggle('flex');
+  };
+
+  function compressImageToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxW = 1024;
+          const scale = Math.min(1, maxW / img.width);
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+          resolve(dataUrl.split(',')[1]);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  window.scanAndAutoAdd = async () => {
+    const fileInput = document.getElementById('aiPhotoInput');
+    const btn = document.getElementById('aiScanBtn');
+    const resBox = document.getElementById('aiScanResult');
+    const selectedMed = document.getElementById('aiScanMedium').value;
+    const selectedSes = document.getElementById('aiScanSession').value;
+
+    if (!fileInput.files || !fileInput.files[0]) {
+      alert("Pehle subjects ki photo select karein!");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-1"></i> AI Scanning Photo...`;
+    resBox.classList.add('hidden');
+
+    try {
+      const base64 = await compressImageToBase64(fileInput.files[0]);
+      const apiRes = await fetch('/api/extract-codes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64, mimeType: 'image/jpeg' })
+      });
+      const data = await apiRes.json();
+
+      if (!apiRes.ok) throw new Error(data.error || 'Scan failed');
+
+      const extracted = data.codes || [];
+      if (!extracted.length) {
+        resBox.innerHTML = `<p class="text-red-500 font-bold">❌ Photo me koi valid IGNOU subject code nahi mila. Clear photo upload karein.</p>`;
+        resBox.classList.remove('hidden');
+        return;
+      }
+
+      const norm = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      const added = [];
+      const notFound = [];
+
+      extracted.forEach(rawCode => {
+        const cleanCode = norm(rawCode);
+        const product = cacheData.find(p => norm(p.subjectCode) === cleanCode);
+
+        if (product) {
+          const availMeds = Array.isArray(product.mediums) && product.mediums.length
+            ? product.mediums
+            : [product.medium || 'Hindi Medium'];
+
+          const matchedMed = availMeds.find(m => m.toLowerCase().includes(selectedMed.split(' ')[0].toLowerCase()));
+
+          if (matchedMed) {
+            if (!cart.find(c => c.id === product.id && c.medium === matchedMed && c.session === selectedSes)) {
+              cart.push({
+                id: product.id,
+                subjectCode: product.subjectCode,
+                medium: matchedMed,
+                session: selectedSes,
+                price: Number(product.price) || 25,
+                ytLink: product.ytLink || ''
+              });
+            }
+            added.push(product.subjectCode);
+          } else {
+            notFound.push(`${rawCode} (${selectedMed} N/A)`);
+          }
+        } else {
+          notFound.push(rawCode);
+        }
+      });
+
+      localStorage.setItem('shc_cart_v2', JSON.stringify(cart));
+      updateCartUI();
+
+      resBox.innerHTML = `
+        ${added.length ? `<p class="text-emerald-600 font-black">✅ Added to Bag (${added.length}): ${added.join(', ')}</p>` : ''}
+        ${notFound.length ? `<p class="text-red-500 font-bold">⚠️ Not Available: ${notFound.join(', ')}</p>` : ''}
+        ${added.length ? `<button onclick="toggleAiScanner(); toggleCart();" class="w-full mt-2 bg-slate-900 text-white py-2.5 rounded-xl font-black uppercase text-[10px] hover:bg-[#d32f2f] transition">Open Bag & Pay Now →</button>` : ''}
+      `;
+      resBox.classList.remove('hidden');
+    } catch (err) {
+      alert(err.message || "Error scanning photo.");
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fas fa-bolt mr-1"></i> Scan & Auto Add to Bag`;
+    }
+  };
 
   init();
 </script>
