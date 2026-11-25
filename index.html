@@ -1086,6 +1086,8 @@
         btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-1"></i> Scanning Photo...`;
         const processedDataUrl = await preprocessImageForOCR(selectedOcrFile);
         const { data: { text } } = await Tesseract.recognize(processedDataUrl, 'eng', {
+          workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js',
+          corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@5/tesseract-core.wasm.js',
           logger: (m) => {
             if (m.status === 'recognizing text') {
               const pct = Math.round((m.progress || 0) * 100);
@@ -1151,7 +1153,7 @@
       resBox.classList.remove('hidden');
     } catch (err) {
       console.error("OCR Error:", err);
-      alert("OCR Error: " + (err?.message || err));
+      alert("OCR Error: " + (err?.message || JSON.stringify(err) || String(err)));
     } finally {
       btn.disabled = false;
       btn.innerHTML = `<i class="fas fa-bolt mr-1"></i> Auto Add to Bag`;
