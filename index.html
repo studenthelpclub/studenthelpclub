@@ -1031,31 +1031,36 @@
 
   function preprocessImageForOCR(file) {
     return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        const scale = img.width < 900 ? 2 : 1.5;
-        const pad = 40;
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.round(img.width * scale) + pad * 2;
-        canvas.height = Math.round(img.height * scale) + pad * 2;
-        const ctx = canvas.getContext('2d');
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const scale = img.width < 900 ? 2 : 1.5;
+          const pad = 40;
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale) + pad * 2;
+          canvas.height = Math.round(img.height * scale) + pad * 2;
+          const ctx = canvas.getContext('2d');
 
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, pad, pad, Math.round(img.width * scale), Math.round(img.height * scale));
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, pad, pad, Math.round(img.width * scale), Math.round(img.height * scale));
 
-        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const d = imgData.data;
-        for (let i = 0; i < d.length; i += 4) {
-          const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-          const boosted = gray > 175 ? 255 : (gray < 100 ? 0 : gray);
-          d[i] = d[i + 1] = d[i + 2] = boosted;
-        }
-        ctx.putImageData(imgData, 0, 0);
-        resolve(canvas);
+          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const d = imgData.data;
+          for (let i = 0; i < d.length; i += 4) {
+            const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+            const boosted = gray > 175 ? 255 : (gray < 100 ? 0 : gray);
+            d[i] = d[i + 1] = d[i + 2] = boosted;
+          }
+          ctx.putImageData(imgData, 0, 0);
+          resolve(canvas.toDataURL('image/jpeg', 0.85));
+        };
+        img.onerror = () => reject(new Error("Image load failed"));
+        img.src = e.target.result;
       };
-      img.onerror = reject;
-      img.src = URL.createObjectURL(file);
+      reader.onerror = () => reject(new Error("File read failed"));
+      reader.readAsDataURL(file);
     });
   }
 
@@ -1079,8 +1084,8 @@
 
       if (!rawText && selectedOcrFile) {
         btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-1"></i> Scanning Photo...`;
-        const processedCanvas = await preprocessImageForOCR(selectedOcrFile);
-        const { data: { text } } = await Tesseract.recognize(processedCanvas, 'eng', {
+        const processedDataUrl = await preprocessImageForOCR(selectedOcrFile);
+        const { data: { text } } = await Tesseract.recognize(processedDataUrl, 'eng', {
           logger: (m) => {
             if (m.status === 'recognizing text') {
               const pct = Math.round((m.progress || 0) * 100);
